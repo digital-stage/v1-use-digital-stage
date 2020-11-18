@@ -2,8 +2,7 @@ import React, {useCallback, useRef} from "react";
 import useDigitalStage from "../../";
 import {styled} from 'styletron-react'
 
-
-const Container = styled("div", {
+const Container = styled("form", {
     display: 'flex',
     flexDirection: 'column'
 })
@@ -21,9 +20,9 @@ const LoginPane = () => {
     return (
         <Container>
             Email:
-            <input type="text" ref={emailRef}/>
+            <input type="text" autoComplete="email" ref={emailRef}/>
             Password:
-            <input type="password" ref={passwordRef}/>
+            <input type="password" autoComplete="current-password" ref={passwordRef}/>
             <button onClick={login}>Login
             </button>
         </Container>

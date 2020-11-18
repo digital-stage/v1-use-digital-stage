@@ -1,4 +1,10 @@
 import * as React from 'react';
+import { useEffect } from 'react';
+import debug from 'debug';
+
+const d = debug('useErrors');
+const printWarning = d.extend('warn');
+const printError = d.extend('err');
 
 export interface ErrorsProps {
   warnings: Error[];
@@ -29,6 +35,14 @@ export const ErrorsProvider = (props: { children: React.ReactNode }) => {
   const [warnings, setWarnings] = React.useState<Error[]>([]);
   const [errors, setErrors] = React.useState<Error[]>([]);
   const { children } = props;
+
+  useEffect(() => {
+    errors.forEach((error) => printError(error));
+  }, [errors]);
+
+  useEffect(() => {
+    warnings.forEach((warning) => printWarning(warning));
+  }, [warnings]);
 
   return (
     <ErrorsContext.Provider

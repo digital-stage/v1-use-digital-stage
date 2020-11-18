@@ -1,16 +1,22 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import * as Bowser from 'bowser';
 import debug from 'debug';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import { devToolsEnhancer } from 'redux-devtools-extension';
 import { ErrorsProvider } from './useErrors';
 import useAuth, { AuthContextProvider, TAuthContext } from './useAuth';
 import useSocket, { SocketProvider } from './useSocket';
-import { Device } from './types';
+import { Device, Router } from './types';
 import enumerateDevices from './utils/enumerateDevices';
+import useMediasoup, { MediasoupProvider } from './useMediasoup';
+import reducer from './redux/reducers/index';
 
 const dbg = debug('useDigitalStage:provider');
 
 export interface TDigitalStageContext {
   ready: boolean;
+  router?: Router;
   auth?: TAuthContext;
 }
 
@@ -23,6 +29,7 @@ const UseDigitalStageProvider = (props: { children: React.ReactNode }) => {
   const authAPI = useAuth();
   const [ready, setReady] = useState<boolean>(!authAPI.loading);
   const socketAPI = useSocket();
+  const { router } = useMediasoup();
 
   const { token } = authAPI;
 
@@ -65,24 +72,19 @@ const UseDigitalStageProvider = (props: { children: React.ReactNode }) => {
     );
 
   useEffect(() => {
-    if (token) {
-      if (socketAPI && !socketAPI.connected) {
-        dbg('Connecting to API server with token');
-        createInitialDevice()
-          .then((initialDevice) => socketAPI.connect(token, initialDevice))
-          .then(() => setReady(true));
-      } else {
-        dbg('Socket is still null');
-      }
-    } else {
-      dbg('token is still null');
+    if (token && socketAPI && !socketAPI.connected) {
+      dbg('Connecting to API server with token');
+      createInitialDevice()
+        .then((initialDevice) => socketAPI.connect(token, initialDevice))
+        .then(() => setReady(true));
     }
-  }, [token, socketAPI]);
+  }, [token, socketAPI, socketAPI.connected]);
 
   return (
     <DigitalStageContext.Provider
       value={{
         ready,
+        router,
         auth: authAPI,
       }}
     >
@@ -91,27 +93,41 @@ const UseDigitalStageProvider = (props: { children: React.ReactNode }) => {
   );
 };
 
-export const DigitalStageProvider = (props: {
+const DigitalStageProvider = (props: {
   children: React.ReactNode;
   authUrl: string;
   apiUrl: string;
+  routerDistUrl: string;
+  debugRedux?: boolean;
 }) => {
-  const { children, authUrl, apiUrl } = props;
+  const { children, authUrl, apiUrl, routerDistUrl, debugRedux } = props;
+
+  const store = createStore(
+    reducer,
+    debugRedux ? devToolsEnhancer({}) : undefined
+  );
 
   return (
     <ErrorsProvider>
       <AuthContextProvider authUrl={authUrl}>
-        <SocketProvider apiUrl={apiUrl}>
-          <UseDigitalStageProvider>{children}</UseDigitalStageProvider>
-        </SocketProvider>
+        <Provider store={store}>
+          <SocketProvider apiUrl={apiUrl}>
+            <MediasoupProvider routerDistUrl={routerDistUrl}>
+              <UseDigitalStageProvider>{children}</UseDigitalStageProvider>
+            </MediasoupProvider>
+          </SocketProvider>
+        </Provider>
       </AuthContextProvider>
     </ErrorsProvider>
   );
 };
-
-const useDigitalStage = (): TDigitalStageContext => {
-  dbg('instance of digital stage');
-  return useContext<TDigitalStageContext>(DigitalStageContext);
+DigitalStageProvider.defaultProps = {
+  debugRedux: false,
 };
+
+export { DigitalStageProvider };
+
+const useDigitalStage = (): TDigitalStageContext =>
+  useContext<TDigitalStageContext>(DigitalStageContext);
 
 export default useDigitalStage;

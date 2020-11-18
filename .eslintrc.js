@@ -6,6 +6,9 @@ module.exports = {
     "prettier/@typescript-eslint",
     "plugin:prettier/recommended"
   ],
+  "rules": {
+    "no-underscore-dangle": 0
+  },
   "settings": {
     "react": {
       "version": "detect"

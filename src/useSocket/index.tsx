@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { TeckosClient, TeckosClientWithJWT } from 'teckos-client';
 import debug from 'debug';
 import { Device } from '../types';
+import useSocketToDispatch from '../redux/useSocketToDispatch';
 
 const d = debug('useSocket');
 
@@ -22,6 +23,8 @@ const SocketContext = React.createContext<TSocketContext>({
   connected: false,
 });
 
+export type SocketHandlerHook = (socket: TeckosClient) => any;
+
 const useSocket = (): TSocketContext =>
   React.useContext<TSocketContext>(SocketContext);
 
@@ -33,6 +36,7 @@ const SocketProvider = (props: {
   const { children, apiUrl, autoReconnect } = props;
   const [socket, setSocket] = useState<TeckosClient>();
   const [connected, setConnected] = useState<boolean>(false);
+  const handler = useSocketToDispatch();
 
   const connect = useCallback(
     (token: string, initialDevice: Partial<Device>): Promise<TeckosClient> => {
@@ -52,6 +56,10 @@ const SocketProvider = (props: {
               device: JSON.stringify(initialDevice),
             }
           );
+          if (handler) {
+            d('Attaching handler to socket');
+            handler(nSocket);
+          }
           nSocket.connect();
           nSocket.once('connect', () => {
             clearTimeout(timer);
@@ -63,11 +71,9 @@ const SocketProvider = (props: {
           return nSocket;
         });
       }
-      d(`Socket is ${socket}`);
-
       throw new Error('Already connected');
     },
-    [apiUrl, socket, autoReconnect]
+    [apiUrl, socket, autoReconnect, handler]
   );
 
   const disconnect = useCallback(() => {
@@ -85,14 +91,6 @@ const SocketProvider = (props: {
       });
     }
     throw new Error('Not connected');
-  }, [socket]);
-
-  useEffect(() => {
-    if (socket) {
-      d('Socket changed');
-    } else {
-      d('Socket is null');
-    }
   }, [socket]);
 
   return (
