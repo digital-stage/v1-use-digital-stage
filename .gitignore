@@ -6,3 +6,4 @@ dist
 backup
 .next
 .idea
+coverage
