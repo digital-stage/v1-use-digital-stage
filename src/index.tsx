@@ -3,4 +3,4 @@ import * as types from './types';
 
 export { DigitalStageProvider, types };
 
-export { default as useDigitalStage } from './useDigitalStage';
+export { default } from './useDigitalStage';

@@ -1,5 +1,5 @@
 import React, {useCallback, useRef} from "react";
-import {useDigitalStage} from "../../";
+import useDigitalStage from "../../";
 import {styled} from 'styletron-react'
 
 

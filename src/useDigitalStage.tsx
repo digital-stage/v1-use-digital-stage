@@ -3,7 +3,7 @@ import * as Bowser from 'bowser';
 import debug from 'debug';
 import { ErrorsProvider } from './useErrors';
 import useAuth, { AuthContextProvider, TAuthContext } from './useAuth';
-import useSocket, { SocketProvider, TSocketContext } from './useSocket';
+import useSocket, { SocketProvider } from './useSocket';
 import { Device } from './types';
 import enumerateDevices from './utils/enumerateDevices';
 

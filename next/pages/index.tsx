@@ -1,4 +1,4 @@
-import {useDigitalStage} from "../../dist";
+import useDigitalStage from "../..";
 import LoginPane from "../components/LoginPane";
 
 const Index = () => {
@@ -13,7 +13,7 @@ const Index = () => {
         )
     }
 
-    if( auth && !auth.user ) {
+    if (auth && !auth.user) {
         return (
             <LoginPane/>
         )
