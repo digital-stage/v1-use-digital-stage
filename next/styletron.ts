@@ -4,7 +4,7 @@ import { DebugEngine } from 'styletron-react';
 const getHydrateClass = (): HTMLCollectionOf<any> =>
   document.getElementsByClassName('_styletron_hydrate_');
 
-export const styletron =
+export const styletron: any =
   typeof window === 'undefined'
     ? new Server()
     : new Client({

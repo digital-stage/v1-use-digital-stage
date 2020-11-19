@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { TeckosClient, TeckosClientWithJWT } from 'teckos-client';
 import debug from 'debug';
 import { Device } from '../types';
@@ -14,13 +14,19 @@ export interface TSocketContext {
 
   disconnect(): Promise<any>;
 
-  connected: boolean;
+  status: Status;
+}
+
+export enum Status {
+  DISCONNECTED = 'disconnected',
+  CONNECTING = 'connecting',
+  CONNECTED = 'connected',
 }
 
 const SocketContext = React.createContext<TSocketContext>({
   connect: () => Promise.reject(new Error('Not ready')),
   disconnect: () => Promise.reject(new Error('Not ready')),
-  connected: false,
+  status: Status.DISCONNECTED,
 });
 
 export type SocketHandlerHook = (socket: TeckosClient) => any;
@@ -35,13 +41,14 @@ const SocketProvider = (props: {
 }) => {
   const { children, apiUrl, autoReconnect } = props;
   const [socket, setSocket] = useState<TeckosClient>();
-  const [connected, setConnected] = useState<boolean>(false);
+  const [status, setStatus] = useState<Status>(Status.DISCONNECTED);
   const handler = useSocketToDispatch();
 
   const connect = useCallback(
     (token: string, initialDevice: Partial<Device>): Promise<TeckosClient> => {
       if (!socket) {
         d('Connecting');
+        setStatus(Status.CONNECTING);
         return new Promise<TeckosClient>((resolve, reject) => {
           const timer = setTimeout(() => {
             reject(new Error('Timeout'));
@@ -53,7 +60,7 @@ const SocketProvider = (props: {
             },
             token,
             {
-              device: JSON.stringify(initialDevice),
+              device: initialDevice,
             }
           );
           if (handler) {
@@ -61,11 +68,14 @@ const SocketProvider = (props: {
             handler(nSocket);
           }
           nSocket.connect();
+          nSocket.on('disconnect', () => {
+            setStatus(Status.DISCONNECTED);
+          });
           nSocket.once('connect', () => {
             clearTimeout(timer);
             d('Connected');
             setSocket(nSocket);
-            setConnected(true);
+            setStatus(Status.CONNECTED);
             resolve(nSocket);
           });
           return nSocket;
@@ -93,12 +103,23 @@ const SocketProvider = (props: {
     throw new Error('Not connected');
   }, [socket]);
 
+  useEffect(() => {
+    if (socket) {
+      return () => {
+        // Clean up
+        d('Cleaning up socket by disconnecting');
+        socket.close();
+      };
+    }
+    return () => {};
+  }, [socket]);
+
   return (
     <SocketContext.Provider
       value={{
         connect,
         disconnect,
-        connected,
+        status,
       }}
     >
       {children}

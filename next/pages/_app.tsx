@@ -2,7 +2,9 @@ import React from "react";
 import {Provider as StyletronProvider} from 'styletron-react'
 import {DigitalStageProvider} from "../..";
 import {styletron, debug} from "../styletron";
-
+import './../styles.css'
+import AppBar from "../components/AppBar";
+import Wrapper from "../components/Wrapper";
 
 function MyApp({Component, pageProps}) {
     return (
@@ -11,9 +13,11 @@ function MyApp({Component, pageProps}) {
                 apiUrl="wss://api.digital-stage.org"
                 authUrl="https://auth.digital-stage.org"
                 routerDistUrl="https://routers.digital-stage.org"
-                debugRedux={true}
             >
-                <Component {...pageProps} />
+                <AppBar/>
+                <Wrapper>
+                    <Component {...pageProps} />
+                </Wrapper>
             </DigitalStageProvider>
         </StyletronProvider>
     );

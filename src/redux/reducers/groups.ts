@@ -1,18 +1,23 @@
 import omit from 'lodash/omit';
 import without from 'lodash/without';
-import { Stage } from '../../types';
 import { ServerStageEvents } from '../../global/SocketEvents';
+import { Group } from '../../types/Group';
+import upsert from '../utils/upsert';
 
-export interface StagesStore {
+export interface GroupsStore {
   byId: {
-    [id: string]: Stage;
+    [id: string]: Group;
+  };
+  byStage: {
+    [stageId: string]: string[];
   };
   allIds: string[];
 }
 
-function stages(
-  state: StagesStore = {
+function groups(
+  state: GroupsStore = {
     byId: {},
+    byStage: {},
     allIds: [],
   },
   action: {
@@ -21,16 +26,23 @@ function stages(
   }
 ) {
   switch (action.type) {
-    case ServerStageEvents.STAGE_ADDED:
+    case ServerStageEvents.GROUP_ADDED:
       return {
         ...state,
         byId: {
           ...state.byId,
           [action.payload._id]: action.payload,
         },
+        byStage: {
+          ...state.byStage,
+          [action.payload.stageId]: upsert<string>(
+            state.byStage[action.payload.stageId],
+            action.payload._id
+          ),
+        },
         allIds: [...state.allIds, action.payload._id],
       };
-    case ServerStageEvents.STAGE_CHANGED:
+    case ServerStageEvents.GROUP_CHANGED:
       return {
         ...state,
         byId: {
@@ -41,10 +53,17 @@ function stages(
           },
         },
       };
-    case ServerStageEvents.STAGE_REMOVED:
+    case ServerStageEvents.GROUP_REMOVED:
       return {
         ...state,
         byId: omit(state.byId, action.payload),
+        byStage: {
+          ...state.byStage,
+          [state.byId[action.payload].stageId]: without<string>(
+            [state.byId[action.payload].stageId],
+            action.payload
+          ),
+        },
         allIds: without<string>(state.allIds, action.payload),
       };
     default:
@@ -52,4 +71,4 @@ function stages(
   }
 }
 
-export default stages;
+export default groups;

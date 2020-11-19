@@ -32,6 +32,18 @@ const setReady = () => {
   };
 };
 
+const handleStageJoined = (payload: { stageId: string; groupId: string }) => {
+  return {
+    type: ServerGlobalEvents.STAGE_JOINED,
+    payload,
+  };
+};
+const handleStageLeft = () => {
+  return {
+    type: ServerGlobalEvents.STAGE_LEFT,
+  };
+};
+
 const reset = () => {
   return {
     type: AdditionalReducerTypes.RESET,
@@ -41,6 +53,8 @@ const reset = () => {
 const allActions = {
   server: {
     handleUserReady,
+    handleStageJoined,
+    handleStageLeft,
     setReady,
   },
   client: {

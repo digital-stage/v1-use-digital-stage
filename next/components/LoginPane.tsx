@@ -1,4 +1,4 @@
-import React, {useCallback, useRef} from "react";
+import React, {useCallback, useRef, useState} from "react";
 import useDigitalStage from "../../";
 import {styled} from 'styletron-react'
 
@@ -11,20 +11,28 @@ const LoginPane = () => {
     const {auth} = useDigitalStage();
     const emailRef = useRef<HTMLInputElement>();
     const passwordRef = useRef<HTMLInputElement>();
+    const [error, setError] = useState<string>();
 
-    const login = useCallback(() => {
+    const handleSubmit = useCallback((event) => {
+        event.preventDefault();
         if (auth && emailRef && passwordRef)
             auth.signInWithEmailAndPassword(emailRef.current.value, passwordRef.current.value)
+                .catch((loginError) =>   setError(loginError.message))
     }, [auth, emailRef, passwordRef])
 
     return (
-        <Container>
+        <Container onSubmit={handleSubmit}>
             Email:
             <input type="text" autoComplete="email" ref={emailRef}/>
             Password:
             <input type="password" autoComplete="current-password" ref={passwordRef}/>
-            <button onClick={login}>Login
+            <button type="submit">Login
             </button>
+            {error ? (
+                <div>
+                    Fehler: {error}
+                </div>
+            ) : undefined}
         </Container>
     )
 }

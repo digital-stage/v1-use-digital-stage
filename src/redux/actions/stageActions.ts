@@ -70,18 +70,6 @@ const removeStage = (stageId: string) => {
   };
 };
 
-const handleStageJoined = (payload: InitialStagePackage) => {
-  return {
-    type: ServerStageEvents.STAGE_JOINED,
-    payload,
-  };
-};
-const handleStageLeft = () => {
-  return {
-    type: ServerStageEvents.STAGE_LEFT,
-  };
-};
-
 const addGroup = (group: Group) => {
   return {
     type: ServerStageEvents.GROUP_ADDED,
@@ -323,8 +311,6 @@ const server = {
   addCustomOvTrack,
   changeCustomOvTrack,
   removeCustomOvTrack,
-  handleStageJoined,
-  handleStageLeft,
 };
 const client = {
   addVideoConsumer,

@@ -63,13 +63,78 @@ const useSocketToDispatch = () => {
         dispatch(allActions.stageActions.server.addStage(payload));
       });
       socket.on(
-        ServerStageEvents.STAGE_JOINED,
+        ServerGlobalEvents.STAGE_JOINED,
         (payload: InitialStagePackage) => {
-          dispatch(allActions.stageActions.server.handleStageJoined(payload));
+          const {
+            stage,
+            groups,
+            stageMembers,
+            customGroups,
+            customStageMembers,
+            videoProducers,
+            audioProducers,
+            customAudioProducers,
+            ovTracks,
+            customOvTracks,
+            stageId,
+            groupId,
+          } = payload;
+          if (stage) {
+            dispatch(allActions.stageActions.server.addStage(stage));
+          }
+          if (groups) {
+            groups.forEach((group) =>
+              dispatch(allActions.stageActions.server.addGroup(group))
+            );
+          }
+          stageMembers.forEach((stageMember) =>
+            dispatch(allActions.stageActions.server.addStageMember(stageMember))
+          );
+          customStageMembers.forEach((customStageMember) =>
+            dispatch(
+              allActions.stageActions.server.addCustomStageMember(
+                customStageMember
+              )
+            )
+          );
+          customGroups.forEach((customGroup) =>
+            dispatch(allActions.stageActions.server.addCustomGroup(customGroup))
+          );
+          videoProducers.forEach((videoProducer) =>
+            dispatch(
+              allActions.stageActions.server.addVideoProducer(videoProducer)
+            )
+          );
+          audioProducers.forEach((audioProducer) =>
+            dispatch(
+              allActions.stageActions.server.addAudioProducer(audioProducer)
+            )
+          );
+          customAudioProducers.forEach((customAudioProducer) =>
+            dispatch(
+              allActions.stageActions.server.addCustomAudioProducer(
+                customAudioProducer
+              )
+            )
+          );
+          ovTracks.forEach((ovTrack) =>
+            dispatch(allActions.stageActions.server.addOvTrack(ovTrack))
+          );
+          customOvTracks.forEach((customOvTrack) =>
+            dispatch(
+              allActions.stageActions.server.addCustomOvTrack(customOvTrack)
+            )
+          );
+          dispatch(
+            allActions.server.handleStageJoined({
+              stageId,
+              groupId,
+            })
+          );
         }
       );
-      socket.on(ServerStageEvents.STAGE_LEFT, () => {
-        dispatch(allActions.stageActions.server.handleStageLeft());
+      socket.on(ServerGlobalEvents.STAGE_LEFT, () => {
+        dispatch(allActions.server.handleStageLeft());
       });
       socket.on(ServerStageEvents.STAGE_CHANGED, (payload: Stage) => {
         dispatch(allActions.stageActions.server.changeStage(payload));

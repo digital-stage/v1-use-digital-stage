@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import debug from 'debug';
 import { getFastestRouter } from './util';
 import { Router } from '../types';
@@ -20,13 +26,19 @@ export const MediasoupProvider = (props: {
   const { reportError } = useErrors();
   const [router, setRouter] = useState<Router>();
 
-  useEffect(() => {
+  const getRouter = useCallback(() => {
     getFastestRouter(routerDistUrl)
       .then((fastestRouter) => {
         d(`Using the fastest available router: ${fastestRouter.url}`);
         setRouter(fastestRouter);
       })
       .catch((error) => reportError(error));
+  }, [reportError, routerDistUrl]);
+
+  useEffect(() => {
+    if (routerDistUrl) {
+      getRouter();
+    }
   }, [routerDistUrl]);
 
   return (

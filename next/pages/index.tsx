@@ -20,9 +20,8 @@ const Index = () => {
                     <li>Status: {ready ? "ready" : "loading"}</li>
                     {router ? <li>Fastest Router: {router.url}</li>: null}
                 </ul>
-
-
             </div>
+
         </div>
     )
 }

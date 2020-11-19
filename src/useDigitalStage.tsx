@@ -4,9 +4,9 @@ import debug from 'debug';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { devToolsEnhancer } from 'redux-devtools-extension';
-import { ErrorsProvider } from './useErrors';
+import { ErrorsProvider, useErrors } from './useErrors';
 import useAuth, { AuthContextProvider, TAuthContext } from './useAuth';
-import useSocket, { SocketProvider } from './useSocket';
+import useSocket, { SocketProvider, Status } from './useSocket';
 import { Device, Router } from './types';
 import enumerateDevices from './utils/enumerateDevices';
 import useMediasoup, { MediasoupProvider } from './useMediasoup';
@@ -30,6 +30,7 @@ const UseDigitalStageProvider = (props: { children: React.ReactNode }) => {
   const [ready, setReady] = useState<boolean>(!authAPI.loading);
   const socketAPI = useSocket();
   const { router } = useMediasoup();
+  const { reportError } = useErrors();
 
   const { token } = authAPI;
 
@@ -72,13 +73,19 @@ const UseDigitalStageProvider = (props: { children: React.ReactNode }) => {
     );
 
   useEffect(() => {
-    if (token && socketAPI && !socketAPI.connected) {
+    if (
+      token &&
+      reportError &&
+      socketAPI &&
+      socketAPI.status === Status.DISCONNECTED
+    ) {
       dbg('Connecting to API server with token');
       createInitialDevice()
         .then((initialDevice) => socketAPI.connect(token, initialDevice))
-        .then(() => setReady(true));
+        .then(() => setReady(true))
+        .catch((connError) => reportError(connError));
     }
-  }, [token, socketAPI, socketAPI.connected]);
+  }, [token, reportError, socketAPI]);
 
   return (
     <DigitalStageContext.Provider
@@ -93,19 +100,15 @@ const UseDigitalStageProvider = (props: { children: React.ReactNode }) => {
   );
 };
 
+const store = createStore(reducer, devToolsEnhancer({}));
+
 const DigitalStageProvider = (props: {
   children: React.ReactNode;
   authUrl: string;
   apiUrl: string;
   routerDistUrl: string;
-  debugRedux?: boolean;
 }) => {
-  const { children, authUrl, apiUrl, routerDistUrl, debugRedux } = props;
-
-  const store = createStore(
-    reducer,
-    debugRedux ? devToolsEnhancer({}) : undefined
-  );
+  const { children, authUrl, apiUrl, routerDistUrl } = props;
 
   return (
     <ErrorsProvider>
@@ -120,9 +123,6 @@ const DigitalStageProvider = (props: {
       </AuthContextProvider>
     </ErrorsProvider>
   );
-};
-DigitalStageProvider.defaultProps = {
-  debugRedux: false,
 };
 
 export { DigitalStageProvider };

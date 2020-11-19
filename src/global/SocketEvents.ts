@@ -1,5 +1,7 @@
 export enum ServerGlobalEvents {
   READY = 'ready',
+  STAGE_LEFT = 'stage-left',
+  STAGE_JOINED = 'stage-joined',
 }
 
 export enum ServerUserEvents {
@@ -68,9 +70,6 @@ export enum ClientDeviceEvents {
 
 export enum ServerStageEvents {
   STAGE_READY = 'stage-ready',
-
-  STAGE_LEFT = 'stage-left',
-  STAGE_JOINED = 'stage-joined',
 
   STAGE_ADDED = 'stage-added',
   STAGE_CHANGED = 'stage-changed',
