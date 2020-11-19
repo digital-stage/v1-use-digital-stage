@@ -10,10 +10,14 @@ import useStageMembersByStage from './redux/hooks/useStageMembersByStage';
 import useStageMembersByGroup from './redux/hooks/useStageMembersByGroup';
 import useStageMembers from './redux/hooks/useStageMembers';
 import useStageMember from './redux/hooks/useStageMember';
+import useDevices from './redux/hooks/useDevices';
+import useDevice from './redux/hooks/useDevice';
 
 export {
   DigitalStageProvider,
   types,
+  useDevices,
+  useDevice,
   useStage,
   useStages,
   useSelector,

@@ -4,8 +4,12 @@ import CodeWrapper from "../components/CodeWrapper";
 import {useGroupsByStage} from "../..";
 import {useStages} from "../..";
 import {useGroup} from "../..";
+import AddGroupPanel from "../components/interaction/AddGroupPanel";
+import useDigitalStage from "../..";
+import Button from "../components/Button";
 
 const Groups = () => {
+    const {actions, user} = useDigitalStage();
     const groups = useGroups();
     const stages = useStages();
     const [stageId, setStageId] = useState<string>();
@@ -14,18 +18,19 @@ const Groups = () => {
     const group = useGroup(groupId);
 
     useEffect(() => {
-        if( !stageId )
+        if (!stageId)
             setStageId(stages.allIds[0])
     }, [stages])
 
     useEffect(() => {
-        if( !groupId )
-        setGroupId(groups.allIds[0])
+        if (!groupId)
+            setGroupId(groups.allIds[0])
     }, [groups])
 
     return (
         <div>
             <h2>Usage</h2>
+            <h3>Fetch</h3>
             <p>
                 Get all available groups by using:
             </p>
@@ -38,6 +43,37 @@ const Groups = () => {
                 Get single group by using:
             </p>
             <CodeWrapper>const group = useGroups(&lt;groupId&gt;)</CodeWrapper>
+            <h3>Update</h3>
+            <p>
+                Use actions to create, modify or delete any group.
+                You can only modify or delete groups of stages you're admin of, so you may check this before calling any
+                update function:
+            </p>
+            <CodeWrapper>
+                const &#123; actions, user &#125; = useDigitalStage()<br/>
+                const stage = useStage(&lt;stageId&gt;);<br/><br/>
+                if( stage.admins.find(adminId =&gt; adminId === user._id)) &#123;<br/>
+                &nbsp;&nbsp;actions.createGroup(stage._id, "My new group")<br/>
+                &#125;
+            </CodeWrapper>
+            <CodeWrapper>
+                const &#123; actions, user &#125; = useDigitalStage()<br/>
+                const group = useStage(&lt;groupId&gt;);<br/>
+                const stage = useGroup(group.stageId);<br/><br/>
+                if( stage.admins.find(adminId =&gt; adminId === user._id)) &#123;<br/>
+                &nbsp;&nbsp;actions.updateGroup(group._id, {JSON.stringify({
+                name: "Another group name"
+            })})<br/>
+                &#125;
+            </CodeWrapper>
+            <CodeWrapper>
+                const &#123;actions&#125; = useDigitalStage()<br/>
+                const group = useStage(&lt;groupId&gt;);<br/>
+                const stage = useGroup(group.stageId);<br/><br/>
+                if( stage.admins.find(adminId =&gt; adminId === user._id)) &#123;<br/>
+                &nbsp;&nbsp;actions.deleteGroup(group._id)<br/>
+                &#125;
+            </CodeWrapper>
             <h2>Result</h2>
             <h3>All groups</h3>
             <p>Format is: _id - name</p>
@@ -66,14 +102,24 @@ const Groups = () => {
             <CodeWrapper>
                 <ul>
                     {groupsByStage.map(group => {
+                        if (!group) {
+                            console.log("UNDEFINEF?")
+                            return undefined
+                        }
                         return (
                             <li key={group._id}>
                                 {group._id} - {group.name}
+                                <Button
+                                    disabled={!user || !stages.byId[stageId].admins.find(adminId => adminId === user._id)}
+                                    onClick={() => actions.removeGroup(group._id)}>
+                                    delete
+                                </Button>
                             </li>
                         )
                     })}
                 </ul>
             </CodeWrapper>
+            <AddGroupPanel onClick={(groupName) => actions.createGroup(stageId, groupName)}/>
             <h3>Single group</h3>
             <select onChange={(event) => setGroupId(event.target.value)}>
                 {groups.allIds.map(sId => {
@@ -84,7 +130,9 @@ const Groups = () => {
                 })}
             </select>
             <CodeWrapper>
+                <pre>
                 {JSON.stringify(group, null, 2)}
+                </pre>
             </CodeWrapper>
         </div>
     )

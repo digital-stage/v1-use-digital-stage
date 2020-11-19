@@ -22,14 +22,13 @@ import { CustomStageMemberOvTrack } from '../types/CustomStageMemberOvTrack';
 
 const useSocketToDispatch = () => {
   const dispatch = useDispatch();
-  const attach = useCallback(
+  return useCallback(
     (socket: TeckosClient) => {
       socket.on(ServerGlobalEvents.READY, () => {
         dispatch(allActions.server.setReady());
       });
 
       socket.on(ServerDeviceEvents.LOCAL_DEVICE_READY, (payload: Device) => {
-        console.log(payload);
         dispatch(
           allActions.deviceActions.server.handleLocalDeviceReady(payload)
         );
@@ -313,6 +312,5 @@ const useSocketToDispatch = () => {
     },
     [dispatch]
   );
-  return attach;
 };
 export default useSocketToDispatch;

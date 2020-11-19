@@ -10,6 +10,8 @@ const d = debug('useSocket');
 export interface TSocketContext {
   error?: Error;
 
+  socket?: TeckosClient;
+
   connect(token: string, initialDevice: Partial<Device>): Promise<TeckosClient>;
 
   disconnect(): Promise<any>;
@@ -117,6 +119,7 @@ const SocketProvider = (props: {
   return (
     <SocketContext.Provider
       value={{
+        socket,
         connect,
         disconnect,
         status,

@@ -1,5 +1,4 @@
-/*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
-
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@700&family=Fira+Code:wght@300&display=swap');
 /* Document
    ========================================================================== */
 
@@ -22,6 +21,7 @@ html {
 
 body {
     margin: 0;
+    font-family: 'Heebo', serif;
 }
 
 /**
@@ -385,11 +385,6 @@ ul, ol, dd {
     list-style: none;
 }
 
-
-p {
-    margin: 0;
-}
-
 cite {
     font-style: normal;
 }
@@ -398,4 +393,8 @@ fieldset {
     border-width: 0;
     padding: 0;
     margin: 0;
+}
+
+h1,h2,h3,h4,h5 {
+    font-family: 'Heebo', serif;
 }

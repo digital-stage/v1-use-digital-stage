@@ -87,7 +87,9 @@ const StageMembers = () => {
                 })}
             </select>
             <CodeWrapper>
+                <pre>
                 {JSON.stringify(stageMember, null, 2)}
+                </pre>
             </CodeWrapper>
         </div>
     )

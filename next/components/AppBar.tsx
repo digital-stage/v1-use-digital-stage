@@ -31,6 +31,11 @@ const AppBar = () => {
                         </Link>
                     </ListItem>
                     <ListItem>
+                        <Link href="/devices">
+                            Devices
+                        </Link>
+                    </ListItem>
+                    <ListItem>
                         <Link href="/stages">
                             Stages
                         </Link>
@@ -47,7 +52,7 @@ const AppBar = () => {
                     </ListItem>
                     <ListItem>
                         <Link href="/state">
-                            State
+                            Full state
                         </Link>
                     </ListItem>
                 </List>

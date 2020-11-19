@@ -2,20 +2,25 @@ import React, {useEffect, useState} from "react";
 import {useStages} from "../..";
 import CodeWrapper from "../components/CodeWrapper";
 import {useStage} from "../..";
+import useDigitalStage from "../..";
+import Button from "../components/Button";
+import AddStagePanel from "../components/interaction/AddStagePanel";
 
 const Stages = () => {
+    const {actions, user} = useDigitalStage();
     const stages = useStages();
     const [stageId, setStageId] = useState<string>();
     const stage = useStage(stageId);
 
     useEffect(() => {
-        if( !stageId )
+        if (!stageId)
             setStageId(stages.allIds[0])
     }, [stages])
 
     return (
         <div>
             <h2>Usage</h2>
+            <h3>Fetch</h3>
             <p>
                 Get all available stages by using:
             </p>
@@ -24,6 +29,31 @@ const Stages = () => {
                 Get single stage by using:
             </p>
             <CodeWrapper>const stage = useStage(&lt;stageId&gt;)</CodeWrapper>
+            <h3>Update</h3>
+            <p>
+                Use actions to create, modify or delete any stage.
+                You can only modify or delete stages you're admin of, so you may check this before calling any update function:
+            </p>
+            <CodeWrapper>
+                const &#123; actions &#125; = useDigitalStage()<br/>
+                actions.createStage("Stage name", "my-password")
+            </CodeWrapper>
+            <CodeWrapper>
+                const &#123; actions, user &#125; = useDigitalStage()<br/>
+                const stage = useStage(&lt;stageId&gt;);<br/><br/>
+                if( stage.admins.find(adminId =&gt; adminId === user._id)) &#123;<br/>
+                &nbsp;&nbsp;actions.updateStage(&lt;stageId&gt;, {JSON.stringify({
+                name: "My stage name"
+            })})<br/>
+                &#125;
+            </CodeWrapper>
+            <CodeWrapper>
+                const &#123;actions&#125; = useDigitalStage()<br/>
+                const stage = useStage(&lt;stageId&gt;);<br/><br/>
+                if( stage.admins.find(adminId =&gt; adminId === user._id)) &#123;<br/>
+                &nbsp;&nbsp;actions.deleteStage(&lt;stageId&gt;)<br/>
+                &#125;
+            </CodeWrapper>
             <h2>Result</h2>
             <p>Format is: _id - name</p>
             <CodeWrapper>
@@ -33,12 +63,18 @@ const Stages = () => {
                         return (
                             <li key={stage._id}>
                                 {stage._id} - {stage.name}
+                                <Button
+                                    disabled={!user || !stage.admins.find(adminId => adminId === user._id)}
+                                    onClick={() => actions.removeStage(stage._id)}>
+                                    delete
+                                </Button>
                             </li>
                         )
                     })}
                 </ul>
             </CodeWrapper>
-            <h3>Single group</h3>
+            <AddStagePanel onClick={(stageName) => actions.createStage(stageName, "")}/>
+            <h3>Single stage</h3>
             <select onChange={(event) => setStageId(event.target.value)} value={stageId}>
                 {stages.allIds.map(sId => {
                     const stage = stages.byId[sId];
@@ -48,7 +84,9 @@ const Stages = () => {
                 })}
             </select>
             <CodeWrapper>
+                <pre>
                 {JSON.stringify(stage, null, 2)}
+                </pre>
             </CodeWrapper>
         </div>
     )

@@ -61,14 +61,15 @@ function customStageMembers(
     }
     case ServerStageEvents.CUSTOM_STAGE_MEMBER_REMOVED: {
       const id = action.payload as string;
+      const { stageMemberId } = state.byId[id];
       return {
         ...state,
         byId: omit(state.byId, id),
         byStageMember: {
           ...state.byStageMember,
-          [state.byId[id].stageMemberId]: without<string>(
-            [state.byId[id].stageMemberId],
-            action.payload
+          [stageMemberId]: without<string>(
+            state.byStageMember[stageMemberId],
+            id
           ),
         },
         allIds: without<string>(state.allIds, id),

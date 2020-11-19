@@ -1,5 +1,6 @@
 // DEVICE
 import { ThreeDimensionAudioProperties } from '../types/ThreeDimensionAudioProperty';
+import { Stage } from '../types';
 
 export interface AddAudioProducerPayload {
   routerId: string;
@@ -109,16 +110,7 @@ export type AddStagePayload = Partial<{
 
 export interface ChangeStagePayload {
   id: string;
-  update: Partial<{
-    name: string;
-    password: string;
-    width: number;
-    length: number;
-    height: number;
-    absorption: number;
-    damping: number;
-    // admins: string[];
-  }>;
+  update: Partial<Stage>;
 }
 
 export type RemoveStagePayload = string;

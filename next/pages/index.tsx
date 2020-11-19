@@ -19,8 +19,10 @@ const Index = () => {
                 <ul>
                     <li>Status: {ready ? "ready" : "loading"}</li>
                     {router ? <li>Fastest Router: {router.url}</li>: null}
+                    <li>Your user ID: {auth.user._id}</li>
                 </ul>
             </div>
+
 
         </div>
     )

@@ -84,22 +84,18 @@ function stageMembers(
     }
     case ServerStageEvents.STAGE_MEMBER_REMOVED: {
       const id = action.payload as string;
+      const { stageId } = state.byId[id];
+      const { groupId } = state.byId[id];
       return {
         ...state,
         byId: omit(state.byId, id),
         byStage: {
           ...state.byStage,
-          [state.byId[id].stageId]: without<string>(
-            [state.byId[id].stageId],
-            action.payload
-          ),
+          [stageId]: without<string>(state.byStage[stageId], action.payload),
         },
         byGroup: {
           ...state.byGroup,
-          [state.byId[id].groupId]: without<string>(
-            [state.byId[id].groupId],
-            action.payload
-          ),
+          [groupId]: without<string>(state.byGroup[groupId], action.payload),
         },
         allIds: without<string>(state.allIds, id),
       };

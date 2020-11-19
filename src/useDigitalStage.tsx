@@ -7,10 +7,13 @@ import { devToolsEnhancer } from 'redux-devtools-extension';
 import { ErrorsProvider, useErrors } from './useErrors';
 import useAuth, { AuthContextProvider, TAuthContext } from './useAuth';
 import useSocket, { SocketProvider, Status } from './useSocket';
-import { Device, Router } from './types';
+import { Device, Router, User } from './types';
 import enumerateDevices from './utils/enumerateDevices';
 import useMediasoup, { MediasoupProvider } from './useMediasoup';
 import reducer from './redux/reducers/index';
+import { StageHandlingProvider } from './useStageHandling';
+import useStageActions, { TStageActionContext } from './useStageActions';
+import useCurrentUser from './redux/hooks/useCurrentUser';
 
 const dbg = debug('useDigitalStage:provider');
 
@@ -18,21 +21,26 @@ export interface TDigitalStageContext {
   ready: boolean;
   router?: Router;
   auth?: TAuthContext;
+  actions?: TStageActionContext;
+  user?: User;
 }
 
 const DigitalStageContext = createContext<TDigitalStageContext>({
   ready: false,
 });
 
+// TODO: Remove useAuth from this hooks and require JWT token as param
 const UseDigitalStageProvider = (props: { children: React.ReactNode }) => {
   const { children } = props;
-  const authAPI = useAuth();
-  const [ready, setReady] = useState<boolean>(!authAPI.loading);
+  const auth = useAuth();
+  const [ready, setReady] = useState<boolean>(!auth.loading);
   const socketAPI = useSocket();
   const { router } = useMediasoup();
   const { reportError } = useErrors();
+  const actions = useStageActions();
+  const user = useCurrentUser();
 
-  const { token } = authAPI;
+  const { token } = auth;
 
   const createInitialDevice = (): Promise<Partial<Device>> =>
     enumerateDevices().then(
@@ -92,7 +100,9 @@ const UseDigitalStageProvider = (props: { children: React.ReactNode }) => {
       value={{
         ready,
         router,
-        auth: authAPI,
+        auth,
+        actions,
+        user,
       }}
     >
       {children}
@@ -115,9 +125,11 @@ const DigitalStageProvider = (props: {
       <AuthContextProvider authUrl={authUrl}>
         <Provider store={store}>
           <SocketProvider apiUrl={apiUrl}>
-            <MediasoupProvider routerDistUrl={routerDistUrl}>
-              <UseDigitalStageProvider>{children}</UseDigitalStageProvider>
-            </MediasoupProvider>
+            <StageHandlingProvider>
+              <MediasoupProvider routerDistUrl={routerDistUrl}>
+                <UseDigitalStageProvider>{children}</UseDigitalStageProvider>
+              </MediasoupProvider>
+            </StageHandlingProvider>
           </SocketProvider>
         </Provider>
       </AuthContextProvider>

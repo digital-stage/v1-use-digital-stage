@@ -1,8 +1,12 @@
-import { ServerGlobalEvents } from '../../global/SocketEvents';
+import {
+  ServerGlobalEvents,
+  ServerUserEvents,
+} from '../../global/SocketEvents';
 
 export interface GlobalStore {
   stageId?: string;
   groupId?: string;
+  userId?: string;
   ready: boolean;
 }
 
@@ -39,6 +43,11 @@ function global(
         ...state,
         stageId: undefined,
         groupId: undefined,
+      };
+    case ServerUserEvents.USER_READY:
+      return {
+        ...state,
+        userId: action.payload._id,
       };
     default:
       return state;

@@ -53,19 +53,19 @@ function groups(
           },
         },
       };
-    case ServerStageEvents.GROUP_REMOVED:
+    case ServerStageEvents.GROUP_REMOVED: {
+      const id = action.payload as string;
+      const { stageId } = state.byId[id];
       return {
         ...state,
         byId: omit(state.byId, action.payload),
         byStage: {
           ...state.byStage,
-          [state.byId[action.payload].stageId]: without<string>(
-            [state.byId[action.payload].stageId],
-            action.payload
-          ),
+          [stageId]: without<string>(state.byStage[stageId], id),
         },
         allIds: without<string>(state.allIds, action.payload),
       };
+    }
     default:
       return state;
   }

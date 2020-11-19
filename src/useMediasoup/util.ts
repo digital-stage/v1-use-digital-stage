@@ -1,8 +1,11 @@
 import mediasoupClient from 'mediasoup-client';
 import { TeckosClient } from 'teckos-client';
+import debug from 'debug';
 import { Router } from '../types';
 import { StageMemberAudioProducer } from '../types/StageMemberAudioProducer';
 import { StageMemberVideoProducer } from '../types/StageMemberVideoProducer';
+
+const reportError = debug('useMediasoup:err');
 
 export enum RouterEvents {
   TransportCloses = 'transport-closed',
@@ -86,7 +89,7 @@ export const getFastestRouter = (routerDistUrl: string): Promise<Router> =>
               latency,
             }))
             .catch((error) => {
-              console.error(error);
+              reportError(error);
               return {
                 router,
                 latency: 9999,
