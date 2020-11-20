@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const upsert = function <T>(arr: Readonly<T[]>, value: T): T[] {
+const upsert = <T>(arr: Readonly<T[]>, value: T): T[] => {
   if (!arr) {
     return [value];
   }

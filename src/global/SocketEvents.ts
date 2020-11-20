@@ -75,9 +75,9 @@ export enum ServerStageEvents {
   STAGE_CHANGED = 'stage-changed',
   STAGE_REMOVED = 'stage-removed',
 
-  USER_ADDED = 'remote-user-added',
-  USER_CHANGED = 'remote-user-changed',
-  USER_REMOVED = 'remote-user-removed',
+  REMOTE_USER_ADDED = 'remote-user-added',
+  REMOTE_USER_CHANGED = 'remote-user-changed',
+  REMOTE_USER_REMOVED = 'remote-user-removed',
 
   GROUP_ADDED = 'group-added',
   GROUP_CHANGED = 'group-changed',

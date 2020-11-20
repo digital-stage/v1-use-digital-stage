@@ -38,6 +38,10 @@ const useSocketToDispatch = () => {
         dispatch(allActions.server.handleUserReady(payload));
       });
 
+      socket.on(ServerUserEvents.USER_CHANGED, (payload: User) => {
+        dispatch(allActions.server.changeUser(payload));
+      });
+
       socket.on(ServerDeviceEvents.DEVICE_ADDED, (payload: Device) => {
         dispatch(allActions.deviceActions.server.addDevice(payload));
       });
@@ -48,14 +52,16 @@ const useSocketToDispatch = () => {
         dispatch(allActions.deviceActions.server.removeDevice(payload));
       });
 
-      socket.on(ServerStageEvents.USER_ADDED, (payload: User) => {
-        dispatch(allActions.stageActions.server.addUser(payload));
+      socket.on(ServerStageEvents.REMOTE_USER_ADDED, (payload: User) => {
+        dispatch(allActions.stageActions.server.addRemoteUser(payload));
       });
-      socket.on(ServerStageEvents.USER_CHANGED, (payload: User) => {
-        dispatch(allActions.stageActions.server.changeUser(payload));
+
+      socket.on(ServerStageEvents.REMOTE_USER_CHANGED, (payload: User) => {
+        dispatch(allActions.stageActions.server.changeRemoteUser(payload));
       });
-      socket.on(ServerStageEvents.USER_REMOVED, (payload: string) => {
-        dispatch(allActions.stageActions.server.removeUser(payload));
+
+      socket.on(ServerStageEvents.REMOTE_USER_REMOVED, (payload: string) => {
+        dispatch(allActions.stageActions.server.removeRemoteUser(payload));
       });
 
       socket.on(ServerStageEvents.STAGE_ADDED, (payload: Stage) => {

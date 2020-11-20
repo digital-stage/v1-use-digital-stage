@@ -7,7 +7,9 @@
     "preinstall": "cd .. && yarn install",
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "npx eslint components pages --ext .ts,.tsx",
+    "lint:fix": "npx eslint components pages --ext .ts,.tsx --fix"
   },
   "alias": {
     "react": "../node_modules/react",
@@ -16,14 +18,14 @@
   "author": "delude88",
   "license": "ISC",
   "devDependencies": {
-    "@types/react": "^16.9.56",
+    "@types/react": "^16.14.0",
     "@types/react-dom": "^16.9.9"
   },
   "dependencies": {
     "@types/styletron-engine-atomic": "^1.1.0",
     "@types/styletron-react": "^5.0.2",
     "@types/styletron-standard": "^2.0.1",
-    "next": "^10.0.1",
+    "next": "^10.0.2",
     "reselect": "^4.0.0",
     "styletron-engine-atomic": "^1.4.6",
     "styletron-react": "^5.2.7"

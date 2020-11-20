@@ -1,6 +1,6 @@
 import React from "react";
 import {useSelector} from "react-redux";
-import CodeWrapper from "../components/CodeWrapper";
+import CodeWrapper from "../components/ui/CodeWrapper";
 
 const State = () => {
     const state = useSelector(state => state);

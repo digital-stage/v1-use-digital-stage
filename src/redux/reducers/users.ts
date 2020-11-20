@@ -21,7 +21,7 @@ function users(
   }
 ) {
   switch (action.type) {
-    case ServerStageEvents.USER_ADDED:
+    case ServerStageEvents.REMOTE_USER_ADDED:
       return {
         ...state,
         byId: {
@@ -30,7 +30,7 @@ function users(
         },
         allIds: [...state.allIds, action.payload._id],
       };
-    case ServerStageEvents.USER_CHANGED:
+    case ServerUserEvents.USER_CHANGED:
       return {
         ...state,
         byId: {
@@ -41,7 +41,18 @@ function users(
           },
         },
       };
-    case ServerStageEvents.USER_REMOVED:
+    case ServerStageEvents.REMOTE_USER_CHANGED:
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [action.payload._id]: {
+            ...state.byId[action.payload._id],
+            ...action.payload,
+          },
+        },
+      };
+    case ServerStageEvents.REMOTE_USER_REMOVED:
       return {
         ...state,
         byId: omit(state.byId, action.payload),

@@ -3,7 +3,7 @@ import filter from 'lodash/filter';
 import without from 'lodash/without';
 import { ServerStageEvents } from '../../global/SocketEvents';
 import upsert from '../utils/upsert';
-import { StageMember } from '../../types/StageMember';
+import { StageMember } from '../../types';
 
 export interface StageMembersStore {
   byId: {

@@ -45,11 +45,7 @@ export interface TStageActionContext {
     absorption?: number
   ): void;
 
-  joinStage(
-    stageId: string,
-    groupId: string,
-    password: string | null
-  ): Promise<void>;
+  joinStage(stageId: string, groupId: string, password?: string): Promise<void>;
 
   leaveStage(): void;
 
@@ -219,7 +215,7 @@ const useStageActions = (): TStageActionContext => {
 
     // Also update request handler
     requestLeave();
-  }, [socket]);
+  }, [socket, requestLeave]);
 
   const leaveStageForGood = useCallback(
     (id: string) => {
@@ -231,7 +227,7 @@ const useStageActions = (): TStageActionContext => {
         requestLeave();
       }
     },
-    [socket]
+    [socket, requestLeave]
   );
 
   const removeStage = useCallback(

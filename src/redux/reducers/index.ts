@@ -8,6 +8,7 @@ import customStageMembers, {
 } from './customStageMembers';
 import groups, { GroupsStore } from './groups';
 import users, { UsersStore } from './users';
+import customGroups, { CustomGroupsStore } from './customGroups';
 
 export interface RootReducer {
   global: GlobalStore;
@@ -15,6 +16,7 @@ export interface RootReducer {
   users: UsersStore;
   stages: StagesStore;
   groups: GroupsStore;
+  customGroups: CustomGroupsStore;
   stageMembers: StageMembersStore;
   customStageMembers: CustomStageMembersStore;
 }
@@ -25,6 +27,7 @@ export default combineReducers<RootReducer>({
   users,
   stages,
   groups,
+  customGroups,
   stageMembers,
   customStageMembers,
 });

@@ -2,7 +2,10 @@ import React, { useRef } from 'react';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
 
-const AddGroupPanel = (props: { onClick(stageName: string): void }) => {
+const AddCustomStageMember = (props: {
+
+    onClick(stageName: string): void
+}) => {
   const groupNameRef = useRef<HTMLInputElement>();
 
   return (
@@ -14,4 +17,4 @@ const AddGroupPanel = (props: { onClick(stageName: string): void }) => {
     </>
   );
 };
-export default AddGroupPanel;
+export default AddCustomStageMember;

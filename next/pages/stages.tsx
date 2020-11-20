@@ -1,13 +1,15 @@
 import React, {useEffect, useState} from "react";
 import {useStages} from "../..";
-import CodeWrapper from "../components/CodeWrapper";
+import CodeWrapper from "../components/ui/CodeWrapper";
 import {useStage} from "../..";
 import useDigitalStage from "../..";
-import Button from "../components/Button";
+import Button from "../components/ui/Button";
 import AddStagePanel from "../components/interaction/AddStagePanel";
+import {useCurrentUser} from "../..";
 
 const Stages = () => {
-    const {actions, user} = useDigitalStage();
+    const {actions} = useDigitalStage();
+    const user = useCurrentUser();
     const stages = useStages();
     const [stageId, setStageId] = useState<string>();
     const stage = useStage(stageId);

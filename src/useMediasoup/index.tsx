@@ -36,10 +36,10 @@ export const MediasoupProvider = (props: {
   }, [reportError, routerDistUrl]);
 
   useEffect(() => {
-    if (routerDistUrl) {
+    if (routerDistUrl && getRouter) {
       getRouter();
     }
-  }, [routerDistUrl]);
+  }, [routerDistUrl, getRouter]);
 
   return (
     <MediasoupContext.Provider value={{ router }}>

@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import * as Bowser from 'bowser';
 import debug from 'debug';
 import { Provider } from 'react-redux';
@@ -6,14 +12,14 @@ import { createStore } from 'redux';
 import { devToolsEnhancer } from 'redux-devtools-extension';
 import { ErrorsProvider, useErrors } from './useErrors';
 import useAuth, { AuthContextProvider, TAuthContext } from './useAuth';
-import useSocket, { SocketProvider, Status } from './useSocket';
-import { Device, Router, User } from './types';
+import useSocket, { SocketProvider } from './useSocket';
+import { Device, Router } from './types';
 import enumerateDevices from './utils/enumerateDevices';
 import useMediasoup, { MediasoupProvider } from './useMediasoup';
 import reducer from './redux/reducers/index';
 import { StageHandlingProvider } from './useStageHandling';
 import useStageActions, { TStageActionContext } from './useStageActions';
-import useCurrentUser from './redux/hooks/useCurrentUser';
+import Status, { IStatus } from './useSocket/Status';
 
 const dbg = debug('useDigitalStage:provider');
 
@@ -22,11 +28,12 @@ export interface TDigitalStageContext {
   router?: Router;
   auth?: TAuthContext;
   actions?: TStageActionContext;
-  user?: User;
+  status: IStatus[keyof IStatus];
 }
 
 const DigitalStageContext = createContext<TDigitalStageContext>({
   ready: false,
+  status: Status.disconnected,
 });
 
 // TODO: Remove useAuth from this hooks and require JWT token as param
@@ -38,7 +45,6 @@ const UseDigitalStageProvider = (props: { children: React.ReactNode }) => {
   const { router } = useMediasoup();
   const { reportError } = useErrors();
   const actions = useStageActions();
-  const user = useCurrentUser();
 
   const { token } = auth;
 
@@ -80,20 +86,30 @@ const UseDigitalStageProvider = (props: { children: React.ReactNode }) => {
       }
     );
 
-  useEffect(() => {
-    if (
-      token &&
-      reportError &&
-      socketAPI &&
-      socketAPI.status === Status.DISCONNECTED
-    ) {
-      dbg('Connecting to API server with token');
-      createInitialDevice()
-        .then((initialDevice) => socketAPI.connect(token, initialDevice))
-        .then(() => setReady(true))
-        .catch((connError) => reportError(connError));
+  const startSocketConnection = useCallback(() => {
+    if (token && reportError && socketAPI) {
+      if (socketAPI.status === Status.disconnected) {
+        dbg('Connecting to API server with token');
+        createInitialDevice()
+          .then((initialDevice) => socketAPI.connect(token, initialDevice))
+          .then(() => setReady(true))
+          .catch((connError) => reportError(connError));
+      }
     }
   }, [token, reportError, socketAPI]);
+
+  useEffect(() => {
+    if (token && socketAPI) {
+      if (socketAPI.status === Status.disconnected) {
+        console.log('Connect');
+        startSocketConnection();
+      }
+    }
+  }, [token, socketAPI]);
+
+  useEffect(() => {
+    if (socketAPI) console.log(socketAPI.status);
+  }, [socketAPI]);
 
   return (
     <DigitalStageContext.Provider
@@ -102,7 +118,7 @@ const UseDigitalStageProvider = (props: { children: React.ReactNode }) => {
         router,
         auth,
         actions,
-        user,
+        status: socketAPI ? socketAPI.status : Status.disconnected,
       }}
     >
       {children}

@@ -4,7 +4,8 @@ import {DigitalStageProvider} from "../..";
 import {styletron, debug} from "../styletron";
 import './../styles.css'
 import AppBar from "../components/AppBar";
-import Wrapper from "../components/Wrapper";
+import Wrapper from "../components/ui/Wrapper";
+import StatusInformer from "../components/StatusInformer";
 
 function MyApp({Component, pageProps}) {
     return (
@@ -18,6 +19,7 @@ function MyApp({Component, pageProps}) {
                 <Wrapper>
                     <Component {...pageProps} />
                 </Wrapper>
+                <StatusInformer/>
             </DigitalStageProvider>
         </StyletronProvider>
     );

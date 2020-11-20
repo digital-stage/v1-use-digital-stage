@@ -1,15 +1,14 @@
 import omit from 'lodash/omit';
 import without from 'lodash/without';
 import { ServerStageEvents } from '../../global/SocketEvents';
-import upsert from '../utils/upsert';
-import { CustomStageMember } from '../../types/CustomStageMember';
+import { CustomStageMember } from '../../types';
 
 export interface CustomStageMembersStore {
   byId: {
     [id: string]: CustomStageMember;
   };
   byStageMember: {
-    [stageMemberId: string]: string[];
+    [stageMemberId: string]: string;
   };
   allIds: string[];
 }
@@ -30,21 +29,15 @@ function customStageMembers(
       const customStageMember = action.payload as CustomStageMember;
       return {
         ...state,
-        groups: {
-          ...state,
-          byId: {
-            ...state.byId,
-            [action.payload._id]: customStageMember,
-          },
-          byStageMember: {
-            ...state.byStageMember,
-            [action.payload.stageMemberId]: upsert<string>(
-              state.byStageMember[customStageMember.stageMemberId],
-              action.payload._id
-            ),
-          },
-          allIds: [...state.allIds, customStageMember._id],
+        byId: {
+          ...state.byId,
+          [customStageMember._id]: customStageMember,
         },
+        byStageMember: {
+          ...state.byStageMember,
+          [customStageMember.stageMemberId]: customStageMember._id,
+        },
+        allIds: [...state.allIds, customStageMember._id],
       };
     }
     case ServerStageEvents.CUSTOM_STAGE_MEMBER_CHANGED: {
@@ -65,13 +58,7 @@ function customStageMembers(
       return {
         ...state,
         byId: omit(state.byId, id),
-        byStageMember: {
-          ...state.byStageMember,
-          [stageMemberId]: without<string>(
-            state.byStageMember[stageMemberId],
-            id
-          ),
-        },
+        byStageMember: omit(state.byStageMember, stageMemberId),
         allIds: without<string>(state.allIds, id),
       };
     }

@@ -20,6 +20,12 @@ export interface ReducerAction extends AnyAction {
   payload?: any;
 }
 
+const changeUser = (user: Partial<User>) => {
+  return {
+    type: ServerUserEvents.USER_CHANGED,
+    payload: user,
+  };
+};
 const handleUserReady = (user: User) => {
   return {
     type: ServerUserEvents.USER_READY,
@@ -52,6 +58,7 @@ const reset = () => {
 
 const allActions = {
   server: {
+    changeUser,
     handleUserReady,
     handleStageJoined,
     handleStageLeft,

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import CodeWrapper from "../components/CodeWrapper";
+import CodeWrapper from "../components/ui/CodeWrapper";
 import {useStages} from "../..";
 import {useStageMember, useStageMembersByStage} from "../..";
 import {useStageMembers} from "../..";

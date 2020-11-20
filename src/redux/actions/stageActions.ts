@@ -33,21 +33,21 @@ export interface InitialStagePackage extends StagePackage {
   groupId: string;
 }
 
-const addUser = (user: User) => {
+const addRemoteUser = (user: User) => {
   return {
-    type: ServerStageEvents.USER_ADDED,
+    type: ServerStageEvents.REMOTE_USER_ADDED,
     payload: user,
   };
 };
-const changeUser = (user: Partial<User>) => {
+const changeRemoteUser = (user: Partial<User>) => {
   return {
-    type: ServerStageEvents.USER_CHANGED,
+    type: ServerStageEvents.REMOTE_USER_CHANGED,
     payload: user,
   };
 };
-const removeUser = (userId: string) => {
+const removeRemoteUser = (userId: string) => {
   return {
-    type: ServerStageEvents.USER_REMOVED,
+    type: ServerStageEvents.REMOTE_USER_REMOVED,
     payload: userId,
   };
 };
@@ -278,9 +278,9 @@ const removeAudioConsumer = (audioConsumerId: string) => {
 };
 
 const server = {
-  addUser,
-  changeUser,
-  removeUser,
+  addRemoteUser,
+  changeRemoteUser,
+  removeRemoteUser,
   addStage,
   changeStage,
   removeStage,

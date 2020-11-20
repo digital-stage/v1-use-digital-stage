@@ -12,10 +12,20 @@ import useStageMembers from './redux/hooks/useStageMembers';
 import useStageMember from './redux/hooks/useStageMember';
 import useDevices from './redux/hooks/useDevices';
 import useDevice from './redux/hooks/useDevice';
+import useCurrentUser from './redux/hooks/useCurrentUser';
+import useCurrentGroupId from './redux/hooks/useCurrentGroupId';
+import useCurrentStageId from './redux/hooks/useCurrentStageId';
+import Status from './useSocket/Status';
+import useCustomStageMembers from './redux/hooks/useCustomStageMembers';
+import useCustomGroups from './redux/hooks/useCustomGroups';
 
 export {
-  DigitalStageProvider,
   types,
+  Status,
+  DigitalStageProvider,
+  useCurrentStageId,
+  useCurrentGroupId,
+  useCurrentUser,
   useDevices,
   useDevice,
   useStage,
@@ -24,10 +34,12 @@ export {
   useGroups,
   useGroupsByStage,
   useGroup,
+  useCustomGroups,
   useStageMembers,
   useStageMember,
   useStageMembersByStage,
   useStageMembersByGroup,
+  useCustomStageMembers,
 };
 
 export { default } from './useDigitalStage';

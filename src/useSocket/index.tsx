@@ -4,6 +4,7 @@ import { TeckosClient, TeckosClientWithJWT } from 'teckos-client';
 import debug from 'debug';
 import { Device } from '../types';
 import useSocketToDispatch from '../redux/useSocketToDispatch';
+import Status, { IStatus } from './Status';
 
 const d = debug('useSocket');
 
@@ -14,24 +15,16 @@ export interface TSocketContext {
 
   connect(token: string, initialDevice: Partial<Device>): Promise<TeckosClient>;
 
-  disconnect(): Promise<any>;
+  disconnect(): Promise<void>;
 
-  status: Status;
-}
-
-export enum Status {
-  DISCONNECTED = 'disconnected',
-  CONNECTING = 'connecting',
-  CONNECTED = 'connected',
+  status: IStatus[keyof IStatus];
 }
 
 const SocketContext = React.createContext<TSocketContext>({
   connect: () => Promise.reject(new Error('Not ready')),
   disconnect: () => Promise.reject(new Error('Not ready')),
-  status: Status.DISCONNECTED,
+  status: Status.disconnected,
 });
-
-export type SocketHandlerHook = (socket: TeckosClient) => any;
 
 const useSocket = (): TSocketContext =>
   React.useContext<TSocketContext>(SocketContext);
@@ -39,82 +32,104 @@ const useSocket = (): TSocketContext =>
 const SocketProvider = (props: {
   children: React.ReactNode;
   apiUrl: string;
-  autoReconnect?: boolean;
 }) => {
-  const { children, apiUrl, autoReconnect } = props;
+  const { children, apiUrl } = props;
   const [socket, setSocket] = useState<TeckosClient>();
-  const [status, setStatus] = useState<Status>(Status.DISCONNECTED);
+  const [status, setStatus] = useState<IStatus[keyof IStatus]>(
+    Status.disconnected
+  );
   const handler = useSocketToDispatch();
 
   const connect = useCallback(
     (token: string, initialDevice: Partial<Device>): Promise<TeckosClient> => {
-      if (!socket) {
-        d('Connecting');
-        setStatus(Status.CONNECTING);
-        return new Promise<TeckosClient>((resolve, reject) => {
-          const timer = setTimeout(() => {
-            reject(new Error('Timeout'));
-          }, 5000);
-          const nSocket = new TeckosClientWithJWT(
-            apiUrl,
-            {
-              reconnection: autoReconnect,
-            },
-            token,
-            {
-              device: initialDevice,
+      return new Promise<TeckosClient>((resolve, reject) => {
+        if (!socket) {
+          if (status === Status.disconnected) {
+            d('Connecting');
+            setStatus(Status.connecting);
+            const nSocket = new TeckosClientWithJWT(
+              apiUrl,
+              {
+                reconnection: true,
+                timeout: 1000,
+              },
+              token,
+              {
+                device: initialDevice,
+              }
+            );
+            if (handler) {
+              d('Attaching handler to socket');
+              handler(nSocket);
             }
-          );
-          if (handler) {
-            d('Attaching handler to socket');
-            handler(nSocket);
+            nSocket.on('disconnect', () => {
+              d('Disconnected');
+              setStatus(Status.connecting);
+            });
+            nSocket.on('error', (error: Error) => {
+              d(`Got error:`);
+              d(error);
+            });
+            nSocket.on('reconnect', () => {
+              d(`Reconnected`);
+            });
+            nSocket.on('connect', () => {
+              d('Connected');
+              setSocket(nSocket);
+              setStatus(Status.connected);
+              resolve(nSocket);
+            });
+            nSocket.connect();
+          } else {
+            reject(new Error('Already connected'));
           }
-          nSocket.connect();
-          nSocket.on('disconnect', () => {
-            setStatus(Status.DISCONNECTED);
-          });
-          nSocket.once('connect', () => {
-            clearTimeout(timer);
-            d('Connected');
-            setSocket(nSocket);
-            setStatus(Status.CONNECTED);
-            resolve(nSocket);
-          });
-          return nSocket;
-        });
-      }
-      throw new Error('Already connected');
+        } else {
+          reject(
+            new Error('Already created socket connection, try to use promise')
+          );
+        }
+      });
     },
-    [apiUrl, socket, autoReconnect, handler]
+    [apiUrl, socket, handler, status]
   );
 
   const disconnect = useCallback(() => {
-    if (socket) {
+    if (socket && status === Status.connected) {
       d('Disconnecting');
-      return new Promise<TeckosClient>((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         const timer = setTimeout(() => {
           reject(new Error('Timeout'));
         }, 5000);
+        socket.removeAllListeners('disconnect');
         socket.once('disconnect', () => {
           clearTimeout(timer);
+          setStatus(Status.disconnected);
+          setSocket(undefined);
           resolve();
         });
         socket.close();
       });
     }
     throw new Error('Not connected');
-  }, [socket]);
+  }, [socket, status]);
+
+  const cleanupConnection = useCallback(() => {
+    d('Cleaning up socket connection');
+    if (socket) {
+      if (status === Status.connected) {
+        socket.close();
+      }
+      setStatus(Status.disconnected);
+      setSocket(undefined);
+    }
+  }, [socket, status]);
 
   useEffect(() => {
-    if (socket) {
-      return () => {
-        // Clean up
-        d('Cleaning up socket by disconnecting');
-        socket.close();
-      };
-    }
-    return () => {};
-  }, [socket]);
+    return () => {
+      cleanupConnection();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <SocketContext.Provider
@@ -128,9 +143,6 @@ const SocketProvider = (props: {
       {children}
     </SocketContext.Provider>
   );
-};
-SocketProvider.defaultProps = {
-  autoReconnect: false,
 };
 export { SocketProvider };
 
