@@ -1,6 +1,11 @@
 # Digital Stage Hooks
 
-## Installation
+## HOT AND NEW! :collision:
+
+Introducing our API [LIVE DOCUMENTATION](https://use-digital-stage-npgdmlfkf.vercel.app/)
+
+
+### Installation
 
 Install the hooks via
 
@@ -8,7 +13,7 @@ Install the hooks via
 npm install use-digital-stage # or yarn install use-digital-stage
 ```
 
-## Usage
+### Usage
 
 In order to use the hook, you'll have to wrap the component or app using the hook with the DigitalStageProvider and specify the server urls, e.g.:
 
