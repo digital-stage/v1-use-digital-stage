@@ -23,6 +23,7 @@ import useAudioProducers from './redux/hooks/useAudioProducers';
 import useCustomAudioProducers from './redux/hooks/useCustomAudioProducers';
 import useVideoConsumers from './redux/hooks/useVideoConsumers';
 import useAudioConsumers from './redux/hooks/useAudioConsumers';
+import useLocalDevice from './redux/hooks/useLocalDevice';
 
 export {
   types,
@@ -31,6 +32,7 @@ export {
   useCurrentStageId,
   useCurrentGroupId,
   useCurrentUser,
+  useLocalDevice,
   useDevices,
   useDevice,
   useStage,

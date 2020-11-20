@@ -1,4 +1,5 @@
 import {
+  ServerDeviceEvents,
   ServerGlobalEvents,
   ServerUserEvents,
 } from '../../global/SocketEvents';
@@ -6,6 +7,7 @@ import {
 export interface GlobalStore {
   stageId?: string;
   groupId?: string;
+  localDeviceId?: string;
   userId?: string;
   ready: boolean;
 }
@@ -14,6 +16,7 @@ function global(
   state: GlobalStore = {
     ready: false,
     stageId: undefined,
+    localDeviceId: undefined,
     groupId: undefined,
   },
   action: {
@@ -48,6 +51,11 @@ function global(
       return {
         ...state,
         userId: action.payload._id,
+      };
+    case ServerDeviceEvents.LOCAL_DEVICE_READY:
+      return {
+        ...state,
+        localDeviceId: action.payload._id,
       };
     default:
       return state;
