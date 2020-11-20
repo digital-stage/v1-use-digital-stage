@@ -7,7 +7,13 @@ module.exports = {
     "plugin:prettier/recommended"
   ],
   "rules": {
-    "no-underscore-dangle": 0
+    "no-underscore-dangle": 0,
+    'prettier/prettier': [
+      'error',
+      {
+        endOfLine: 'auto',
+      },
+    ],
   },
   "settings": {
     "react": {
