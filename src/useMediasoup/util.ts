@@ -1,9 +1,11 @@
 import mediasoupClient from 'mediasoup-client';
 import { TeckosClient } from 'teckos-client';
 import debug from 'debug';
-import { Router } from '../types';
-import { StageMemberAudioProducer } from '../types/StageMemberAudioProducer';
-import { StageMemberVideoProducer } from '../types/StageMemberVideoProducer';
+import {
+  Router,
+  StageMemberAudioProducer,
+  StageMemberVideoProducer,
+} from '../types';
 
 const reportError = debug('useMediasoup:err');
 
@@ -115,12 +117,12 @@ export const getFastestRouter = (routerDistUrl: string): Promise<Router> =>
     });
 
 function requestImage(url: string) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     const img = new Image();
-    img.onload = function () {
+    img.onload = () => {
       resolve(img);
     };
-    img.onerror = function () {
+    img.onerror = () => {
       reject(url);
     };
     img.src = `${url}?random-no-cache=${Math.floor(
@@ -130,9 +132,9 @@ function requestImage(url: string) {
 }
 
 function ping(url: string, multiplier?: number): Promise<number> {
-  return new Promise<number>(function (resolve, reject) {
+  return new Promise<number>((resolve, reject) => {
     const start: number = new Date().getTime();
-    const response = function () {
+    const response = () => {
       let delta: number = new Date().getTime() - start;
       delta *= multiplier || 1;
       resolve(delta);
@@ -142,7 +144,7 @@ function ping(url: string, multiplier?: number): Promise<number> {
       .catch(() => reject(Error('Error')));
 
     // Set a timeout for max-pings, 300ms.
-    setTimeout(function () {
+    setTimeout(() => {
       reject(Error('Timeout'));
     }, 300);
   });

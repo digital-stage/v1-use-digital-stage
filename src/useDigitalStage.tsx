@@ -101,15 +101,10 @@ const UseDigitalStageProvider = (props: { children: React.ReactNode }) => {
   useEffect(() => {
     if (token && socketAPI) {
       if (socketAPI.status === Status.disconnected) {
-        console.log('Connect');
         startSocketConnection();
       }
     }
   }, [token, socketAPI]);
-
-  useEffect(() => {
-    if (socketAPI) console.log(socketAPI.status);
-  }, [socketAPI]);
 
   return (
     <DigitalStageContext.Provider

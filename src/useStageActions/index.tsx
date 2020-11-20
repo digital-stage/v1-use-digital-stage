@@ -227,7 +227,7 @@ const useStageActions = (): TStageActionContext => {
         requestLeave();
       }
     },
-    [socket, requestLeave]
+    [socket, requestLeave, stageId]
   );
 
   const removeStage = useCallback(
