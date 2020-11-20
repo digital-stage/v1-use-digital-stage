@@ -9,6 +9,13 @@ import customStageMembers, {
 import groups, { GroupsStore } from './groups';
 import users, { UsersStore } from './users';
 import customGroups, { CustomGroupsStore } from './customGroups';
+import audioProducers, { AudioProducersStore } from './audioProducers';
+import videoProducers, { VideoProducersStore } from './videoProducers';
+import customAudioProducers, {
+  CustomAudioProducersStore,
+} from './customAudioProducers';
+import videoConsumers, { VideoConsumersStore } from './videoConsumers';
+import audioConsumers, { AudioConsumersStore } from './audioConsumers';
 
 export interface RootReducer {
   global: GlobalStore;
@@ -19,6 +26,11 @@ export interface RootReducer {
   customGroups: CustomGroupsStore;
   stageMembers: StageMembersStore;
   customStageMembers: CustomStageMembersStore;
+  videoProducers: VideoProducersStore;
+  audioProducers: AudioProducersStore;
+  customAudioProducers: CustomAudioProducersStore;
+  videoConsumers: VideoConsumersStore;
+  audioConsumers: AudioConsumersStore;
 }
 
 export default combineReducers<RootReducer>({
@@ -30,4 +42,9 @@ export default combineReducers<RootReducer>({
   customGroups,
   stageMembers,
   customStageMembers,
+  videoProducers,
+  audioProducers,
+  customAudioProducers,
+  videoConsumers,
+  audioConsumers,
 });
