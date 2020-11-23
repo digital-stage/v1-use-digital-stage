@@ -1,11 +1,6 @@
 import { useSelector } from 'react-redux';
 import { RootReducer } from '../reducers';
-import { StageMember } from '../../types/StageMember';
-
-export type StageMemberWithUserData = StageMember & {
-  name?: string;
-  avatarUrl?: string;
-};
+import { StageMemberWithUserData } from '../../types';
 
 const useStageMembersByStage = (stageId: string): StageMemberWithUserData[] =>
   useSelector<RootReducer, StageMemberWithUserData[]>(

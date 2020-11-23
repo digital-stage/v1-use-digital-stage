@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import debug from 'debug';
 
 const d = debug('useErrors');
@@ -44,15 +44,27 @@ export const ErrorsProvider = (props: { children: React.ReactNode }) => {
     warnings.forEach((warning) => printWarning(warning));
   }, [warnings]);
 
+  const reportWarning = useCallback((warning: Error) => {
+    setWarnings((prev) => [...prev, warning]);
+  }, []);
+
+  const reportError = useCallback((error: Error) => {
+    setErrors((prev) => [...prev, error]);
+  }, []);
+
+  const clear = useCallback(() => {
+    setWarnings([]);
+    setErrors([]);
+  }, []);
+
   return (
     <ErrorsContext.Provider
       value={{
         warnings,
-        reportWarning: (warning: Error) =>
-          setWarnings((prev) => [...prev, warning]),
+        reportWarning,
         errors,
-        reportError: (error: Error) => setErrors((prev) => [...prev, error]),
-        clear: () => setErrors([]),
+        reportError,
+        clear,
       }}
     >
       {children}

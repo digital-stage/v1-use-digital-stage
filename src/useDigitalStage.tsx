@@ -13,19 +13,18 @@ import { devToolsEnhancer } from 'redux-devtools-extension';
 import { ErrorsProvider, useErrors } from './useErrors';
 import useAuth, { AuthContextProvider, TAuthContext } from './useAuth';
 import useSocket, { SocketProvider } from './useSocket';
-import { Device, Router } from './types';
+import { Device } from './types';
 import enumerateDevices from './utils/enumerateDevices';
-import useMediasoup, { MediasoupProvider } from './useMediasoup';
 import reducer from './redux/reducers/index';
 import { StageHandlingProvider } from './useStageHandling';
 import useStageActions, { TStageActionContext } from './useStageActions';
 import Status, { IStatus } from './useSocket/Status';
+import { WebRTCCommunicationProvider } from './useWebRTCCommunication';
 
 const dbg = debug('useDigitalStage:provider');
 
 export interface TDigitalStageContext {
   ready: boolean;
-  router?: Router;
   auth?: TAuthContext;
   actions?: TStageActionContext;
   status: IStatus[keyof IStatus];
@@ -42,7 +41,6 @@ const UseDigitalStageProvider = (props: { children: React.ReactNode }) => {
   const auth = useAuth();
   const [ready, setReady] = useState<boolean>(!auth.loading);
   const socketAPI = useSocket();
-  const { router } = useMediasoup();
   const { reportError } = useErrors();
   const actions = useStageActions();
 
@@ -110,7 +108,6 @@ const UseDigitalStageProvider = (props: { children: React.ReactNode }) => {
     <DigitalStageContext.Provider
       value={{
         ready,
-        router,
         auth,
         actions,
         status: socketAPI ? socketAPI.status : Status.disconnected,
@@ -137,9 +134,9 @@ const DigitalStageProvider = (props: {
         <Provider store={store}>
           <SocketProvider apiUrl={apiUrl}>
             <StageHandlingProvider>
-              <MediasoupProvider routerDistUrl={routerDistUrl}>
+              <WebRTCCommunicationProvider routerDistUrl={routerDistUrl}>
                 <UseDigitalStageProvider>{children}</UseDigitalStageProvider>
-              </MediasoupProvider>
+              </WebRTCCommunicationProvider>
             </StageHandlingProvider>
           </SocketProvider>
         </Provider>

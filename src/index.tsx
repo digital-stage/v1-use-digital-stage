@@ -24,6 +24,8 @@ import useCustomAudioProducers from './redux/hooks/useCustomAudioProducers';
 import useVideoConsumers from './redux/hooks/useVideoConsumers';
 import useAudioConsumers from './redux/hooks/useAudioConsumers';
 import useLocalDevice from './redux/hooks/useLocalDevice';
+import useUsers from './redux/hooks/useUsers';
+import useVideoConsumersByStageMember from './redux/hooks/useVideoConsumersByStageMember';
 
 export {
   types,
@@ -52,6 +54,8 @@ export {
   useCustomAudioProducers,
   useVideoConsumers,
   useAudioConsumers,
+  useVideoConsumersByStageMember,
+  useUsers,
 };
 
 export { default } from './useDigitalStage';

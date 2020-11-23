@@ -1,11 +1,7 @@
 import mediasoupClient from 'mediasoup-client';
-import { TeckosClient } from 'teckos-client';
+import { ITeckosClient } from 'teckos-client';
 import debug from 'debug';
-import {
-  Router,
-  StageMemberAudioProducer,
-  StageMemberVideoProducer,
-} from '../types';
+import { Router } from '../../types';
 
 const reportError = debug('useMediasoup:err');
 
@@ -151,7 +147,7 @@ function ping(url: string, multiplier?: number): Promise<number> {
 }
 
 export const createWebRTCTransport = (
-  socket: TeckosClient,
+  socket: ITeckosClient,
   device: mediasoupClient.Device,
   direction: 'send' | 'receive'
 ): Promise<mediasoupClient.types.Transport> =>
@@ -223,7 +219,7 @@ export const createProducer = (
     },
   });
 export const pauseProducer = (
-  socket: TeckosClient,
+  socket: ITeckosClient,
   producer: mediasoupClient.types.Producer
 ): Promise<mediasoupClient.types.Producer> =>
   new Promise<mediasoupClient.types.Producer>((resolve, reject) =>
@@ -235,7 +231,7 @@ export const pauseProducer = (
   );
 
 export const resumeProducer = (
-  socket: TeckosClient,
+  socket: ITeckosClient,
   producer: mediasoupClient.types.Producer
 ): Promise<mediasoupClient.types.Producer> =>
   new Promise<mediasoupClient.types.Producer>((resolve, reject) =>
@@ -251,7 +247,7 @@ export const resumeProducer = (
   );
 
 export const stopProducer = (
-  socket: TeckosClient,
+  socket: ITeckosClient,
   producer: mediasoupClient.types.Producer
 ): Promise<mediasoupClient.types.Producer> =>
   new Promise<mediasoupClient.types.Producer>((resolve, reject) =>
@@ -263,16 +259,16 @@ export const stopProducer = (
   );
 
 export const createConsumer = (
-  socket: TeckosClient,
+  socket: ITeckosClient,
   device: mediasoupClient.Device,
   transport: mediasoupClient.types.Transport,
-  remoteProducer: StageMemberAudioProducer | StageMemberVideoProducer
+  globalProducerId: string
 ): Promise<mediasoupClient.types.Consumer> =>
   new Promise<mediasoupClient.types.Consumer>((resolve, reject) => {
     socket.emit(
       RouterRequests.CreateConsumer,
       {
-        globalProducerId: remoteProducer.globalProducerId,
+        globalProducerId,
         transportId: transport.id,
         rtpCapabilities: device.rtpCapabilities, // TODO: Necessary?
       },
@@ -299,7 +295,7 @@ export const createConsumer = (
   });
 
 export const resumeConsumer = (
-  socket: TeckosClient,
+  socket: ITeckosClient,
   consumer: mediasoupClient.types.Consumer
 ): Promise<mediasoupClient.types.Consumer> => {
   if (consumer.paused) {
@@ -319,7 +315,7 @@ export const resumeConsumer = (
 };
 
 export const pauseConsumer = (
-  socket: TeckosClient,
+  socket: ITeckosClient,
   consumer: mediasoupClient.types.Consumer
 ): Promise<mediasoupClient.types.Consumer> => {
   if (!consumer.paused) {
@@ -339,7 +335,7 @@ export const pauseConsumer = (
 };
 
 export const closeConsumer = (
-  socket: TeckosClient,
+  socket: ITeckosClient,
   consumer: mediasoupClient.types.Consumer
 ): Promise<mediasoupClient.types.Consumer> =>
   new Promise<mediasoupClient.types.Consumer>((resolve, reject) =>

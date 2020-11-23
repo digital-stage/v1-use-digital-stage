@@ -13,6 +13,7 @@ import { StageMember } from './StageMember';
 import { StageMemberAudioProducer } from './StageMemberAudioProducer';
 import { StageMemberOvTrack } from './StageMemberOvTrack';
 import { StageMemberVideoProducer } from './StageMemberVideoProducer';
+import { StageMemberWithUserData } from './StageMemberWithUserData';
 import { ThreeDimensionAudioProperties } from './ThreeDimensionAudioProperty';
 import { Track } from './Track';
 import { TrackPreset } from './TrackPreset';
@@ -33,6 +34,7 @@ export type {
   SoundCard,
   Stage,
   StageMember,
+  StageMemberWithUserData,
   StageMemberAudioProducer,
   StageMemberOvTrack,
   StageMemberVideoProducer,

@@ -53,6 +53,9 @@ const AppBar = () => {
             <Link href="/customstagemembers">Custom stage members</Link>
           </ListItem>
           <ListItem>
+            <Link href="/chat">Chat</Link>
+          </ListItem>
+          <ListItem>
             <Link href="/state">Full state</Link>
           </ListItem>
         </List>
