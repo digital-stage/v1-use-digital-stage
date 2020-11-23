@@ -1,7 +1,13 @@
 import {styled} from "styletron-react";
 import React, {useCallback} from "react";
-import useDigitalStage, {useLocalDevice} from "../..";
-import {useCurrentStageId, useGroupsByStage, useStageMembersByGroup, useVideoConsumersByStageMember, useAudioConsumers, types} from "../..";
+import useDigitalStage, {
+    useLocalDevice,
+    useVideoConsumers,
+    useCurrentStageId,
+    useGroupsByStage,
+    useStageMembersByGroup,
+    useVideoConsumersByStageMember,
+    types} from "../..";
 import VideoPlayer from "../components/ui/VideoPlayer";
 
 const Wrapper = styled("div", {
@@ -34,12 +40,12 @@ const StageMemberView = (props: {
 }) => {
     const {stageMember} = props;
     const videoConsumers = useVideoConsumersByStageMember(stageMember._id);
-    const audioConsumers = useAudioConsumers();
 
     return (
         <div>
             <h4>{stageMember.name || stageMember._id}</h4>
-            <VideoPlayer consumers={videoConsumers} />
+            <p>{videoConsumers.length} VIDEO CONSUMERS</p>
+            <VideoPlayer consumers={videoConsumers}/>
         </div>
     )
 }
@@ -54,7 +60,7 @@ const GroupView = (props: {
     return (
         <div>
             <h3>{group.name}</h3>
-            {stageMembers.map(stageMember => <StageMemberView stageMember={stageMember}/>)}
+            {stageMembers.map(stageMember => <StageMemberView key={stageMember._id} stageMember={stageMember}/>)}
         </div>
     )
 }
@@ -64,6 +70,8 @@ const Chat = () => {
     const {actions} = useDigitalStage();
     const localDevice = useLocalDevice();
 
+    const consumers = useVideoConsumers();
+
     // Get current stage id
     const stageId = useCurrentStageId();
 
@@ -71,7 +79,7 @@ const Chat = () => {
     const groups = useGroupsByStage(stageId);
 
     const toggleWebcam = useCallback(() => {
-        if(actions) {
+        if (actions) {
             actions.updateDevice(localDevice._id, {
                 sendVideo: !localDevice.sendVideo
             })
@@ -79,7 +87,7 @@ const Chat = () => {
     }, [actions, localDevice]);
 
     const toggleMic = useCallback(() => {
-        if(actions) {
+        if (actions) {
             actions.updateDevice(localDevice._id, {
                 sendAudio: !localDevice.sendAudio
             })
@@ -87,11 +95,12 @@ const Chat = () => {
     }, [actions, localDevice]);
 
 
-    if(stageId){
+    if (stageId) {
 
         return (
             <>
-                {groups.map(group => <GroupView group={group}/>)}
+                <p>{consumers.allIds.length} VIDEO CONSUMERS</p>
+                {groups.map(group => <GroupView key={group._id} group={group}/>)}
 
                 {localDevice ? (
                     <Wrapper>

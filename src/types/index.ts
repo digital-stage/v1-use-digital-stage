@@ -5,6 +5,7 @@ import { CustomStageMember } from './CustomStageMember';
 import { CustomStageMemberAudioProducer } from './CustomStageMemberAudioProducer';
 import { CustomStageMemberOvTrack } from './CustomStageMemberOvTrack';
 import { Device } from './Device';
+import { GlobalProducer } from './GlobalProducer';
 import { Group } from './Group';
 import { Router } from './Router';
 import { SoundCard } from './SoundCard';
@@ -32,6 +33,7 @@ export type {
   Group,
   Router,
   SoundCard,
+  GlobalProducer,
   Stage,
   StageMember,
   StageMemberWithUserData,

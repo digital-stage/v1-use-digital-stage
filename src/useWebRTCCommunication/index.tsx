@@ -1,11 +1,19 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import debug from 'debug';
 import { useDispatch } from 'react-redux';
-import { Device, Router } from '../types';
+import {
+  Router,
+  StageMemberAudioProducer,
+  StageMemberVideoProducer,
+} from '../types';
 import useLocalDevice from '../redux/hooks/useLocalDevice';
 import useMediasoup from './useMediasoup';
-import { useErrors } from '../useErrors';
 import useAudioProducers from '../redux/hooks/useAudioProducers';
 import useVideoProducers from '../redux/hooks/useVideoProducers';
 import allActions from '../redux/actions';
@@ -20,231 +28,204 @@ const WebRTCCommunicationContext = createContext<TWebRTCCommunicationContext>(
   {}
 );
 
+function isAudioProducer(
+  producer: StageMemberVideoProducer | StageMemberAudioProducer
+): producer is StageMemberAudioProducer {
+  return (producer as StageMemberAudioProducer).volume !== undefined;
+}
+
 export const WebRTCCommunicationProvider = (props: {
   children: React.ReactNode;
   routerDistUrl: string;
 }) => {
   const { children, routerDistUrl } = props;
-  const {
-    consumers,
-    producers,
-    consume,
-    produce,
-    stopProducing,
-    stopConsuming,
-  } = useMediasoup(routerDistUrl);
-
-  const { reportError } = useErrors();
+  const { connected, consumers, consume, stopConsuming } = useMediasoup(
+    routerDistUrl
+  );
 
   const dispatch = useDispatch();
 
   // Automated Device handling
   const localDevice = useLocalDevice();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // @ts-ignore
+  const [working, setWorking] = useState<boolean>(false);
   const remoteVideoProducers = useVideoProducers();
   const remoteAudioProducers = useAudioProducers();
-  const [lastDeviceState, setLastDeviceState] = useState<Device>();
-  const [
-    consumeVideoAutomatically,
-    setConsumeVideoAutomatically,
-  ] = useState<boolean>(false);
-  const [
-    consumeAudioAutomatically,
-    setConsumeAudioAutomatically,
-  ] = useState<boolean>(false);
+  const [sendAudio, setSendAudio] = useState<boolean>(false);
+  const [sendVideo, setSendVideo] = useState<boolean>(false);
+  const [receiveVideo, setReceiveVideo] = useState<boolean>(false);
+  const [receiveAudio, setReceiveAudio] = useState<boolean>(false);
 
-  /**
-   * React to state change of local device by sending or receiving video or audio
-   */
-  useEffect(() => {
-    if (localDevice && reportError) {
-      if (
-        !lastDeviceState ||
-        lastDeviceState.sendVideo !== localDevice.sendVideo
-      ) {
-        // send video state changed
-        if (localDevice.sendVideo) {
-          // send video
-          d('Send video requested');
-          navigator.mediaDevices
-            .getUserMedia({
-              audio: false,
-              video:
-                localDevice && localDevice.inputVideoDeviceId
-                  ? {
-                      deviceId: localDevice.inputVideoDeviceId,
-                    }
-                  : true,
+  const consumeRemoteProducer = useCallback(
+    (remoteProducer: StageMemberVideoProducer | StageMemberAudioProducer) => {
+      consume(remoteProducer).then((consumer) => {
+        d(`Consuming now remote producer ${remoteProducer._id}`);
+        const action = isAudioProducer(remoteProducer)
+          ? allActions.stageActions.client.addAudioConsumer({
+              _id: consumer.id,
+              stage: remoteProducer.stageId,
+              stageMember: remoteProducer.stageMemberId,
+              audioProducer: remoteProducer._id,
+              msConsumer: consumer,
             })
-            .then((stream) => stream.getVideoTracks())
-            .then((tracks) =>
-              Promise.all(tracks.map((track) => produce(track)))
-            )
-            .then(() => {
-              console.log('TODO: Publish producers globally');
-            })
-            .catch((error) => reportError(error));
-        } else {
-          // stop sending video
-          d('Stop sending video requested');
-          const videoProducerIds = Object.keys(producers).filter(
-            (id) => producers[id].kind === 'video'
-          );
-          videoProducerIds.map((videoProducerId) =>
-            stopProducing(videoProducerId).catch((error) => reportError(error))
-          );
-        }
-      }
-
-      if (
-        !lastDeviceState ||
-        lastDeviceState.sendAudio !== localDevice.sendAudio
-      ) {
-        // send audio state changed
-        if (localDevice.sendAudio) {
-          // send audio
-          d('Send audio requested');
-          navigator.mediaDevices
-            .getUserMedia({
-              video: false,
-              audio: {
-                deviceId: localDevice
-                  ? localDevice.inputAudioDeviceId
-                  : undefined,
-                autoGainControl: false,
-                echoCancellation: false,
-                noiseSuppression: false,
-              },
-            })
-            .then((stream) => stream.getAudioTracks())
-            .then((tracks) =>
-              Promise.all(tracks.map((track) => produce(track)))
-            )
-            .then(() => {
-              console.log('TODO: Publish producers globally');
-            })
-            .catch((error) => reportError(error));
-        } else {
-          // stop sending audio
-          d('Stop sending audio requested');
-          const audioProducerIds = Object.keys(producers).filter(
-            (id) => producers[id].kind === 'audio'
-          );
-          audioProducerIds.map((audioProducerId) =>
-            stopProducing(audioProducerId).catch((error) => reportError(error))
-          );
-        }
-      }
-
-      if (
-        !lastDeviceState ||
-        lastDeviceState.receiveVideo !== localDevice.receiveVideo
-      ) {
-        // receive video state changed
-        if (localDevice.receiveVideo) {
-          // receive video
-          d('Receive video requested');
-          setConsumeVideoAutomatically(true);
-        } else {
-          // stop receiving video
-          d('Stop receiving video requested');
-          setConsumeVideoAutomatically(false);
-        }
-      }
-
-      if (
-        !lastDeviceState ||
-        lastDeviceState.receiveAudio !== localDevice.receiveAudio
-      ) {
-        // receive audio state changed
-        if (localDevice.receiveAudio) {
-          // receive audio
-          d('Receive audio requested');
-          setConsumeAudioAutomatically(true);
-        } else {
-          // stop receiving audio
-          d('Stop receiving audio requested');
-          setConsumeAudioAutomatically(false);
-        }
-      }
-
-      // Save local device state for next comparison
-      setLastDeviceState(localDevice);
-    }
-  }, [localDevice, reportError]);
-
-  useEffect(() => {
-    if (consumeVideoAutomatically) {
-      d('Start consuming video');
-      remoteVideoProducers.allIds.forEach((producerId) => {
-        if (!consumers[producerId]) {
-          const producer = remoteVideoProducers.byId[producerId];
-          consume(producer).then((consumer) => {
-            d(`Consuming now ${producerId}`);
-            dispatch(
-              allActions.stageActions.client.addVideoConsumer({
-                _id: consumer.id,
-                stage: producer.stageId,
-                stageMember: producer.stageMemberId,
-                videoProducer: producer._id,
-                msConsumer: consumer,
-              })
-            );
-          });
-        }
+          : allActions.stageActions.client.addVideoConsumer({
+              _id: consumer.id,
+              stage: remoteProducer.stageId,
+              stageMember: remoteProducer.stageMemberId,
+              videoProducer: remoteProducer._id,
+              msConsumer: consumer,
+            });
+        dispatch(action);
       });
-    } else {
-      d('Stop consuming video');
-      remoteVideoProducers.allIds.forEach((producerId) => {
-        if (consumers[producerId]) {
-          stopConsuming(remoteVideoProducers.byId[producerId]).then(
-            (consumer) => {
-              d(`Stopped consuming ${producerId}`);
-              dispatch(
-                allActions.stageActions.client.removeVideoConsumer(consumer.id)
-              );
-            }
-          );
-        }
-      });
-    }
-  }, [consumeVideoAutomatically, remoteVideoProducers]);
+    },
+    [consume, dispatch]
+  );
+
+  const stopConsumingRemoteProducer = useCallback(
+    (remoteProducer: StageMemberVideoProducer | StageMemberAudioProducer) => {
+      if (stopConsuming) {
+        stopConsuming(remoteProducer).then((consumer) => {
+          d(`Stopped consuming remote producer ${remoteProducer._id}`);
+          const action = isAudioProducer(remoteProducer)
+            ? allActions.stageActions.client.removeAudioConsumer(consumer.id)
+            : allActions.stageActions.client.removeVideoConsumer(consumer.id);
+          dispatch(action);
+        });
+      }
+    },
+    [stopConsuming, dispatch]
+  );
 
   useEffect(() => {
-    if (consumeAudioAutomatically) {
-      d('Start consuming audio');
+    if (receiveAudio) {
+      // Clean up all video consumers
       remoteAudioProducers.allIds.forEach((producerId) => {
         if (!consumers[producerId]) {
+          d(`Consuming audio producer ${producerId}`);
           const producer = remoteAudioProducers.byId[producerId];
-          consume(producer).then((consumer) => {
-            d(`Consuming now ${producerId}`);
-            dispatch(
-              allActions.stageActions.client.addVideoConsumer({
-                _id: consumer.id,
-                stage: producer.stageId,
-                stageMember: producer.stageMemberId,
-                videoProducer: producer._id,
-                msConsumer: consumer,
-              })
-            );
-          });
+          consumeRemoteProducer(producer);
         }
       });
     } else {
-      d('Stop consuming audio');
       remoteAudioProducers.allIds.forEach((producerId) => {
         if (consumers[producerId]) {
-          stopConsuming(remoteAudioProducers.byId[producerId]).then(
-            (consumer) => {
-              d(`Stopped consuming ${producerId}`);
-              dispatch(
-                allActions.stageActions.client.removeAudioConsumer(consumer.id)
-              );
-            }
-          );
+          d(`Stop consuming audio producer ${producerId}`);
+          const producer = remoteAudioProducers.byId[producerId];
+          stopConsumingRemoteProducer(producer);
         }
       });
     }
-  }, [consumeAudioAutomatically, remoteAudioProducers]);
+    if (receiveVideo) {
+      // Clean up all video consumers
+      remoteVideoProducers.allIds.forEach((producerId) => {
+        if (!consumers[producerId]) {
+          d(`Consuming video producer ${producerId}`);
+          const producer = remoteVideoProducers.byId[producerId];
+          consumeRemoteProducer(producer);
+        }
+      });
+    } else {
+      remoteVideoProducers.allIds.forEach((producerId) => {
+        if (consumers[producerId]) {
+          d(`Stop consuming video producer ${producerId}`);
+          const producer = remoteVideoProducers.byId[producerId];
+          stopConsumingRemoteProducer(producer);
+        }
+      });
+    }
+  }, [
+    connected,
+    receiveAudio,
+    receiveVideo,
+    remoteVideoProducers,
+    remoteAudioProducers,
+    consumers,
+    dispatch,
+  ]);
+
+  const doSomething = useCallback(() => {
+    setWorking(true);
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        setWorking(false);
+        resolve();
+      }, 2000);
+    });
+  }, []);
+
+  useEffect(() => {
+    d('Check for and removing consumers of obsolete producers');
+    // Clean up deprecated consumers
+    const deprecatedProducers = Object.keys(consumers)
+      .map(
+        (producerId) =>
+          remoteVideoProducers.byId[producerId] ||
+          remoteAudioProducers.byId[producerId]
+      )
+      .filter((deprecatedProducer) => deprecatedProducer !== undefined);
+
+    deprecatedProducers.forEach((deprecatedProducer) =>
+      stopConsumingRemoteProducer(deprecatedProducer)
+    );
+  }, [
+    stopConsumingRemoteProducer,
+    consumers,
+    remoteVideoProducers,
+    remoteAudioProducers,
+  ]);
+
+  const sync = useCallback(() => {
+    if (localDevice) {
+      if (localDevice.sendVideo !== sendVideo) {
+        if (localDevice.sendVideo) {
+          d('Send video on');
+          doSomething();
+        } else {
+          d('Send video off');
+          doSomething();
+        }
+        setSendVideo(localDevice.sendVideo);
+      }
+      if (localDevice.sendAudio !== sendAudio) {
+        if (localDevice.sendAudio) {
+          d('Send audio on');
+          doSomething();
+        } else {
+          d('Send audio off');
+          doSomething();
+        }
+        setSendAudio(localDevice.sendAudio);
+      }
+      if (localDevice.receiveVideo !== receiveVideo) {
+        if (localDevice.receiveVideo) {
+          d('Receive video on');
+        } else {
+          d('Receive video off');
+        }
+        setReceiveAudio(localDevice.receiveVideo);
+      }
+      if (localDevice.receiveAudio !== receiveAudio) {
+        if (localDevice.receiveAudio) {
+          d('Receive audio on');
+        } else {
+          d('Receive audio off');
+        }
+        setReceiveAudio(localDevice.receiveAudio);
+      }
+    } else {
+      setSendVideo(false);
+      setSendAudio(false);
+      setReceiveVideo(false);
+      setReceiveAudio(false);
+    }
+  }, [localDevice, sendVideo, sendAudio, receiveVideo, receiveAudio]);
+
+  useEffect(() => {
+    if (connected && !working) {
+      sync();
+    }
+  }, [connected, working, localDevice, sync]);
 
   return (
     <WebRTCCommunicationContext.Provider value={{}}>
