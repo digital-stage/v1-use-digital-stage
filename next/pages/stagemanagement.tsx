@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import useDigitalStage, { useStages, useGroupsByStage } from '../..';
+import useDigitalStage, {useCurrentStageId, useGroupsByStage, useStages} from '../..';
 import Button from "../components/ui/Button";
-import {useCurrentStageId} from "../..";
 
 const StageManagement = () => {
     const { actions } = useDigitalStage();

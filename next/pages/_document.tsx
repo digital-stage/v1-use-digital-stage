@@ -1,6 +1,6 @@
-import Document, { Html, Head, Main, NextScript } from 'next/document'
-import { Provider as StyletronProvider } from 'styletron-react'
-import { styletron } from '../styletron'
+import Document, {Head, Html, Main, NextScript} from 'next/document'
+import {Provider as StyletronProvider} from 'styletron-react'
+import {styletron} from '../styletron'
 import React from "react";
 
 class MyDocument extends Document<{

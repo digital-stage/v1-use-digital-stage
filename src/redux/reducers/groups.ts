@@ -1,21 +1,11 @@
 import omit from 'lodash/omit';
 import without from 'lodash/without';
 import { ServerStageEvents } from '../../global/SocketEvents';
-import { Group } from '../../types/Group';
 import upsert from '../utils/upsert';
-
-export interface GroupsStore {
-  byId: {
-    [id: string]: Group;
-  };
-  byStage: {
-    [stageId: string]: string[];
-  };
-  allIds: string[];
-}
+import { GroupsCollection } from '../../types';
 
 function groups(
-  state: GroupsStore = {
+  state: GroupsCollection = {
     byId: {},
     byStage: {},
     allIds: [],

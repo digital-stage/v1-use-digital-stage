@@ -1,20 +1,13 @@
 import omit from 'lodash/omit';
 import without from 'lodash/without';
 import { ServerStageEvents } from '../../global/SocketEvents';
-import { StageMemberAudioProducer } from '../../types';
-
-export interface AudioProducersStore {
-  byId: {
-    [id: string]: StageMemberAudioProducer;
-  };
-  byStageMember: {
-    [stageMemberId: string]: string;
-  };
-  allIds: string[];
-}
+import {
+  RemoteAudioProducer,
+  RemoteAudioProducersCollection,
+} from '../../types';
 
 function audioProducers(
-  state: AudioProducersStore = {
+  state: RemoteAudioProducersCollection = {
     byId: {},
     byStageMember: {},
     allIds: [],
@@ -26,7 +19,7 @@ function audioProducers(
 ) {
   switch (action.type) {
     case ServerStageEvents.STAGE_MEMBER_AUDIO_ADDED: {
-      const audioProducer = action.payload as StageMemberAudioProducer;
+      const audioProducer = action.payload as RemoteAudioProducer;
       return {
         ...state,
         byId: {

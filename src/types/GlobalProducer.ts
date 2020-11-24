@@ -1,3 +1,6 @@
+/**
+ *
+ */
 export interface GlobalProducer {
   _id: string;
   deviceId: string; // <-- RELATION

@@ -1,10 +1,7 @@
 import React, {useEffect, useState} from "react";
 import CodeWrapper from "../components/ui/CodeWrapper";
-import {useCustomStageMembers} from "../..";
 import Button from "../components/ui/Button";
-import useDigitalStage from "../..";
-import {useStageMembersByStage} from "../..";
-import {useCurrentStageId} from "../..";
+import useDigitalStage, {useCurrentStageId, useCustomStageMembers, useStageMembersByStage} from "../..";
 import RangeSlider from "../components/ui/RangeSlider";
 
 const StageMembers = () => {

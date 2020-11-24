@@ -1,20 +1,13 @@
 import omit from 'lodash/omit';
 import without from 'lodash/without';
 import { ServerStageEvents } from '../../global/SocketEvents';
-import { StageMemberVideoProducer } from '../../types';
-
-export interface VideoProducersStore {
-  byId: {
-    [id: string]: StageMemberVideoProducer;
-  };
-  byStageMember: {
-    [stageMemberId: string]: string;
-  };
-  allIds: string[];
-}
+import {
+  RemoteVideoProducer,
+  RemoteVideoProducersCollection,
+} from '../../types';
 
 function videoProducers(
-  state: VideoProducersStore = {
+  state: RemoteVideoProducersCollection = {
     byId: {},
     byStageMember: {},
     allIds: [],
@@ -26,7 +19,7 @@ function videoProducers(
 ) {
   switch (action.type) {
     case ServerStageEvents.STAGE_MEMBER_VIDEO_ADDED: {
-      const videoProducer = action.payload as StageMemberVideoProducer;
+      const videoProducer = action.payload as RemoteVideoProducer;
       return {
         ...state,
         byId: {

@@ -3,23 +3,10 @@ import filter from 'lodash/filter';
 import without from 'lodash/without';
 import { ServerStageEvents } from '../../global/SocketEvents';
 import upsert from '../utils/upsert';
-import { StageMember } from '../../types';
-
-export interface StageMembersStore {
-  byId: {
-    [id: string]: StageMember;
-  };
-  byGroup: {
-    [groupId: string]: string[];
-  };
-  byStage: {
-    [stageId: string]: string[];
-  };
-  allIds: string[];
-}
+import { StageMembersCollection } from '../../types';
 
 function stageMembers(
-  state: StageMembersStore = {
+  state: StageMembersCollection = {
     byId: {},
     byStage: {},
     byGroup: {},

@@ -13,17 +13,20 @@ import { devToolsEnhancer } from 'redux-devtools-extension';
 import { ErrorsProvider, useErrors } from './useErrors';
 import useAuth, { AuthContextProvider, TAuthContext } from './useAuth';
 import useSocket, { SocketProvider } from './useSocket';
-import { Device } from './types';
+import { Device, Router } from './types';
 import enumerateDevices from './utils/enumerateDevices';
 import reducer from './redux/reducers/index';
 import { StageHandlingProvider } from './useStageHandling';
 import useStageActions, { TStageActionContext } from './useStageActions';
 import Status, { IStatus } from './useSocket/Status';
-import { WebRTCCommunicationProvider } from './useWebRTCCommunication';
+import useWebRTCCommunication, {
+  WebRTCCommunicationProvider,
+} from './useWebRTCCommunication';
 
 const dbg = debug('useDigitalStage:provider');
 
 export interface TDigitalStageContext {
+  router?: Router;
   ready: boolean;
   auth?: TAuthContext;
   actions?: TStageActionContext;
@@ -43,6 +46,7 @@ const UseDigitalStageProvider = (props: { children: React.ReactNode }) => {
   const socketAPI = useSocket();
   const { reportError } = useErrors();
   const actions = useStageActions();
+  const { router } = useWebRTCCommunication();
 
   const { token } = auth;
 
@@ -102,11 +106,12 @@ const UseDigitalStageProvider = (props: { children: React.ReactNode }) => {
         startSocketConnection();
       }
     }
-  }, [token, socketAPI]);
+  }, [token, socketAPI, startSocketConnection]);
 
   return (
     <DigitalStageContext.Provider
       value={{
+        router,
         ready,
         auth,
         actions,

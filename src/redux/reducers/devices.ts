@@ -1,17 +1,10 @@
 import omit from 'lodash/omit';
 import without from 'lodash/without';
-import { Device } from '../../types';
+import { DevicesCollection } from '../../types';
 import { ServerDeviceEvents } from '../../global/SocketEvents';
 
-export interface DevicesStore {
-  byId: {
-    [id: string]: Device;
-  };
-  allIds: string[];
-}
-
 function devices(
-  state: DevicesStore = {
+  state: DevicesCollection = {
     byId: {},
     allIds: [],
   },

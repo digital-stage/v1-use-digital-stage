@@ -1,13 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {useDevices, useDevice} from "../..";
 import CodeWrapper from "../components/ui/CodeWrapper";
-import useDigitalStage from "../..";
+import {useDevice, useDevices} from "../..";
 
 const Devices = () => {
-    const {actions} = useDigitalStage();
     const devices = useDevices();
     const [deviceId, setDeviceId] = useState<string>();
-    const stage = useDevice(deviceId);
+    const device = useDevice(deviceId);
     useEffect(() => {
         if (!deviceId)
             setDeviceId(devices.allIds[0])
@@ -61,7 +59,7 @@ const Devices = () => {
             </select>
             <CodeWrapper>
                 <pre>
-                {JSON.stringify(stage, null, 2)}
+                {JSON.stringify(device, null, 2)}
                 </pre>
             </CodeWrapper>
         </div>

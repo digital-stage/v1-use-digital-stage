@@ -1,7 +1,7 @@
 import React from "react";
 import {Provider as StyletronProvider} from 'styletron-react'
 import {DigitalStageProvider} from "../..";
-import {styletron, debug} from "../styletron";
+import {debug, styletron} from "../styletron";
 import './../styles.css'
 import AppBar from "../components/AppBar";
 import Wrapper from "../components/ui/Wrapper";

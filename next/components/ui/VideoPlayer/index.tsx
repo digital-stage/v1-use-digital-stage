@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {types} from "../../../..";
+import {LocalConsumer} from "../../../..";
 
 interface CanvasElement extends HTMLCanvasElement {
     captureStream(): MediaStream;
@@ -15,7 +15,7 @@ interface AnimationFrame {
 }
 
 interface Props {
-    consumers: types.VideoConsumer[];
+    consumers: LocalConsumer[];
 }
 
 interface States {
@@ -61,8 +61,8 @@ class VideoPlayer extends React.Component<Props, States> {
             // Video producers or size of wrapper has changed
             if (size) {
                 const videoTracks: MediaStreamTrack[] = consumers
-                    .filter((vp) => vp.msConsumer && vp.msConsumer.track)
-                    .map((vp) => vp.msConsumer.track);
+                    .filter((vp) => vp.consumer && vp.consumer.track)
+                    .map((vp) => vp.consumer.track);
 
                 const numRows = Math.ceil(Math.sqrt(videoTracks.length));
 

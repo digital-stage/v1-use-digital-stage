@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { styled } from 'styletron-react';
+import {styled} from 'styletron-react';
 import React from 'react';
 import useDigitalStage from '../..';
 

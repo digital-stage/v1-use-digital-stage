@@ -212,7 +212,6 @@ export const createProducer = (
   track: MediaStreamTrack
 ): Promise<mediasoupClient.types.Producer> =>
   transport.produce({
-    // TODO: Fix this, TypeError: Cannot read property 'produce' of undefined
     track,
     appData: {
       trackId: track.id,

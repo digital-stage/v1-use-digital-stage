@@ -8,15 +8,18 @@ import React, {
 import debug from 'debug';
 import { useDispatch } from 'react-redux';
 import {
+  Device,
   Router,
-  StageMemberAudioProducer,
-  StageMemberVideoProducer,
+  RemoteAudioProducer,
+  RemoteVideoProducer,
+  LocalProducer,
 } from '../types';
-import useLocalDevice from '../redux/hooks/useLocalDevice';
+import useLocalDevice from '../hooks/useLocalDevice';
 import useMediasoup from './useMediasoup';
-import useAudioProducers from '../redux/hooks/useAudioProducers';
-import useVideoProducers from '../redux/hooks/useVideoProducers';
+import useAudioProducers from '../hooks/useAudioProducers';
+import useVideoProducers from '../hooks/useVideoProducers';
 import allActions from '../redux/actions';
+import { useErrors } from '../useErrors';
 
 interface TWebRTCCommunicationContext {
   router?: Router;
@@ -29,9 +32,9 @@ const WebRTCCommunicationContext = createContext<TWebRTCCommunicationContext>(
 );
 
 function isAudioProducer(
-  producer: StageMemberVideoProducer | StageMemberAudioProducer
-): producer is StageMemberAudioProducer {
-  return (producer as StageMemberAudioProducer).volume !== undefined;
+  producer: RemoteVideoProducer | RemoteAudioProducer
+): producer is RemoteAudioProducer {
+  return (producer as RemoteAudioProducer).volume !== undefined;
 }
 
 export const WebRTCCommunicationProvider = (props: {
@@ -39,9 +42,18 @@ export const WebRTCCommunicationProvider = (props: {
   routerDistUrl: string;
 }) => {
   const { children, routerDistUrl } = props;
-  const { connected, consumers, consume, stopConsuming } = useMediasoup(
-    routerDistUrl
-  );
+  const {
+    router,
+    producers,
+    connected,
+    consumers,
+    consume,
+    stopConsuming,
+    produce,
+    stopProducing,
+  } = useMediasoup(routerDistUrl);
+
+  const { reportError } = useErrors();
 
   const dispatch = useDispatch();
 
@@ -58,24 +70,12 @@ export const WebRTCCommunicationProvider = (props: {
   const [receiveAudio, setReceiveAudio] = useState<boolean>(false);
 
   const consumeRemoteProducer = useCallback(
-    (remoteProducer: StageMemberVideoProducer | StageMemberAudioProducer) => {
-      consume(remoteProducer).then((consumer) => {
+    (remoteProducer: RemoteVideoProducer | RemoteAudioProducer) => {
+      consume(remoteProducer).then((localConsumer) => {
         d(`Consuming now remote producer ${remoteProducer._id}`);
         const action = isAudioProducer(remoteProducer)
-          ? allActions.stageActions.client.addAudioConsumer({
-              _id: consumer.id,
-              stage: remoteProducer.stageId,
-              stageMember: remoteProducer.stageMemberId,
-              audioProducer: remoteProducer._id,
-              msConsumer: consumer,
-            })
-          : allActions.stageActions.client.addVideoConsumer({
-              _id: consumer.id,
-              stage: remoteProducer.stageId,
-              stageMember: remoteProducer.stageMemberId,
-              videoProducer: remoteProducer._id,
-              msConsumer: consumer,
-            });
+          ? allActions.stageActions.client.addAudioConsumer(localConsumer)
+          : allActions.stageActions.client.addVideoConsumer(localConsumer);
         dispatch(action);
       });
     },
@@ -83,13 +83,19 @@ export const WebRTCCommunicationProvider = (props: {
   );
 
   const stopConsumingRemoteProducer = useCallback(
-    (remoteProducer: StageMemberVideoProducer | StageMemberAudioProducer) => {
+    (producerId: string) => {
       if (stopConsuming) {
-        stopConsuming(remoteProducer).then((consumer) => {
-          d(`Stopped consuming remote producer ${remoteProducer._id}`);
-          const action = isAudioProducer(remoteProducer)
-            ? allActions.stageActions.client.removeAudioConsumer(consumer.id)
-            : allActions.stageActions.client.removeVideoConsumer(consumer.id);
+        d(`Stop consuming remote producer ${producerId}`);
+        stopConsuming(producerId).then((localConsumer) => {
+          d(`Stopped consuming remote producer ${producerId}`);
+          const action =
+            localConsumer.consumer.kind === 'audio'
+              ? allActions.stageActions.client.removeAudioConsumer(
+                  localConsumer._id
+                )
+              : allActions.stageActions.client.removeVideoConsumer(
+                  localConsumer._id
+                );
           dispatch(action);
         });
       }
@@ -98,41 +104,53 @@ export const WebRTCCommunicationProvider = (props: {
   );
 
   useEffect(() => {
-    if (receiveAudio) {
-      // Clean up all video consumers
-      remoteAudioProducers.allIds.forEach((producerId) => {
-        if (!consumers[producerId]) {
-          d(`Consuming audio producer ${producerId}`);
-          const producer = remoteAudioProducers.byId[producerId];
-          consumeRemoteProducer(producer);
-        }
+    if (connected && consumeRemoteProducer && stopConsumingRemoteProducer) {
+      d('Check for and removing consumers of obsolete producers');
+      // Clean up deprecated consumers
+      const obsoleteProducerIds = Object.keys(consumers).filter(
+        (producerId) =>
+          !remoteVideoProducers.byId[producerId] &&
+          !remoteAudioProducers.byId[producerId]
+      );
+
+      d(`Have ${obsoleteProducerIds.length} deprecated producers`);
+      obsoleteProducerIds.forEach((obsoleteProducerId) => {
+        stopConsumingRemoteProducer(obsoleteProducerId);
       });
-    } else {
-      remoteAudioProducers.allIds.forEach((producerId) => {
-        if (consumers[producerId]) {
-          d(`Stop consuming audio producer ${producerId}`);
-          const producer = remoteAudioProducers.byId[producerId];
-          stopConsumingRemoteProducer(producer);
-        }
-      });
-    }
-    if (receiveVideo) {
-      // Clean up all video consumers
-      remoteVideoProducers.allIds.forEach((producerId) => {
-        if (!consumers[producerId]) {
-          d(`Consuming video producer ${producerId}`);
-          const producer = remoteVideoProducers.byId[producerId];
-          consumeRemoteProducer(producer);
-        }
-      });
-    } else {
-      remoteVideoProducers.allIds.forEach((producerId) => {
-        if (consumers[producerId]) {
-          d(`Stop consuming video producer ${producerId}`);
-          const producer = remoteVideoProducers.byId[producerId];
-          stopConsumingRemoteProducer(producer);
-        }
-      });
+
+      if (receiveAudio) {
+        remoteAudioProducers.allIds.forEach((producerId) => {
+          if (!consumers[producerId]) {
+            d(`Consuming audio producer ${producerId}`);
+            const producer = remoteAudioProducers.byId[producerId];
+            consumeRemoteProducer(producer);
+          }
+        });
+      } else {
+        remoteAudioProducers.allIds.forEach((producerId) => {
+          if (consumers[producerId]) {
+            d(`Stop consuming audio producer ${producerId}`);
+            stopConsumingRemoteProducer(producerId);
+          }
+        });
+      }
+      if (receiveVideo) {
+        // Clean up all video consumers
+        remoteVideoProducers.allIds.forEach((producerId) => {
+          if (!consumers[producerId]) {
+            d(`Consuming video producer ${producerId}`);
+            const producer = remoteVideoProducers.byId[producerId];
+            consumeRemoteProducer(producer);
+          }
+        });
+      } else {
+        remoteVideoProducers.allIds.forEach((producerId) => {
+          if (consumers[producerId]) {
+            d(`Stop consuming video producer ${producerId}`);
+            stopConsumingRemoteProducer(producerId);
+          }
+        });
+      }
     }
   }, [
     connected,
@@ -141,59 +159,102 @@ export const WebRTCCommunicationProvider = (props: {
     remoteVideoProducers,
     remoteAudioProducers,
     consumers,
+    consumeRemoteProducer,
+    stopConsumingRemoteProducer,
     dispatch,
   ]);
 
-  const doSomething = useCallback(() => {
+  const startSendingVideo = useCallback(
+    (dev: Device): Promise<LocalProducer[]> => {
+      d('Start sending video');
+      setWorking(true);
+      return navigator.mediaDevices
+        .getUserMedia({
+          audio: false,
+          video:
+            dev && dev.inputVideoDeviceId
+              ? {
+                  deviceId: dev.inputVideoDeviceId,
+                }
+              : true,
+        })
+        .then((stream) => stream.getVideoTracks())
+        .then((tracks) => {
+          d(`Producing now ${tracks.length} video tracks`);
+          return tracks;
+        })
+        .then((tracks) => Promise.all(tracks.map((track) => produce(track))))
+        .finally(() => setWorking(false));
+    },
+    [setWorking, produce]
+  );
+
+  const stopSendingVideo = useCallback((): Promise<LocalProducer[]> => {
+    d('Stop sending video');
     setWorking(true);
-    return new Promise<void>((resolve) => {
-      setTimeout(() => {
-        setWorking(false);
-        resolve();
-      }, 2000);
-    });
-  }, []);
-
-  useEffect(() => {
-    d('Check for and removing consumers of obsolete producers');
-    // Clean up deprecated consumers
-    const deprecatedProducers = Object.keys(consumers)
-      .map(
-        (producerId) =>
-          remoteVideoProducers.byId[producerId] ||
-          remoteAudioProducers.byId[producerId]
-      )
-      .filter((deprecatedProducer) => deprecatedProducer !== undefined);
-
-    deprecatedProducers.forEach((deprecatedProducer) =>
-      stopConsumingRemoteProducer(deprecatedProducer)
+    const videoProducerIds = Object.keys(producers).filter(
+      (id) => producers[id].local.kind === 'video'
     );
-  }, [
-    stopConsumingRemoteProducer,
-    consumers,
-    remoteVideoProducers,
-    remoteAudioProducers,
-  ]);
+    return Promise.all(
+      videoProducerIds.map((videoProducerId) => stopProducing(videoProducerId))
+    ).finally(() => setWorking(false));
+  }, [setWorking, producers, stopProducing]);
+
+  const startSendingAudio = useCallback(
+    (dev: Device): Promise<LocalProducer[]> => {
+      d('Start sending audio');
+      setWorking(true);
+      return navigator.mediaDevices
+        .getUserMedia({
+          video: false,
+          audio: {
+            deviceId: dev ? dev.inputAudioDeviceId : undefined,
+            autoGainControl: false,
+            echoCancellation: false,
+            noiseSuppression: false,
+          },
+        })
+        .then((stream) => stream.getAudioTracks())
+        .then((tracks) => {
+          d(`Producing now ${tracks.length} audio tracks`);
+          return tracks;
+        })
+        .then((tracks) => Promise.all(tracks.map((track) => produce(track))))
+        .finally(() => setWorking(false));
+    },
+    [setWorking, produce]
+  );
+
+  const stopSendingAudio = useCallback((): Promise<LocalProducer[]> => {
+    d('Stop sending audio');
+    setWorking(true);
+    const audioProducerIds = Object.keys(producers).filter(
+      (id) => producers[id].local.kind === 'audio'
+    );
+    return Promise.all(
+      audioProducerIds.map((audioProducerId) => stopProducing(audioProducerId))
+    ).finally(() => setWorking(false));
+  }, [setWorking, producers, stopProducing]);
 
   const sync = useCallback(() => {
     if (localDevice) {
       if (localDevice.sendVideo !== sendVideo) {
         if (localDevice.sendVideo) {
           d('Send video on');
-          doSomething();
+          startSendingVideo(localDevice).catch((error) => reportError(error));
         } else {
           d('Send video off');
-          doSomething();
+          stopSendingVideo().catch((error) => reportError(error));
         }
         setSendVideo(localDevice.sendVideo);
       }
       if (localDevice.sendAudio !== sendAudio) {
         if (localDevice.sendAudio) {
           d('Send audio on');
-          doSomething();
+          startSendingAudio(localDevice).catch((error) => reportError(error));
         } else {
           d('Send audio off');
-          doSomething();
+          stopSendingAudio().catch((error) => reportError(error));
         }
         setSendAudio(localDevice.sendAudio);
       }
@@ -203,7 +264,7 @@ export const WebRTCCommunicationProvider = (props: {
         } else {
           d('Receive video off');
         }
-        setReceiveAudio(localDevice.receiveVideo);
+        setReceiveVideo(localDevice.receiveVideo);
       }
       if (localDevice.receiveAudio !== receiveAudio) {
         if (localDevice.receiveAudio) {
@@ -219,16 +280,33 @@ export const WebRTCCommunicationProvider = (props: {
       setReceiveVideo(false);
       setReceiveAudio(false);
     }
-  }, [localDevice, sendVideo, sendAudio, receiveVideo, receiveAudio]);
+  }, [
+    localDevice,
+    sendVideo,
+    sendAudio,
+    receiveVideo,
+    receiveAudio,
+    startSendingVideo,
+    startSendingAudio,
+    stopSendingAudio,
+    stopSendingVideo,
+    reportError,
+  ]);
 
   useEffect(() => {
     if (connected && !working) {
-      sync();
+      if (!working) {
+        sync();
+      }
     }
-  }, [connected, working, localDevice, sync]);
+  }, [connected, working, sync]);
+
+  useEffect(() => {
+    d('Connected changed');
+  }, [connected]);
 
   return (
-    <WebRTCCommunicationContext.Provider value={{}}>
+    <WebRTCCommunicationContext.Provider value={{ router }}>
       {children}
     </WebRTCCommunicationContext.Provider>
   );

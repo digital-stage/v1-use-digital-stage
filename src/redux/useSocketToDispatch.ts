@@ -6,19 +6,23 @@ import {
   ServerStageEvents,
   ServerUserEvents,
 } from '../global/SocketEvents';
-import { Device, Stage, User } from '../types';
+import {
+  Device,
+  Stage,
+  User,
+  Group,
+  CustomGroup,
+  StageMember,
+  CustomStageMember,
+  RemoteVideoProducer,
+  RemoteAudioProducer,
+  StageMemberOvTrack,
+  CustomRemoteAudioProducer,
+  CustomRemoteOvTrack,
+} from '../types';
 import useDispatch from './useDispatch';
 import allActions from './actions';
 import { InitialStagePackage } from './actions/stageActions';
-import { Group } from '../types/Group';
-import { CustomGroup } from '../types/CustomGroup';
-import { StageMember } from '../types/StageMember';
-import { CustomStageMember } from '../types/CustomStageMember';
-import { StageMemberVideoProducer } from '../types/StageMemberVideoProducer';
-import { StageMemberAudioProducer } from '../types/StageMemberAudioProducer';
-import { CustomStageMemberAudioProducer } from '../types/CustomStageMemberAudioProducer';
-import { StageMemberOvTrack } from '../types/StageMemberOvTrack';
-import { CustomStageMemberOvTrack } from '../types/CustomStageMemberOvTrack';
 
 const useSocketToDispatch = () => {
   const dispatch = useDispatch();
@@ -217,13 +221,13 @@ const useSocketToDispatch = () => {
 
       socket.on(
         ServerStageEvents.STAGE_MEMBER_VIDEO_ADDED,
-        (payload: StageMemberVideoProducer) => {
+        (payload: RemoteVideoProducer) => {
           dispatch(allActions.stageActions.server.addVideoProducer(payload));
         }
       );
       socket.on(
         ServerStageEvents.STAGE_MEMBER_VIDEO_CHANGED,
-        (payload: StageMemberVideoProducer) => {
+        (payload: RemoteVideoProducer) => {
           dispatch(allActions.stageActions.server.changeVideoProducer(payload));
         }
       );
@@ -236,13 +240,13 @@ const useSocketToDispatch = () => {
 
       socket.on(
         ServerStageEvents.STAGE_MEMBER_AUDIO_ADDED,
-        (payload: StageMemberAudioProducer) => {
+        (payload: RemoteAudioProducer) => {
           dispatch(allActions.stageActions.server.addAudioProducer(payload));
         }
       );
       socket.on(
         ServerStageEvents.STAGE_MEMBER_AUDIO_CHANGED,
-        (payload: StageMemberAudioProducer) => {
+        (payload: RemoteAudioProducer) => {
           dispatch(allActions.stageActions.server.changeAudioProducer(payload));
         }
       );
@@ -255,7 +259,7 @@ const useSocketToDispatch = () => {
 
       socket.on(
         ServerStageEvents.CUSTOM_STAGE_MEMBER_AUDIO_ADDED,
-        (payload: CustomStageMemberAudioProducer) => {
+        (payload: CustomRemoteAudioProducer) => {
           dispatch(
             allActions.stageActions.server.addCustomAudioProducer(payload)
           );
@@ -263,7 +267,7 @@ const useSocketToDispatch = () => {
       );
       socket.on(
         ServerStageEvents.CUSTOM_STAGE_MEMBER_AUDIO_CHANGED,
-        (payload: CustomStageMemberAudioProducer) => {
+        (payload: CustomRemoteAudioProducer) => {
           dispatch(
             allActions.stageActions.server.changeCustomAudioProducer(payload)
           );
@@ -299,13 +303,13 @@ const useSocketToDispatch = () => {
 
       socket.on(
         ServerStageEvents.CUSTOM_STAGE_MEMBER_OV_ADDED,
-        (payload: CustomStageMemberOvTrack) => {
+        (payload: CustomRemoteOvTrack) => {
           dispatch(allActions.stageActions.server.addCustomOvTrack(payload));
         }
       );
       socket.on(
         ServerStageEvents.CUSTOM_STAGE_MEMBER_OV_CHANGED,
-        (payload: CustomStageMemberOvTrack) => {
+        (payload: CustomRemoteOvTrack) => {
           dispatch(allActions.stageActions.server.changeCustomOvTrack(payload));
         }
       );

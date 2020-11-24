@@ -1,7 +1,6 @@
 import React, {useCallback} from "react";
-import {useCurrentUser} from "../..";
+import useDigitalStage, {useCurrentUser} from "../..";
 import CodeWrapper from "../components/ui/CodeWrapper";
-import useDigitalStage from "../..";
 import ChangeUserPanel from "../components/interaction/ChangeUserPanel";
 
 const User = () => {

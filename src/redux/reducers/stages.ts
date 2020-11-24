@@ -1,17 +1,10 @@
 import omit from 'lodash/omit';
 import without from 'lodash/without';
-import { Stage } from '../../types';
 import { ServerStageEvents } from '../../global/SocketEvents';
-
-export interface StagesStore {
-  byId: {
-    [id: string]: Stage;
-  };
-  allIds: string[];
-}
+import { StagesCollection } from '../../types';
 
 function stages(
-  state: StagesStore = {
+  state: StagesCollection = {
     byId: {},
     allIds: [],
   },

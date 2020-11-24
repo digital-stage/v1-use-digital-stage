@@ -1,14 +1,9 @@
 import {styled} from "styletron-react";
 import React, {useCallback} from "react";
-import useDigitalStage, {
-    useLocalDevice,
-    useVideoConsumers,
-    useCurrentStageId,
-    useGroupsByStage,
-    useStageMembersByGroup,
-    useVideoConsumersByStageMember,
-    types} from "../..";
+import useDigitalStage, {Group, useVideoConsumers} from "../../dist";
 import VideoPlayer from "../components/ui/VideoPlayer";
+import {LocalConsumer, StageMemberWithUserData, useCurrentStageId, useLocalDevice, useSelector} from "../..";
+import {useGroupsByStage, useStageMembersByGroup} from "../../../webclient/lib/digitalstage/useStageSelector";
 
 const Wrapper = styled("div", {
     position: 'fixed',
@@ -36,10 +31,13 @@ const ToggleButton = styled("button", (props: { $active }) => ({
 }));
 
 const StageMemberView = (props: {
-    stageMember: types.StageMemberWithUserData
+    stageMember: StageMemberWithUserData
 }) => {
     const {stageMember} = props;
-    const videoConsumers = useVideoConsumersByStageMember(stageMember._id);
+    const videoConsumers = useSelector<LocalConsumer[]>(state => state.videoConsumers.byStageMember[stageMember._id]
+        ? state.videoConsumers.byStageMember[stageMember._id].map(id => state.videoConsumers.byId[id])
+        : []
+    )
 
     return (
         <div>
@@ -51,7 +49,7 @@ const StageMemberView = (props: {
 }
 
 const GroupView = (props: {
-    group: types.Group
+    group: Group
 }) => {
     const {group} = props;
 

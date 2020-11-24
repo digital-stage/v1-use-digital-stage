@@ -1,20 +1,10 @@
 import omit from 'lodash/omit';
 import without from 'lodash/without';
 import { ServerStageEvents } from '../../global/SocketEvents';
-import { CustomStageMember } from '../../types';
-
-export interface CustomStageMembersStore {
-  byId: {
-    [id: string]: CustomStageMember;
-  };
-  byStageMember: {
-    [stageMemberId: string]: string;
-  };
-  allIds: string[];
-}
+import { CustomStageMember, CustomStageMembersCollection } from '../../types';
 
 function customStageMembers(
-  state: CustomStageMembersStore = {
+  state: CustomStageMembersCollection = {
     byId: {},
     byStageMember: {},
     allIds: [],

@@ -1,17 +1,19 @@
 import { ServerStageEvents } from '../../global/SocketEvents';
-import { Stage, User } from '../../types';
-import { Group } from '../../types/Group';
-import { StageMember } from '../../types/StageMember';
-import { CustomStageMember } from '../../types/CustomStageMember';
-import { CustomGroup } from '../../types/CustomGroup';
-import { StageMemberVideoProducer } from '../../types/StageMemberVideoProducer';
-import { CustomStageMemberAudioProducer } from '../../types/CustomStageMemberAudioProducer';
-import { StageMemberAudioProducer } from '../../types/StageMemberAudioProducer';
-import { StageMemberOvTrack } from '../../types/StageMemberOvTrack';
-import { CustomStageMemberOvTrack } from '../../types/CustomStageMemberOvTrack';
-import { VideoConsumer } from '../../types/VideoConsumer';
+import {
+  Stage,
+  User,
+  Group,
+  StageMember,
+  CustomStageMember,
+  CustomGroup,
+  RemoteVideoProducer,
+  CustomRemoteAudioProducer,
+  RemoteAudioProducer,
+  StageMemberOvTrack,
+  CustomRemoteOvTrack,
+  LocalConsumer,
+} from '../../types';
 import AdditionalReducerTypes from './AdditionalReducerTypes';
-import { AudioConsumer } from '../../types/AudioConsumer';
 
 export interface StagePackage {
   users: User[];
@@ -21,11 +23,11 @@ export interface StagePackage {
   stageMembers: StageMember[];
   customGroups: CustomGroup[];
   customStageMembers: CustomStageMember[];
-  videoProducers: StageMemberVideoProducer[];
-  audioProducers: StageMemberAudioProducer[];
-  customAudioProducers: CustomStageMemberAudioProducer[];
+  videoProducers: RemoteVideoProducer[];
+  audioProducers: RemoteAudioProducer[];
+  customAudioProducers: CustomRemoteAudioProducer[];
   ovTracks: StageMemberOvTrack[];
-  customOvTracks: CustomStageMemberOvTrack[];
+  customOvTracks: CustomRemoteOvTrack[];
 }
 
 export interface InitialStagePackage extends StagePackage {
@@ -146,15 +148,13 @@ const removeCustomStageMember = (customStageMemberId: string) => {
   };
 };
 
-const addVideoProducer = (videoProducer: StageMemberVideoProducer) => {
+const addVideoProducer = (videoProducer: RemoteVideoProducer) => {
   return {
     type: ServerStageEvents.STAGE_MEMBER_VIDEO_ADDED,
     payload: videoProducer,
   };
 };
-const changeVideoProducer = (
-  videoProducer: Partial<StageMemberVideoProducer>
-) => {
+const changeVideoProducer = (videoProducer: Partial<RemoteVideoProducer>) => {
   return {
     type: ServerStageEvents.STAGE_MEMBER_VIDEO_CHANGED,
     payload: videoProducer,
@@ -167,15 +167,13 @@ const removeVideoProducer = (videoProducerId: string) => {
   };
 };
 
-const addAudioProducer = (audioProducer: StageMemberAudioProducer) => {
+const addAudioProducer = (audioProducer: RemoteAudioProducer) => {
   return {
     type: ServerStageEvents.STAGE_MEMBER_AUDIO_ADDED,
     payload: audioProducer,
   };
 };
-const changeAudioProducer = (
-  audioProducer: Partial<StageMemberAudioProducer>
-) => {
+const changeAudioProducer = (audioProducer: Partial<RemoteAudioProducer>) => {
   return {
     type: ServerStageEvents.STAGE_MEMBER_AUDIO_CHANGED,
     payload: audioProducer,
@@ -189,7 +187,7 @@ const removeAudioProducer = (audioProducerId: string) => {
 };
 
 const addCustomAudioProducer = (
-  customAudioProducer: CustomStageMemberAudioProducer
+  customAudioProducer: CustomRemoteAudioProducer
 ) => {
   return {
     type: ServerStageEvents.CUSTOM_STAGE_MEMBER_AUDIO_ADDED,
@@ -197,7 +195,7 @@ const addCustomAudioProducer = (
   };
 };
 const changeCustomAudioProducer = (
-  customAudioProducer: Partial<CustomStageMemberAudioProducer>
+  customAudioProducer: Partial<CustomRemoteAudioProducer>
 ) => {
   return {
     type: ServerStageEvents.CUSTOM_STAGE_MEMBER_AUDIO_CHANGED,
@@ -230,15 +228,13 @@ const removeOvTrack = (trackId: string) => {
   };
 };
 
-const addCustomOvTrack = (customOvTrack: CustomStageMemberOvTrack) => {
+const addCustomOvTrack = (customOvTrack: CustomRemoteOvTrack) => {
   return {
     type: ServerStageEvents.CUSTOM_STAGE_MEMBER_OV_ADDED,
     payload: customOvTrack,
   };
 };
-const changeCustomOvTrack = (
-  customOvTrack: Partial<CustomStageMemberOvTrack>
-) => {
+const changeCustomOvTrack = (customOvTrack: Partial<CustomRemoteOvTrack>) => {
   return {
     type: ServerStageEvents.CUSTOM_STAGE_MEMBER_OV_CHANGED,
     payload: customOvTrack,
@@ -251,7 +247,7 @@ const removeCustomOvTrack = (customOvTrackId: string) => {
   };
 };
 
-const addVideoConsumer = (videoConsumer: VideoConsumer) => {
+const addVideoConsumer = (videoConsumer: LocalConsumer) => {
   return {
     type: AdditionalReducerTypes.ADD_VIDEO_CONSUMER,
     payload: videoConsumer,
@@ -264,7 +260,7 @@ const removeVideoConsumer = (videoConsumerId: string) => {
   };
 };
 
-const addAudioConsumer = (audioConsumer: AudioConsumer) => {
+const addAudioConsumer = (audioConsumer: LocalConsumer) => {
   return {
     type: AdditionalReducerTypes.ADD_AUDIO_CONSUMER,
     payload: audioConsumer,

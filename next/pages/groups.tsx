@@ -1,13 +1,8 @@
 import React, {useEffect, useState} from "react";
-import {useGroups} from "../..";
 import CodeWrapper from "../components/ui/CodeWrapper";
-import {useGroupsByStage} from "../..";
-import {useStages} from "../..";
-import {useGroup} from "../..";
 import AddGroupPanel from "../components/interaction/AddGroupPanel";
-import useDigitalStage from "../..";
+import useDigitalStage, {useCurrentUser, useGroup, useGroups, useGroupsByStage, useStages} from "../..";
 import Button from "../components/ui/Button";
-import {useCurrentUser} from "../..";
 
 const Groups = () => {
     const {actions} = useDigitalStage();

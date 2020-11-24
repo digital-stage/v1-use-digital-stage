@@ -1,17 +1,10 @@
 import omit from 'lodash/omit';
 import without from 'lodash/without';
 import { ServerStageEvents, ServerUserEvents } from '../../global/SocketEvents';
-import { User } from '../../types';
-
-export interface UsersStore {
-  byId: {
-    [id: string]: User;
-  };
-  allIds: string[];
-}
+import { UsersCollection } from '../../types';
 
 function users(
-  state: UsersStore = {
+  state: UsersCollection = {
     byId: {},
     allIds: [],
   },

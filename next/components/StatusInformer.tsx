@@ -1,7 +1,6 @@
-import useDigitalStage from "../..";
+import useDigitalStage, {Status} from "../..";
 import OverlayInformer from "./ui/OverlayInformer";
 import React from "react";
-import {Status} from "../..";
 
 const StatusInformer = () => {
     const {status} = useDigitalStage();

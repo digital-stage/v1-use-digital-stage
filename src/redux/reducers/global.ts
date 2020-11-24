@@ -3,14 +3,7 @@ import {
   ServerGlobalEvents,
   ServerUserEvents,
 } from '../../global/SocketEvents';
-
-export interface GlobalStore {
-  stageId?: string;
-  groupId?: string;
-  localDeviceId?: string;
-  userId?: string;
-  ready: boolean;
-}
+import { GlobalStore } from '../../types';
 
 function global(
   state: GlobalStore = {

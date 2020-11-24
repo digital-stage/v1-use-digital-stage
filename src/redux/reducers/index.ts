@@ -1,37 +1,19 @@
 import { combineReducers } from 'redux';
-import global, { GlobalStore } from './global';
-import devices, { DevicesStore } from './devices';
-import stages, { StagesStore } from './stages';
-import stageMembers, { StageMembersStore } from './stageMembers';
-import customStageMembers, {
-  CustomStageMembersStore,
-} from './customStageMembers';
-import groups, { GroupsStore } from './groups';
-import users, { UsersStore } from './users';
-import customGroups, { CustomGroupsStore } from './customGroups';
-import audioProducers, { AudioProducersStore } from './audioProducers';
-import videoProducers, { VideoProducersStore } from './videoProducers';
-import customAudioProducers, {
-  CustomAudioProducersStore,
-} from './customAudioProducers';
-import videoConsumers, { VideoConsumersStore } from './videoConsumers';
-import audioConsumers, { AudioConsumersStore } from './audioConsumers';
+import global from './global';
 
-export interface RootReducer {
-  global: GlobalStore;
-  devices: DevicesStore;
-  users: UsersStore;
-  stages: StagesStore;
-  groups: GroupsStore;
-  customGroups: CustomGroupsStore;
-  stageMembers: StageMembersStore;
-  customStageMembers: CustomStageMembersStore;
-  videoProducers: VideoProducersStore;
-  audioProducers: AudioProducersStore;
-  customAudioProducers: CustomAudioProducersStore;
-  videoConsumers: VideoConsumersStore;
-  audioConsumers: AudioConsumersStore;
-}
+import { RootReducer } from '../../types/RootReducer';
+import devices from './devices';
+import users from './users';
+import stages from './stages';
+import groups from './groups';
+import customGroups from './customGroups';
+import stageMembers from './stageMembers';
+import customStageMembers from './customStageMembers';
+import videoProducers from './videoProducers';
+import audioProducers from './audioProducers';
+import customAudioProducers from './customAudioProducers';
+import videoConsumers from './videoConsumers';
+import audioConsumers from './audioConsumers';
 
 export default combineReducers<RootReducer>({
   global,

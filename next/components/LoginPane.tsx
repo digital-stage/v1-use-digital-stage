@@ -1,5 +1,5 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { styled } from 'styletron-react';
+import React, {useCallback, useRef, useState} from 'react';
+import {styled} from 'styletron-react';
 import useDigitalStage from '../..';
 
 const Container = styled('form', {

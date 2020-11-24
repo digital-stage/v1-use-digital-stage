@@ -1,4 +1,4 @@
-import { styled } from 'styletron-react';
+import {styled} from 'styletron-react';
 
 const Input = styled('input', {
   backgroundColor: '#22212c',

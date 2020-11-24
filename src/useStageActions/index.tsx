@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { Device, Stage } from '../types';
 import { ThreeDimensionAudioProperties } from '../types/ThreeDimensionAudioProperty';
 import useSocket from '../useSocket';
-import useCurrentStageId from '../redux/hooks/useCurrentStageId';
+import useCurrentStageId from '../hooks/useCurrentStageId';
 import {
   ClientDeviceEvents,
   ClientStageEvents,

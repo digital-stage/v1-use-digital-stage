@@ -18,8 +18,10 @@ import {
 import {
   GlobalProducer,
   Router,
-  StageMemberAudioProducer,
-  StageMemberVideoProducer,
+  RemoteAudioProducer,
+  RemoteVideoProducer,
+  LocalConsumer,
+  LocalProducer,
 } from '../../types';
 import { ClientDeviceEvents } from '../../global/SocketEvents';
 import useSocket from '../../useSocket';
@@ -37,24 +39,17 @@ export interface TMediasoupContext {
   connected?: boolean;
   router?: Router;
   producers: {
-    [id: string]: LocalProducer;
+    [trackId: string]: LocalProducer;
   };
   consumers: {
-    [globalProducerId: string]: mediasoupClient.types.Consumer;
+    [globalProducerId: string]: LocalConsumer;
   };
   consume: (
-    producer: StageMemberVideoProducer | StageMemberAudioProducer
-  ) => Promise<mediasoupClient.types.Consumer>;
-  stopConsuming: (
-    producer: StageMemberVideoProducer | StageMemberAudioProducer
-  ) => Promise<mediasoupClient.types.Consumer>;
+    producer: RemoteVideoProducer | RemoteAudioProducer
+  ) => Promise<LocalConsumer>;
+  stopConsuming: (producerId: string) => Promise<LocalConsumer>;
   produce: (track: MediaStreamTrack) => Promise<LocalProducer>;
   stopProducing: (trackId: string) => Promise<LocalProducer>;
-}
-
-export interface LocalProducer {
-  global: GlobalProducer;
-  local: mediasoupClient.types.Producer;
 }
 
 const useMediasoup = (routerDistUrl: string): TMediasoupContext => {
@@ -70,7 +65,7 @@ const useMediasoup = (routerDistUrl: string): TMediasoupContext => {
     [id: string]: LocalProducer;
   }>({});
   const [consumers, setConsumers] = useState<{
-    [globalProducerId: string]: mediasoupClient.types.Consumer;
+    [globalProducerId: string]: LocalConsumer;
   }>({});
 
   // Mediasoup specific
@@ -209,7 +204,9 @@ const useMediasoup = (routerDistUrl: string): TMediasoupContext => {
   }, [routerConnection, mediasoupDevice]);
 
   const consume = useCallback(
-    (producer: StageMemberVideoProducer | StageMemberAudioProducer) => {
+    (
+      producer: RemoteVideoProducer | RemoteAudioProducer
+    ): Promise<LocalConsumer> => {
       if (routerConnection && mediasoupDevice && receiveTransport) {
         if (!consumers[producer._id]) {
           return createConsumer(
@@ -219,16 +216,24 @@ const useMediasoup = (routerDistUrl: string): TMediasoupContext => {
             producer.globalProducerId
           )
             .then((consumer) => {
+              const localConsumer: LocalConsumer = {
+                _id: consumer.id,
+                consumer,
+                stageId: producer.stageId,
+                stageMemberId: producer.stageMemberId,
+                producerId: producer._id,
+              };
               setConsumers((prev) => ({
                 ...prev,
-                [producer._id]: consumer,
+                [producer._id]: localConsumer,
               }));
-              return consumer;
+              return localConsumer;
             })
-            .then((consumer) => {
-              if (consumer.paused)
-                return resumeConsumer(routerConnection, consumer);
-              return consumer;
+            .then(async (localConsumer) => {
+              if (localConsumer.consumer.paused) {
+                await resumeConsumer(routerConnection, localConsumer.consumer);
+              }
+              return localConsumer;
             });
         }
         throw new Error(`Already consuming ${producer._id}`);
@@ -239,20 +244,18 @@ const useMediasoup = (routerDistUrl: string): TMediasoupContext => {
   );
 
   const stopConsuming = useCallback(
-    (
-      producer: StageMemberVideoProducer | StageMemberAudioProducer
-    ): Promise<mediasoupClient.types.Consumer> => {
+    (producerId: string): Promise<LocalConsumer> => {
       if (routerConnection) {
-        const consumer = consumers[producer._id];
+        const consumer = consumers[producerId];
         if (consumer) {
-          return closeConsumer(routerConnection, consumer).then(
-            (): mediasoupClient.types.Consumer => {
-              setConsumers((prev) => omit(prev, producer._id));
+          return closeConsumer(routerConnection, consumer.consumer).then(
+            (): LocalConsumer => {
+              setConsumers((prev) => omit(prev, producerId));
               return consumer;
             }
           );
         }
-        throw new Error(`Could not find consumer for producer ${producer._id}`);
+        throw new Error(`Could not find consumer for producer ${producerId}`);
       }
       throw new Error(`Connection is not ready`);
     },

@@ -1,26 +1,13 @@
 import omit from 'lodash/omit';
 import without from 'lodash/without';
-import { VideoConsumer } from '../../types';
+import { LocalConsumer, LocalConsumersCollection } from '../../types';
 import AdditionalReducerTypes from '../actions/AdditionalReducerTypes';
 
-export interface VideoConsumersStore {
-  byId: {
-    [id: string]: VideoConsumer;
-  };
-  byStageMember: {
-    [stageMemberId: string]: string[];
-  };
-  byVideoProducer: {
-    [audioProducerId: string]: string;
-  };
-  allIds: string[];
-}
-
 function videoConsumers(
-  state: VideoConsumersStore = {
+  state: LocalConsumersCollection = {
     byId: {},
     byStageMember: {},
-    byVideoProducer: {},
+    byProducer: {},
     allIds: [],
   },
   action: {
@@ -30,7 +17,7 @@ function videoConsumers(
 ) {
   switch (action.type) {
     case AdditionalReducerTypes.ADD_VIDEO_CONSUMER: {
-      const videoConsumer = action.payload as VideoConsumer;
+      const videoConsumer = action.payload as LocalConsumer;
       return {
         ...state,
         byId: {
@@ -39,30 +26,33 @@ function videoConsumers(
         },
         byStageMember: {
           ...state.byStageMember,
-          [videoConsumer.stageMember]: [
-            ...state.byStageMember[videoConsumer.stageMember],
+          [videoConsumer.stageMemberId]: [
+            ...state.byStageMember[videoConsumer.stageMemberId],
             videoConsumer._id,
           ],
         },
-        byVideoProducer: {
-          ...state.byVideoProducer,
-          [videoConsumer.videoProducer]: videoConsumer._id,
+        byProducer: {
+          ...state.byProducer,
+          [videoConsumer.producerId]: videoConsumer._id,
         },
         allIds: [...state.allIds, videoConsumer._id],
       };
     }
     case AdditionalReducerTypes.REMOVE_VIDEO_CONSUMER: {
       const id = action.payload as string;
-      const { stageMember } = state.byId[id];
-      const { videoProducer } = state.byId[id];
+      const { stageMemberId } = state.byId[id];
+      const { producerId } = state.byId[id];
       return {
         ...state,
         byId: omit(state.byId, id),
         byStageMember: {
           ...state.byStageMember,
-          [stageMember]: without<string>(state.byStageMember[stageMember], id),
+          [stageMemberId]: without<string>(
+            state.byStageMember[stageMemberId],
+            id
+          ),
         },
-        byVideoProducer: omit(state.byVideoProducer, videoProducer),
+        byProducer: omit(state.byProducer, producerId),
         allIds: without<string>(state.allIds, id),
       };
     }

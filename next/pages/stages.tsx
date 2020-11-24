@@ -1,11 +1,8 @@
 import React, {useEffect, useState} from "react";
-import {useStages} from "../..";
 import CodeWrapper from "../components/ui/CodeWrapper";
-import {useStage} from "../..";
-import useDigitalStage from "../..";
+import useDigitalStage, {useCurrentUser, useStage, useStages} from "../..";
 import Button from "../components/ui/Button";
 import AddStagePanel from "../components/interaction/AddStagePanel";
-import {useCurrentUser} from "../..";
 
 const Stages = () => {
     const {actions} = useDigitalStage();

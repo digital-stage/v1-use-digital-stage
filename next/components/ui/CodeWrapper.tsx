@@ -1,4 +1,4 @@
-import { styled } from 'styletron-react';
+import {styled} from 'styletron-react';
 
 const CodeWrapper = styled('div', {
   color: '#f8f8f2',

@@ -1,4 +1,4 @@
-import { styled } from 'styletron-react';
+import {styled} from 'styletron-react';
 
 const Button = styled('button', {
   border: '1px solid black',
