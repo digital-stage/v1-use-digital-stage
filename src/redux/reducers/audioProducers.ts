@@ -10,13 +10,14 @@ function audioProducers(
   state: RemoteAudioProducersCollection = {
     byId: {},
     byStageMember: {},
+    byStage: {},
     allIds: [],
   },
   action: {
     type: string;
     payload: any;
   }
-) {
+): RemoteAudioProducersCollection {
   switch (action.type) {
     case ServerStageEvents.STAGE_MEMBER_AUDIO_ADDED: {
       const audioProducer = action.payload as RemoteAudioProducer;
@@ -28,7 +29,20 @@ function audioProducers(
         },
         byStageMember: {
           ...state.byStageMember,
-          [audioProducer.stageMemberId]: audioProducer._id,
+          [audioProducer.stageMemberId]: state.byStageMember[
+            audioProducer.stageMemberId
+          ]
+            ? [
+                ...state.byStageMember[audioProducer.stageMemberId],
+                audioProducer._id,
+              ]
+            : [audioProducer._id],
+        },
+        byStage: {
+          ...state.byStage,
+          [audioProducer.stageId]: state.byStage[audioProducer.stageId]
+            ? [...state.byStage[audioProducer.stageId], audioProducer._id]
+            : [audioProducer._id],
         },
         allIds: [...state.allIds, audioProducer._id],
       };
@@ -47,11 +61,21 @@ function audioProducers(
     }
     case ServerStageEvents.STAGE_MEMBER_AUDIO_REMOVED: {
       const id = action.payload as string;
-      const { stageMemberId } = state.byId[id];
+      if (!state.byId[id]) {
+        return state;
+      }
+      const { stageId, stageMemberId } = state.byId[id];
       return {
         ...state,
         byId: omit(state.byId, id),
-        byStageMember: omit(state.byStageMember, stageMemberId),
+        byStageMember: {
+          ...state.byStageMember,
+          [stageMemberId]: without(state.byStageMember[stageMemberId], id),
+        },
+        byStage: {
+          ...state.byStage,
+          [stageId]: without(state.byStage[stageId], id),
+        },
         allIds: without<string>(state.allIds, id),
       };
     }

@@ -4,7 +4,8 @@ module.exports = {
     'airbnb/hooks',
     "react-app",
     "prettier/@typescript-eslint",
-    "plugin:prettier/recommended"
+    'plugin:@typescript-eslint/recommended',
+    "plugin:prettier/recommended",
   ],
   "rules": {
     "no-underscore-dangle": 0,

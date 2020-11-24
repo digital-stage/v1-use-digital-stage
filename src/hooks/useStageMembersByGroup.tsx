@@ -1,10 +1,10 @@
 import { useSelector } from 'react-redux';
 import { RootReducer, StageMemberWithUserData } from '../types';
 
-const useStageMembersByStage = (stageId: string): StageMemberWithUserData[] =>
+const useStageMembersByStage = (groupId: string): StageMemberWithUserData[] =>
   useSelector<RootReducer, StageMemberWithUserData[]>((state) =>
-    state.stageMembers.byStage[stageId]
-      ? state.stageMembers.byStage[stageId].map((id) => {
+    state.stageMembers.byGroup[groupId]
+      ? state.stageMembers.byGroup[groupId].map((id) => {
           const stageMember = state.stageMembers.byId[id];
           const user = state.users.byId[stageMember.userId];
           if (user) {

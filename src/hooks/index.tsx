@@ -21,6 +21,10 @@ import useUsers from './useUsers';
 import useGroupsByStage from './useGroupsByStage';
 import useStageMembersByStage from './useStageMembersByStage';
 import useStage from './useStage';
+import useIsStageAdmin from './useIsStageAdmin';
+import useRemoteDevices from './useRemoteDevices';
+import useConductorsByStage from './useConductorsByStage';
+import useStageMembersByGroup from './useStageMembersByGroup';
 
 export {
   useAudioProducers,
@@ -30,9 +34,11 @@ export {
   useCustomAudioProducers,
   useCustomGroups,
   useCustomStageMembers,
+  useConductorsByStage,
   useLocalDevice,
   useDevices,
   useDevice,
+  useRemoteDevices,
   useStages,
   useStage,
   useSelector,
@@ -42,8 +48,10 @@ export {
   useStageMembers,
   useStageMember,
   useStageMembersByStage,
+  useStageMembersByGroup,
   useVideoProducers,
   useVideoConsumers,
   useAudioConsumers,
   useUsers,
+  useIsStageAdmin,
 };

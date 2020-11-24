@@ -1,5 +1,5 @@
-import TeckosClient from 'teckos-client/dist/TeckosClient';
 import { useCallback } from 'react';
+import { TeckosClient } from 'teckos-client';
 import {
   ServerDeviceEvents,
   ServerGlobalEvents,

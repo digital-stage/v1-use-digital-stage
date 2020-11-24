@@ -10,8 +10,6 @@ import debug from 'debug';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { devToolsEnhancer } from 'redux-devtools-extension';
-import { ErrorsProvider, useErrors } from './useErrors';
-import useAuth, { AuthContextProvider, TAuthContext } from './useAuth';
 import useSocket, { SocketProvider } from './useSocket';
 import { Device, Router } from './types';
 import enumerateDevices from './utils/enumerateDevices';
@@ -28,7 +26,6 @@ const dbg = debug('useDigitalStage:provider');
 export interface TDigitalStageContext {
   router?: Router;
   ready: boolean;
-  auth?: TAuthContext;
   actions?: TStageActionContext;
   status: IStatus[keyof IStatus];
 }
@@ -38,17 +35,16 @@ const DigitalStageContext = createContext<TDigitalStageContext>({
   status: Status.disconnected,
 });
 
-// TODO: Remove useAuth from this hooks and require JWT token as param
-const UseDigitalStageProvider = (props: { children: React.ReactNode }) => {
-  const { children } = props;
-  const auth = useAuth();
-  const [ready, setReady] = useState<boolean>(!auth.loading);
+const UseDigitalStageProvider = (props: {
+  children: React.ReactNode;
+  token?: string;
+  handleError: (error: Error) => any;
+}) => {
+  const { children, token, handleError } = props;
+  const [ready, setReady] = useState<boolean>(!token);
   const socketAPI = useSocket();
-  const { reportError } = useErrors();
   const actions = useStageActions();
   const { router } = useWebRTCCommunication();
-
-  const { token } = auth;
 
   const createInitialDevice = (): Promise<Partial<Device>> =>
     enumerateDevices().then(
@@ -89,16 +85,16 @@ const UseDigitalStageProvider = (props: { children: React.ReactNode }) => {
     );
 
   const startSocketConnection = useCallback(() => {
-    if (token && reportError && socketAPI) {
+    if (token && socketAPI) {
       if (socketAPI.status === Status.disconnected) {
         dbg('Connecting to API server with token');
         createInitialDevice()
           .then((initialDevice) => socketAPI.connect(token, initialDevice))
           .then(() => setReady(true))
-          .catch((connError) => reportError(connError));
+          .catch((connError) => handleError(connError));
       }
     }
-  }, [token, reportError, socketAPI]);
+  }, [token, handleError, socketAPI]);
 
   useEffect(() => {
     if (token && socketAPI) {
@@ -113,7 +109,6 @@ const UseDigitalStageProvider = (props: { children: React.ReactNode }) => {
       value={{
         router,
         ready,
-        auth,
         actions,
         status: socketAPI ? socketAPI.status : Status.disconnected,
       }}
@@ -122,32 +117,53 @@ const UseDigitalStageProvider = (props: { children: React.ReactNode }) => {
     </DigitalStageContext.Provider>
   );
 };
+UseDigitalStageProvider.defaultProps = {
+  token: undefined,
+};
 
 const store = createStore(reducer, devToolsEnhancer({}));
 
 const DigitalStageProvider = (props: {
   children: React.ReactNode;
-  authUrl: string;
   apiUrl: string;
   routerDistUrl: string;
+  token?: string;
+  addErrorHandler?: (error: Error) => any;
 }) => {
-  const { children, authUrl, apiUrl, routerDistUrl } = props;
+  const { children, token, apiUrl, routerDistUrl, addErrorHandler } = props;
+
+  const handleError = useCallback(
+    (error: Error) => {
+      if (addErrorHandler) {
+        addErrorHandler(error);
+      } else {
+        // eslint-disable-next-line no-console
+        console.error(error);
+      }
+    },
+    [addErrorHandler]
+  );
 
   return (
-    <ErrorsProvider>
-      <AuthContextProvider authUrl={authUrl}>
-        <Provider store={store}>
-          <SocketProvider apiUrl={apiUrl}>
-            <StageHandlingProvider>
-              <WebRTCCommunicationProvider routerDistUrl={routerDistUrl}>
-                <UseDigitalStageProvider>{children}</UseDigitalStageProvider>
-              </WebRTCCommunicationProvider>
-            </StageHandlingProvider>
-          </SocketProvider>
-        </Provider>
-      </AuthContextProvider>
-    </ErrorsProvider>
+    <Provider store={store}>
+      <SocketProvider apiUrl={apiUrl}>
+        <StageHandlingProvider>
+          <WebRTCCommunicationProvider
+            handleError={handleError}
+            routerDistUrl={routerDistUrl}
+          >
+            <UseDigitalStageProvider handleError={handleError} token={token}>
+              {children}
+            </UseDigitalStageProvider>
+          </WebRTCCommunicationProvider>
+        </StageHandlingProvider>
+      </SocketProvider>
+    </Provider>
   );
+};
+DigitalStageProvider.defaultProps = {
+  token: undefined,
+  addErrorHandler: undefined,
 };
 
 export { DigitalStageProvider };

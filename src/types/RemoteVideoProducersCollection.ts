@@ -5,7 +5,10 @@ export interface RemoteVideoProducersCollection {
     [id: string]: RemoteVideoProducer;
   };
   byStageMember: {
-    [stageMemberId: string]: string;
+    [stageMemberId: string]: string[];
+  };
+  byStage: {
+    [stageId: string]: string[];
   };
   allIds: string[];
 }

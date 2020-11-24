@@ -5,7 +5,10 @@ export interface RemoteAudioProducersCollection {
     [id: string]: RemoteAudioProducer;
   };
   byStageMember: {
-    [stageMemberId: string]: string;
+    [stageMemberId: string]: string[];
+  };
+  byStage: {
+    [stageId: string]: string[];
   };
   allIds: string[];
 }

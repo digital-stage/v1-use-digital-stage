@@ -3,7 +3,7 @@ import * as cookie from 'js-cookie';
 import fetch from 'isomorphic-unfetch';
 import debug from 'debug';
 import { useErrors } from '../useErrors';
-import { AuthUser } from '../types';
+import { AuthUser } from '../../../src/types';
 
 const d = debug('digitalstage:auth');
 
@@ -43,13 +43,13 @@ const AuthContext = React.createContext<TAuthContext>({
 
 const getUserByToken = (authUrl: string, token: string): Promise<AuthUser> =>
   fetch(`${authUrl}/profile`, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((result) => result.json())
-    .then((json) => json as AuthUser);
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  },
+})
+  .then((result) => result.json())
+  .then((json) => json as AuthUser);
 
 export const AuthContextProvider = (props: {
   children: React.ReactNode;
@@ -90,10 +90,10 @@ export const AuthContextProvider = (props: {
         )
         .then((resToken) =>
           getUserByToken(authUrl, resToken).then((resUser) => {
-            setUser(resUser);
-            setToken(resToken);
-            cookie.set('token', resToken, { expires: 1 });
-          })
+          setUser(resUser);
+          setToken(resToken);
+          cookie.set('token', resToken, { expires: 1 });
+        })
         )
         .catch((err) => {
           throw err;
@@ -124,10 +124,10 @@ export const AuthContextProvider = (props: {
         })
         .then((resToken) =>
           getUserByToken(authUrl, resToken).then((resUser) => {
-            setUser(resUser);
-            setToken(resToken);
-            cookie.set('token', resToken, { expires: staySignedIn ? 7 : 1 });
-          })
+          setUser(resUser);
+          setToken(resToken);
+          cookie.set('token', resToken, { expires: staySignedIn ? 7 : 1 });
+        })
         )
         .catch((err) => {
           throw err;
@@ -142,39 +142,39 @@ export const AuthContextProvider = (props: {
   const requestPasswordReset = React.useCallback(
     (email: string) =>
       fetch(`${authUrl}/forgot`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-        body: JSON.stringify({
-          email,
-        }),
-      })
-        .then((res) => res.status)
-        .catch((err) => {
-          throw err;
-        }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        email,
+      }),
+    })
+      .then((res) => res.status)
+      .catch((err) => {
+        throw err;
+      }),
     [authUrl]
   );
 
   const resetPassword = React.useCallback(
     (resetToken: string, password: string) =>
       fetch(`${authUrl}/reset`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-        body: JSON.stringify({
-          token: resetToken,
-          password,
-        }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        token: resetToken,
+        password,
+      }),
+    })
+      .then((result) => {
+        if (!result.ok) {
+          throw new Error('Abgelaufener Link');
+        }
       })
-        .then((result) => {
-          if (!result.ok) {
-            throw new Error('Abgelaufener Link');
-          }
-        })
-        .catch((error) => reportError(error.message)),
+      .catch((error) => reportError(error.message)),
     [authUrl, reportError]
   );
 

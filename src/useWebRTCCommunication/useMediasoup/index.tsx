@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useEffect, useState } from 'react';
 import debug from 'debug';
 import { ITeckosClient, TeckosClient } from 'teckos-client';
@@ -27,7 +26,7 @@ import { ClientDeviceEvents } from '../../global/SocketEvents';
 import useSocket from '../../useSocket';
 import { AddAudioProducerPayload } from '../../global/SocketPayloads';
 
-const TIMEOUT_MS: number = 5000;
+const TIMEOUT_MS = 5000;
 
 const d = debug('useMediasoup');
 
@@ -95,7 +94,6 @@ const useMediasoup = (routerDistUrl: string): TMediasoupContext => {
         })
         .catch((error) => err(error));
     }
-    return () => {};
   }, [routerDistUrl, router]);
 
   useEffect(() => {
@@ -126,7 +124,7 @@ const useMediasoup = (routerDistUrl: string): TMediasoupContext => {
         setRouterConnection(undefined);
       };
     }
-    return () => {};
+    return undefined;
   }, [router]);
 
   useEffect(() => {
@@ -150,7 +148,7 @@ const useMediasoup = (routerDistUrl: string): TMediasoupContext => {
         setRtpCapabilities(undefined);
       };
     }
-    return () => {};
+    return undefined;
   }, [routerConnection]);
 
   useEffect(() => {
@@ -181,7 +179,7 @@ const useMediasoup = (routerDistUrl: string): TMediasoupContext => {
         if (createdTransport) createdTransport.close();
       };
     }
-    return () => {};
+    return undefined;
   }, [routerConnection, mediasoupDevice]);
 
   useEffect(() => {
@@ -200,7 +198,7 @@ const useMediasoup = (routerDistUrl: string): TMediasoupContext => {
         if (createdTransport) createdTransport.close();
       };
     }
-    return () => {};
+    return undefined;
   }, [routerConnection, mediasoupDevice]);
 
   const consume = useCallback(

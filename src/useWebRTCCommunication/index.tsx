@@ -19,7 +19,6 @@ import useMediasoup from './useMediasoup';
 import useAudioProducers from '../hooks/useAudioProducers';
 import useVideoProducers from '../hooks/useVideoProducers';
 import allActions from '../redux/actions';
-import { useErrors } from '../useErrors';
 
 interface TWebRTCCommunicationContext {
   router?: Router;
@@ -40,8 +39,9 @@ function isAudioProducer(
 export const WebRTCCommunicationProvider = (props: {
   children: React.ReactNode;
   routerDistUrl: string;
+  handleError: (error: Error) => any;
 }) => {
-  const { children, routerDistUrl } = props;
+  const { children, routerDistUrl, handleError } = props;
   const {
     router,
     producers,
@@ -53,14 +53,10 @@ export const WebRTCCommunicationProvider = (props: {
     stopProducing,
   } = useMediasoup(routerDistUrl);
 
-  const { reportError } = useErrors();
-
   const dispatch = useDispatch();
 
   // Automated Device handling
   const localDevice = useLocalDevice();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // @ts-ignore
   const [working, setWorking] = useState<boolean>(false);
   const remoteVideoProducers = useVideoProducers();
   const remoteAudioProducers = useAudioProducers();
@@ -241,20 +237,20 @@ export const WebRTCCommunicationProvider = (props: {
       if (localDevice.sendVideo !== sendVideo) {
         if (localDevice.sendVideo) {
           d('Send video on');
-          startSendingVideo(localDevice).catch((error) => reportError(error));
+          startSendingVideo(localDevice).catch((error) => handleError(error));
         } else {
           d('Send video off');
-          stopSendingVideo().catch((error) => reportError(error));
+          stopSendingVideo().catch((error) => handleError(error));
         }
         setSendVideo(localDevice.sendVideo);
       }
       if (localDevice.sendAudio !== sendAudio) {
         if (localDevice.sendAudio) {
           d('Send audio on');
-          startSendingAudio(localDevice).catch((error) => reportError(error));
+          startSendingAudio(localDevice).catch((error) => handleError(error));
         } else {
           d('Send audio off');
-          stopSendingAudio().catch((error) => reportError(error));
+          stopSendingAudio().catch((error) => handleError(error));
         }
         setSendAudio(localDevice.sendAudio);
       }
@@ -290,7 +286,7 @@ export const WebRTCCommunicationProvider = (props: {
     startSendingAudio,
     stopSendingAudio,
     stopSendingVideo,
-    reportError,
+    handleError,
   ]);
 
   useEffect(() => {
