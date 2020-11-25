@@ -5,6 +5,7 @@ import {
   RemoteAudioProducer,
   RemoteAudioProducersCollection,
 } from '../../types';
+import AdditionalReducerTypes from '../actions/AdditionalReducerTypes';
 
 function audioProducers(
   state: RemoteAudioProducersCollection = {
@@ -19,6 +20,14 @@ function audioProducers(
   }
 ): RemoteAudioProducersCollection {
   switch (action.type) {
+    case AdditionalReducerTypes.RESET: {
+      return {
+        byId: {},
+        byStageMember: {},
+        byStage: {},
+        allIds: [],
+      };
+    }
     case ServerStageEvents.STAGE_MEMBER_AUDIO_ADDED: {
       const audioProducer = action.payload as RemoteAudioProducer;
       return {

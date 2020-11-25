@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
-import { Device, Stage } from '../types';
-import { ThreeDimensionAudioProperties } from '../types/ThreeDimensionAudioProperty';
+import { Device, Stage, Group, ThreeDimensionAudioProperties } from '../types';
 import useSocket from '../useSocket';
 import useCurrentStageId from '../hooks/useCurrentStageId';
 import {
@@ -26,7 +25,6 @@ import {
   SetCustomStageMemberOvPayload,
   SetCustomStageMemberPayload,
 } from '../global/SocketPayloads';
-import { Group } from '../types/Group';
 import useStageHandling from '../useStageHandling';
 
 export interface TStageActionContext {

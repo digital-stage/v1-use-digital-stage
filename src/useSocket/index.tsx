@@ -32,7 +32,7 @@ const useSocket = (): TSocketContext =>
 const SocketProvider = (props: {
   children: React.ReactNode;
   apiUrl: string;
-}) => {
+}): JSX.Element => {
   const { children, apiUrl } = props;
   const [socket, setSocket] = useState<TeckosClient>();
   const [status, setStatus] = useState<IStatus[keyof IStatus]>(

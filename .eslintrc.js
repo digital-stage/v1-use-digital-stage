@@ -6,6 +6,7 @@ module.exports = {
     "prettier/@typescript-eslint",
     'plugin:@typescript-eslint/recommended',
     "plugin:prettier/recommended",
+    "plugin:promise/recommended"
   ],
   "rules": {
     "no-underscore-dangle": 0,

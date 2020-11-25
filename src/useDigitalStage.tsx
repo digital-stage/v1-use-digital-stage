@@ -38,7 +38,7 @@ const DigitalStageContext = createContext<TDigitalStageContext>({
 const UseDigitalStageProvider = (props: {
   children: React.ReactNode;
   token?: string;
-  handleError: (error: Error) => any;
+  handleError: (error: Error) => void;
 }) => {
   const { children, token, handleError } = props;
   const [ready, setReady] = useState<boolean>(!token);
@@ -46,8 +46,8 @@ const UseDigitalStageProvider = (props: {
   const actions = useStageActions();
   const { router } = useWebRTCCommunication();
 
-  const createInitialDevice = (): Promise<Partial<Device>> =>
-    enumerateDevices().then(
+  const createInitialDevice = useCallback((): Promise<Partial<Device>> => {
+    return enumerateDevices().then(
       (mediaDevices): Partial<Device> => {
         const bowser = Bowser.getParser(window.navigator.userAgent);
         const os = bowser.getOSName();
@@ -83,6 +83,7 @@ const UseDigitalStageProvider = (props: {
         };
       }
     );
+  }, []);
 
   const startSocketConnection = useCallback(() => {
     if (token && socketAPI) {
@@ -94,15 +95,13 @@ const UseDigitalStageProvider = (props: {
           .catch((connError) => handleError(connError));
       }
     }
-  }, [token, handleError, socketAPI]);
+  }, [token, handleError, socketAPI.status]);
 
   useEffect(() => {
-    if (token && socketAPI) {
-      if (socketAPI.status === Status.disconnected) {
-        startSocketConnection();
-      }
+    if (token) {
+      startSocketConnection();
     }
-  }, [token, socketAPI, startSocketConnection]);
+  }, [token, startSocketConnection]);
 
   return (
     <DigitalStageContext.Provider
@@ -128,8 +127,8 @@ const DigitalStageProvider = (props: {
   apiUrl: string;
   routerDistUrl: string;
   token?: string;
-  addErrorHandler?: (error: Error) => any;
-}) => {
+  addErrorHandler?: (error: Error) => void;
+}): JSX.Element => {
   const { children, token, apiUrl, routerDistUrl, addErrorHandler } = props;
 
   const handleError = useCallback(

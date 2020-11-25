@@ -39,8 +39,8 @@ function isAudioProducer(
 export const WebRTCCommunicationProvider = (props: {
   children: React.ReactNode;
   routerDistUrl: string;
-  handleError: (error: Error) => any;
-}) => {
+  handleError: (error: Error) => void;
+}): JSX.Element => {
   const { children, routerDistUrl, handleError } = props;
   const {
     router,
@@ -51,7 +51,7 @@ export const WebRTCCommunicationProvider = (props: {
     stopConsuming,
     produce,
     stopProducing,
-  } = useMediasoup(routerDistUrl);
+  } = useMediasoup(routerDistUrl, handleError);
 
   const dispatch = useDispatch();
 
@@ -67,22 +67,25 @@ export const WebRTCCommunicationProvider = (props: {
 
   const consumeRemoteProducer = useCallback(
     (remoteProducer: RemoteVideoProducer | RemoteAudioProducer) => {
-      consume(remoteProducer).then((localConsumer) => {
-        d(`Consuming now remote producer ${remoteProducer._id}`);
-        const action = isAudioProducer(remoteProducer)
-          ? allActions.stageActions.client.addAudioConsumer(localConsumer)
-          : allActions.stageActions.client.addVideoConsumer(localConsumer);
-        dispatch(action);
-      });
+      return consume(remoteProducer)
+        .then((localConsumer) => {
+          d(`Consuming now remote producer ${remoteProducer._id}`);
+          const action = isAudioProducer(remoteProducer)
+            ? allActions.stageActions.client.addAudioConsumer(localConsumer)
+            : allActions.stageActions.client.addVideoConsumer(localConsumer);
+          dispatch(action);
+          return localConsumer;
+        })
+        .catch((error) => handleError(error));
     },
-    [consume, dispatch]
+    [consume, dispatch, handleError]
   );
 
   const stopConsumingRemoteProducer = useCallback(
     (producerId: string) => {
-      if (stopConsuming) {
-        d(`Stop consuming remote producer ${producerId}`);
-        stopConsuming(producerId).then((localConsumer) => {
+      d(`Stop consuming remote producer ${producerId}`);
+      return stopConsuming(producerId)
+        .then((localConsumer) => {
           d(`Stopped consuming remote producer ${producerId}`);
           const action =
             localConsumer.consumer.kind === 'audio'
@@ -93,10 +96,11 @@ export const WebRTCCommunicationProvider = (props: {
                   localConsumer._id
                 );
           dispatch(action);
-        });
-      }
+          return localConsumer;
+        })
+        .catch((error) => handleError(error));
     },
-    [stopConsuming, dispatch]
+    [stopConsuming, dispatch, handleError]
   );
 
   useEffect(() => {
