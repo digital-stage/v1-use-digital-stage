@@ -1,10 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect } from 'react';
-import debug from 'debug';
-
-const d = debug('useErrors');
-const printWarning = d.extend('warn');
-const printError = d.extend('err');
+import { useCallback, useContext, useEffect } from 'react';
 
 export interface ErrorsProps {
   warnings: Error[];
@@ -28,8 +23,7 @@ const ErrorsContext = React.createContext<ErrorsProps>({
   },
 });
 
-export const useErrors = (): ErrorsProps =>
-  React.useContext<ErrorsProps>(ErrorsContext);
+export const useErrors = (): ErrorsProps => useContext<ErrorsProps>(ErrorsContext);
 
 export const ErrorsProvider = (props: { children: React.ReactNode }) => {
   const [warnings, setWarnings] = React.useState<Error[]>([]);
@@ -37,11 +31,11 @@ export const ErrorsProvider = (props: { children: React.ReactNode }) => {
   const { children } = props;
 
   useEffect(() => {
-    errors.forEach((error) => printError(error));
+    errors.forEach((error) => console.error(error));
   }, [errors]);
 
   useEffect(() => {
-    warnings.forEach((warning) => printWarning(warning));
+    warnings.forEach((warning) => console.warn(warning));
   }, [warnings]);
 
   const reportWarning = useCallback((warning: Error) => {

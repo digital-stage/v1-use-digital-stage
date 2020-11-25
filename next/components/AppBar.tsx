@@ -2,6 +2,7 @@ import Link from 'next/link';
 import {styled} from 'styletron-react';
 import React from 'react';
 import useDigitalStage from '../..';
+import useAuth from "../lib/useAuth";
 
 const Container = styled('div', {
   width: '100%',
@@ -13,13 +14,15 @@ const List = styled('div', {
   display: 'flex',
   paddingLeft: '1rem',
   paddingRight: '1rem',
+  flexWrap: 'wrap'
 });
 const ListItem = styled('div', {
   padding: '1rem',
 });
 
 const AppBar = () => {
-  const { ready, auth } = useDigitalStage();
+  const auth = useAuth();
+  const { ready } = useDigitalStage();
 
   if (ready && auth.user) {
     return (

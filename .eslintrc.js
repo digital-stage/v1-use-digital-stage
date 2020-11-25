@@ -10,6 +10,7 @@ module.exports = {
   ],
   "rules": {
     "no-underscore-dangle": 0,
+    "@typescript-eslint/no-unused-vars": 0,
     'prettier/prettier': [
       'error',
       {

@@ -1,6 +1,6 @@
 import React, {useCallback, useRef, useState} from 'react';
 import {styled} from 'styletron-react';
-import useDigitalStage from '../..';
+import useAuth from "../lib/useAuth";
 
 const Container = styled('form', {
   display: 'flex',
@@ -8,7 +8,7 @@ const Container = styled('form', {
 });
 
 const LoginPane = () => {
-  const { auth } = useDigitalStage();
+  const  auth  = useAuth();
   const emailRef = useRef<HTMLInputElement>();
   const passwordRef = useRef<HTMLInputElement>();
   const [error, setError] = useState<string>();

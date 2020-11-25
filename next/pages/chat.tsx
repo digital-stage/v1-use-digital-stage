@@ -1,9 +1,8 @@
 import {styled} from "styletron-react";
 import React, {useCallback} from "react";
-import useDigitalStage, {Group, useVideoConsumers} from "../../dist";
+import useDigitalStage, {Group, useGroupsByStage, useVideoConsumers, useStageMembersByGroup, LocalConsumer, StageMemberWithUserData, useCurrentStageId, useLocalDevice, useSelector} from "../..";
 import VideoPlayer from "../components/ui/VideoPlayer";
-import {LocalConsumer, StageMemberWithUserData, useCurrentStageId, useLocalDevice, useSelector} from "../..";
-import {useGroupsByStage, useStageMembersByGroup} from "../../../webclient/lib/digitalstage/useStageSelector";
+import VideoTrackPlayer from "../components/ui/VideoTrackPlayer";
 
 const Wrapper = styled("div", {
     position: 'fixed',
@@ -43,7 +42,9 @@ const StageMemberView = (props: {
         <div>
             <h4>{stageMember.name || stageMember._id}</h4>
             <p>{videoConsumers.length} VIDEO CONSUMERS</p>
-            <VideoPlayer consumers={videoConsumers}/>
+            {videoConsumers.map(videoConsumer => (
+                <VideoTrackPlayer track={videoConsumer.consumer.track}/>
+            ))}
         </div>
     )
 }

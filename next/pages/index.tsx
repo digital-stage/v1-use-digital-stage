@@ -1,15 +1,16 @@
 import React from 'react';
 import useDigitalStage, {useCurrentUser} from '../..';
 import LoginPane from '../components/LoginPane';
+import useAuth from "../lib/useAuth";
 
 const Index = () => {
-    const {ready, auth, router} = useDigitalStage();
+    const auth = useAuth();
+    const {ready, router} = useDigitalStage();
     const currentUser = useCurrentUser();
 
     if (auth && !auth.user) {
         return <LoginPane/>;
     }
-
 
     return (
         <div>

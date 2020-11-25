@@ -3,7 +3,7 @@ import * as cookie from 'js-cookie';
 import fetch from 'isomorphic-unfetch';
 import debug from 'debug';
 import { useErrors } from '../useErrors';
-import { AuthUser } from '../../../src/types';
+import { AuthUser } from '../../..';
 
 const d = debug('digitalstage:auth');
 
@@ -50,6 +50,8 @@ const getUserByToken = (authUrl: string, token: string): Promise<AuthUser> =>
 })
   .then((result) => result.json())
   .then((json) => json as AuthUser);
+
+export const AuthContextConsumer = AuthContext.Consumer;
 
 export const AuthContextProvider = (props: {
   children: React.ReactNode;
