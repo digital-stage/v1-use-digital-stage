@@ -2,17 +2,17 @@ import {styled} from 'styletron-react';
 
 const Button = styled('button', {
   border: '1px solid black',
-  backgroundColor: '#50fa7b',
+  backgroundColor: '#000',
   padding: '.2rem',
-  color: '#000',
+  color: '#fff',
   fontFamily: "'Fira Code', monospace",
 
   ':hover': {
-    backgroundColor: '#40cd64',
+    backgroundColor: '#333',
   },
   ':disabled': {
     cursor: 'default',
-    backgroundColor: '#cd40aa',
+    backgroundColor: '#fff',
   },
 });
 export default Button;

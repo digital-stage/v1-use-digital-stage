@@ -15,7 +15,10 @@ import { Device, Router } from './types';
 import enumerateDevices from './utils/enumerateDevices';
 import reducer from './redux/reducers/index';
 import { StageHandlingProvider } from './useStageHandling';
-import useStageActions, { TStageActionContext } from './useStageActions';
+import useStageActions, {
+  StageActionsProvider,
+  TStageActionContext,
+} from './useStageActions';
 import Status, { IStatus } from './useSocket/Status';
 import useWebRTCCommunication, {
   WebRTCCommunicationProvider,
@@ -147,14 +150,16 @@ const DigitalStageProvider = (props: {
     <Provider store={store}>
       <SocketProvider apiUrl={apiUrl}>
         <StageHandlingProvider>
-          <WebRTCCommunicationProvider
-            handleError={handleError}
-            routerDistUrl={routerDistUrl}
-          >
-            <UseDigitalStageProvider handleError={handleError} token={token}>
-              {children}
-            </UseDigitalStageProvider>
-          </WebRTCCommunicationProvider>
+          <StageActionsProvider handleError={handleError}>
+            <WebRTCCommunicationProvider
+              handleError={handleError}
+              routerDistUrl={routerDistUrl}
+            >
+              <UseDigitalStageProvider handleError={handleError} token={token}>
+                {children}
+              </UseDigitalStageProvider>
+            </WebRTCCommunicationProvider>
+          </StageActionsProvider>
         </StageHandlingProvider>
       </SocketProvider>
     </Provider>

@@ -1,15 +1,17 @@
 import React, {useEffect, useState} from 'react';
-import useDigitalStage, {useCurrentStageId, useGroupsByStage, useStages} from '../..';
-import Button from "../components/ui/Button";
+import {useCurrentStageId, useGroupsByStage, useStages} from '../../..';
+import Button from "../../components/ui/Button";
+import DocsWrapper from "../../components/docs/DocsWrapper";
+import {useStageActions} from "use-digital-stage";
 
 const StageManagement = () => {
-    const { actions } = useDigitalStage();
     const currentStageId = useCurrentStageId();
     const stages = useStages();
     const [stageId, setStageId] = useState<string>();
     const [groupId, setGroupId] = useState<string>();
     const groups = useGroupsByStage(stageId);
     const [error, setError] = useState<string>();
+    const {leaveStage, joinStage} = useStageActions();
 
     useEffect(() => {
         if( !stageId ) {
@@ -19,12 +21,12 @@ const StageManagement = () => {
 
     if( currentStageId ) {
         return (
-            <Button onClick={() => actions.leaveStage()}>Leave stage</Button>
+            <Button onClick={() => leaveStage()}>Leave stage</Button>
         )
     }
 
     return (
-        <div>
+        <DocsWrapper>
             <select onChange={(event) => setStageId(event.target.value)}>
                 {stages.allIds.map(sId => {
                     const stage = stages.byId[sId];
@@ -41,7 +43,7 @@ const StageManagement = () => {
                 })}
             </select>
             <Button onClick={() => {
-                actions.joinStage(stageId, groupId)
+                joinStage(stageId, groupId)
                     .then(() => setError(undefined))
                     .catch((err) => {
                         console.error(err);
@@ -51,7 +53,7 @@ const StageManagement = () => {
             {error ? (
                 <p>{error}</p>
             ) : null}
-        </div>
+        </DocsWrapper>
     );
 };
 export default StageManagement;

@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import {styled} from 'styletron-react';
 import React from 'react';
-import useDigitalStage from '../..';
-import useAuth from "../lib/useAuth";
+import useDigitalStage from 'use-digital-stage';
+import useAuth from "../../lib/useAuth";
 
 const Container = styled('div', {
   width: '100%',
@@ -32,34 +32,34 @@ const AppBar = () => {
             <Link href="/">Home</Link>
           </ListItem>
           <ListItem>
-            <Link href="/user">User</Link>
+            <Link href="/docs/user">User</Link>
           </ListItem>
           <ListItem>
-            <Link href="/devices">Devices</Link>
+            <Link href="/docs/devices">Devices</Link>
           </ListItem>
           <ListItem>
-            <Link href="/stagemanagement">Stage management</Link>
+            <Link href="/docs/stagemanagement">Stage management</Link>
           </ListItem>
           <ListItem>
-            <Link href="/stages">Stages</Link>
+            <Link href="/docs/stages">Stages</Link>
           </ListItem>
           <ListItem>
-            <Link href="/groups">Groups</Link>
+            <Link href="/docs/groups">Groups</Link>
           </ListItem>
           <ListItem>
-            <Link href="/customgroups">Custom Groups</Link>
+            <Link href="/docs/customgroups">Custom Groups</Link>
           </ListItem>
           <ListItem>
-            <Link href="/stagemembers">Stage members</Link>
+            <Link href="/docs/stagemembers">Stage members</Link>
           </ListItem>
           <ListItem>
-            <Link href="/customstagemembers">Custom stage members</Link>
+            <Link href="/docs/customstagemembers">Custom stage members</Link>
           </ListItem>
           <ListItem>
-            <Link href="/chat">Chat</Link>
+            <Link href="/docs/chat">Chat</Link>
           </ListItem>
           <ListItem>
-            <Link href="/state">Full state</Link>
+            <Link href="/docs/state">Full state</Link>
           </ListItem>
         </List>
       </Container>

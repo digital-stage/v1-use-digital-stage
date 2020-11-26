@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
-import CodeWrapper from "../components/ui/CodeWrapper";
-import {useStageMember, useStageMembers, useStageMembersByStage, useStages} from "../..";
+import CodeWrapper from "../../components/ui/CodeWrapper";
+import {useStageMember, useStageMembers, useStageMembersByStage, useStages} from "use-digital-stage";
+import DocsWrapper from "../../components/docs/DocsWrapper";
 
 const StageMembers = () => {
     const stages = useStages();
@@ -21,7 +22,7 @@ const StageMembers = () => {
     }, [stageMembers])
 
     return (
-        <div>
+        <DocsWrapper>
             <h2>Usage</h2>
             <p>
                 Get all available stage members by using:
@@ -89,7 +90,7 @@ const StageMembers = () => {
                 {JSON.stringify(stageMember, null, 2)}
                 </pre>
             </CodeWrapper>
-        </div>
+        </DocsWrapper>
     )
 }
 export default StageMembers;

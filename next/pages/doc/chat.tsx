@@ -1,8 +1,9 @@
 import {styled} from "styletron-react";
 import React, {useCallback} from "react";
-import useDigitalStage, {Group, useGroupsByStage, useVideoConsumers, useStageMembersByGroup, LocalConsumer, StageMemberWithUserData, useCurrentStageId, useLocalDevice, useSelector} from "../..";
-import VideoPlayer from "../components/ui/VideoPlayer";
-import VideoTrackPlayer from "../components/ui/VideoTrackPlayer";
+import { useStageActions, Group, useGroupsByStage, useVideoConsumers, useStageMembersByGroup, LocalConsumer, StageMemberWithUserData, useCurrentStageId, useLocalDevice, useSelector} from "use-digital-stage";
+
+import DocsWrapper from "../../components/docs/DocsWrapper";
+import VideoPlayer from "../../components/ui/VideoPlayer";
 
 const Wrapper = styled("div", {
     position: 'fixed',
@@ -41,10 +42,7 @@ const StageMemberView = (props: {
     return (
         <div>
             <h4>{stageMember.name || stageMember._id}</h4>
-            <p>{videoConsumers.length} VIDEO CONSUMERS</p>
-            {videoConsumers.map(videoConsumer => (
-                <VideoTrackPlayer track={videoConsumer.consumer.track}/>
-            ))}
+            <VideoPlayer consumers={videoConsumers}/>
         </div>
     )
 }
@@ -66,7 +64,7 @@ const GroupView = (props: {
 
 
 const Chat = () => {
-    const {actions} = useDigitalStage();
+    const {updateDevice} = useStageActions();
     const localDevice = useLocalDevice();
 
     const consumers = useVideoConsumers();
@@ -78,26 +76,22 @@ const Chat = () => {
     const groups = useGroupsByStage(stageId);
 
     const toggleWebcam = useCallback(() => {
-        if (actions) {
-            actions.updateDevice(localDevice._id, {
-                sendVideo: !localDevice.sendVideo
-            })
-        }
-    }, [actions, localDevice]);
+        updateDevice(localDevice._id, {
+            sendVideo: localDevice.sendVideo
+        })
+    }, [updateDevice, localDevice]);
 
     const toggleMic = useCallback(() => {
-        if (actions) {
-            actions.updateDevice(localDevice._id, {
-                sendAudio: !localDevice.sendAudio
-            })
-        }
-    }, [actions, localDevice]);
+        updateDevice(localDevice._id, {
+            sendAudio: localDevice.sendAudio
+        })
+    }, [updateDevice, localDevice]);
 
 
     if (stageId) {
 
         return (
-            <>
+            <DocsWrapper>
                 <p>{consumers.allIds.length} VIDEO CONSUMERS</p>
                 {groups.map(group => <GroupView key={group._id} group={group}/>)}
 
@@ -121,7 +115,7 @@ const Chat = () => {
                         </ToggleButton>
                     </Wrapper>
                 ) : null}
-            </>
+            </DocsWrapper>
         )
     }
     return (

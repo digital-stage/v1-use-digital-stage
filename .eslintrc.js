@@ -6,11 +6,11 @@ module.exports = {
     "prettier/@typescript-eslint",
     'plugin:@typescript-eslint/recommended',
     "plugin:prettier/recommended",
-    "plugin:promise/recommended"
+    "plugin:promise/recommended",
+    'plugin:react/recommended'
   ],
   "rules": {
     "no-underscore-dangle": 0,
-    "@typescript-eslint/no-unused-vars": 0,
     'prettier/prettier': [
       'error',
       {

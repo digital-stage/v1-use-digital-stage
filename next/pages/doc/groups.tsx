@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from "react";
-import CodeWrapper from "../components/ui/CodeWrapper";
-import AddGroupPanel from "../components/interaction/AddGroupPanel";
-import useDigitalStage, {useCurrentUser, useGroup, useGroups, useGroupsByStage, useStages} from "../..";
-import Button from "../components/ui/Button";
+import CodeWrapper from "../../components/ui/CodeWrapper";
+import AddGroupPanel from "../../components/docs/AddGroupPanel";
+import useDigitalStage, {useCurrentUser, useGroup, useGroups, useGroupsByStage, useStages} from "use-digital-stage";
+import Button from "../../components/ui/Button";
+import DocsWrapper from "../../components/docs/DocsWrapper";
 
 const Groups = () => {
     const {actions} = useDigitalStage();
@@ -25,7 +26,7 @@ const Groups = () => {
     }, [groups])
 
     return (
-        <div>
+        <DocsWrapper>
             <h2>Usage</h2>
             <h3>Fetch</h3>
             <p>
@@ -131,7 +132,7 @@ const Groups = () => {
                 {JSON.stringify(group, null, 2)}
                 </pre>
             </CodeWrapper>
-        </div>
+        </DocsWrapper>
     )
 }
 export default Groups;

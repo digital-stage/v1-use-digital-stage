@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
-import CodeWrapper from "../components/ui/CodeWrapper";
-import {useDevice, useDevices} from "../..";
+import CodeWrapper from "../../components/ui/CodeWrapper";
+import {useDevice, useDevices} from "use-digital-stage";
+import DocsWrapper from "../../components/docs/DocsWrapper";
 
 const Devices = () => {
     const devices = useDevices();
@@ -12,7 +13,7 @@ const Devices = () => {
     }, [devices])
 
     return (
-        <div>
+        <DocsWrapper>
             <h2>Usage</h2>
             <h3>Fetch</h3>
             <p>
@@ -62,7 +63,7 @@ const Devices = () => {
                 {JSON.stringify(device, null, 2)}
                 </pre>
             </CodeWrapper>
-        </div>
+        </DocsWrapper>
     )
 }
 export default Devices;

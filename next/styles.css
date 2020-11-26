@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@700&family=Fira+Code:wght@300&display=swap');
+
 /* Document
    ========================================================================== */
 
@@ -21,7 +21,6 @@ html {
 
 body {
     margin: 0;
-    font-family: 'Heebo', serif;
 }
 
 /**
@@ -396,5 +395,4 @@ fieldset {
 }
 
 h1,h2,h3,h4,h5 {
-    font-family: 'Heebo', serif;
 }

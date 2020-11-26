@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from "react";
-import CodeWrapper from "../components/ui/CodeWrapper";
-import Button from "../components/ui/Button";
-import useDigitalStage, {useCurrentStageId, useCustomStageMembers, useStageMembersByStage} from "../..";
-import RangeSlider from "../components/ui/RangeSlider";
+import CodeWrapper from "../../components/ui/CodeWrapper";
+import Button from "../../components/ui/Button";
+import {useStageActions, useCurrentStageId, useCustomStageMembers, useStageMembersByStage} from "use-digital-stage";
+import RangeSlider from "../../components/ui/RangeSlider";
+import DocsWrapper from "../../components/docs/DocsWrapper";
 
 const StageMembers = () => {
-    const {actions} = useDigitalStage();
+    const {setCustomStageMember, removeCustomStageMember} = useStageActions();
 
     const customStageMembers = useCustomStageMembers();
 
@@ -19,7 +20,7 @@ const StageMembers = () => {
     }, [stageMembers])
 
     return (
-        <div>
+        <DocsWrapper>
             <h2>Usage</h2>
             <h3>Fetch</h3>
             <p>
@@ -68,28 +69,29 @@ const StageMembers = () => {
                     <RangeSlider
                         volume={customStageMembers.byId[customStageMembers.byStageMember[stageMemberId]].volume}
                         onChange={(v) => {
-                            actions.setCustomStageMember(
-                                stageMemberId,
-                                {volume: v}
+                            setCustomStageMember(
+                                stageMemberId, {
+                                    volume: v
+                                }
                             );
                         }}/>
                     <Button
                         onClick={() => {
                             const id = customStageMembers.byStageMember[stageMemberId];
                             console.log("Removing " + id)
-                            actions.removeCustomStageMember(customStageMembers.byStageMember[stageMemberId])
+                            removeCustomStageMember(customStageMembers.byStageMember[stageMemberId])
                         }}>delete</Button>
                 </CodeWrapper>
             ) : (
-                <Button onClick={() => actions.setCustomStageMember(stageMemberId, {
-                    volume: 0.2
+                <Button onClick={() => setCustomStageMember(stageMemberId, {
+                    volume: 0
                 })}>
                     Add
                 </Button>
             )}
 
 
-        </div>
+        </DocsWrapper>
     )
 }
 export default StageMembers;

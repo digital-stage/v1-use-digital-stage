@@ -1,8 +1,12 @@
 import React, {useCallback, useRef, useState} from 'react';
 import {styled} from 'styletron-react';
-import useAuth from "../lib/useAuth";
+import useAuth from "../../lib/useAuth";
+import Button from "./../ui/Button";
+import {useRouter} from "next/router";
+import Input from "../ui/Input";
+import Notification from "../ui/Notification";
 
-const Container = styled('form', {
+const Form = styled('form', {
   display: 'flex',
   flexDirection: 'column',
 });
@@ -12,6 +16,7 @@ const LoginPane = () => {
   const emailRef = useRef<HTMLInputElement>();
   const passwordRef = useRef<HTMLInputElement>();
   const [error, setError] = useState<string>();
+    const {push} = useRouter();
 
   const handleSubmit = useCallback(
     (event) => {
@@ -22,6 +27,7 @@ const LoginPane = () => {
             emailRef.current.value,
             passwordRef.current.value
           )
+            .then(() => push("/"))
           .catch((loginError) => setError(loginError.message));
       }
     },
@@ -29,18 +35,18 @@ const LoginPane = () => {
   );
 
   return (
-    <Container onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit} autoComplete="on">
       Email:
-      <input type="text" autoComplete="email" ref={emailRef} />
+      <Input type="text" autoComplete="email" ref={emailRef} />
       Password:
-      <input
+      <Input
         type="password"
         autoComplete="current-password"
         ref={passwordRef}
       />
-      <button type="submit">Login</button>
-      {error ? <div>Fehler: {error}</div> : undefined}
-    </Container>
+      <Button type="submit">Login</Button>
+      {error ? <Notification>{error}</Notification> : undefined}
+    </Form>
   );
 };
 export default LoginPane;

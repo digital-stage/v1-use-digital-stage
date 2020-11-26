@@ -1,5 +1,4 @@
-import useDigitalStage, {Status} from "use-digital-stage";
-import React from "react";
+import useAudioContext from "../lib/useAudioContext";
 import {styled} from "styletron-react";
 
 const Overlay = styled("div", {
@@ -25,14 +24,14 @@ const Box = styled('div', {
     boxShadow: 'rgba(0, 0, 0, 0.32) 0px 23px 17px'
 });
 
-const StatusInformer = () => {
-    const {status} = useDigitalStage();
+const StartPlaybackInformer = () => {
+    const {audioContext, createAudioContext} = useAudioContext();
 
-    if (status === Status.connecting) {
+    if (!audioContext) {
         return (
-            <Overlay>
+            <Overlay onClick={() => createAudioContext()}>
                 <Box>
-                    Connecting to API server...
+                    Click to start audio engine
                 </Box>
             </Overlay>
         )
@@ -40,4 +39,4 @@ const StatusInformer = () => {
 
     return null;
 }
-export default StatusInformer;
+export default StartPlaybackInformer;

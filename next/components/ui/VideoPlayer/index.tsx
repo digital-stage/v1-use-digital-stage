@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {LocalConsumer} from "../../../..";
+import {LocalConsumer} from "use-digital-stage";
+import {styled} from "styletron-react";
 
 interface CanvasElement extends HTMLCanvasElement {
     captureStream(): MediaStream;
@@ -17,6 +18,14 @@ interface AnimationFrame {
 interface Props {
     consumers: LocalConsumer[];
 }
+
+const Canvas = styled("canvas", {
+    width: '100%', height: '100%', stroke: 'red'
+})
+
+const HiddenTrackPlayer = styled("div", {
+    display: 'none'
+})
 
 interface States {
     drawing: boolean;
@@ -192,12 +201,12 @@ class VideoPlayer extends React.Component<Props, States> {
         const {size} = this.state;
         return (
             <div ref={this.wrapperRef}>
-                <canvas
+                <Canvas
                     ref={this.canvasRef}
                     width={size && size.width}
                     height={size && size.height}
                 />
-                <div ref={this.videoContainerRef}/>
+                <HiddenTrackPlayer ref={this.videoContainerRef}/>
             </div>
         );
     }

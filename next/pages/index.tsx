@@ -1,33 +1,22 @@
-import React from 'react';
-import useDigitalStage, {useCurrentUser} from '../..';
-import LoginPane from '../components/LoginPane';
+import React, {useEffect} from "react";
+import {useRouter} from "next/router";
 import useAuth from "../lib/useAuth";
 
 const Index = () => {
     const auth = useAuth();
-    const {ready, router} = useDigitalStage();
-    const currentUser = useCurrentUser();
+    const {push} = useRouter();
 
-    if (auth && !auth.user) {
-        return <LoginPane/>;
-    }
+    useEffect(() => {
+        if( !auth.loading && !auth.user ) {
+            push("/auth/signup")
+        }
+    }, [push, auth])
 
     return (
         <div>
-            READY
-            <div>
-                <h2>Connection information</h2>
-                <ul>
-                    <li>
-                        Status:
-                        {ready ? 'ready' : 'loading'}
-                    </li>
-                    {router ? <li>Fastest Router:{router.url}</li> : null}
-                    {currentUser ? <li>
-                        Your user ID:{currentUser._id}</li> : null}
-                </ul>
-            </div>
+            Loading
+
         </div>
-    );
-};
+    )
+}
 export default Index;

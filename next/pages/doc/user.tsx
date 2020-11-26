@@ -1,7 +1,8 @@
 import React, {useCallback} from "react";
-import useDigitalStage, {useCurrentUser} from "../..";
-import CodeWrapper from "../components/ui/CodeWrapper";
-import ChangeUserPanel from "../components/interaction/ChangeUserPanel";
+import useDigitalStage, {useCurrentUser} from "use-digital-stage";
+import CodeWrapper from "../../components/ui/CodeWrapper";
+import ChangeUserPanel from "../../components/docs/ChangeUserPanel";
+import DocsWrapper from "../../components/docs/DocsWrapper";
 
 const User = () => {
     const {actions} = useDigitalStage();
@@ -9,11 +10,11 @@ const User = () => {
 
     const updateUser = useCallback((name: string, avatarUrl?: string) => {
         if (actions)
-            actions.updateUser(name, avatarUrl)
+            actions.updateUser(name)
     }, [actions])
 
     return (
-        <div>
+        <DocsWrapper>
             <h2>Usage</h2>
             <h3>Fetch</h3>
             <p>
@@ -37,7 +38,7 @@ const User = () => {
 
             {currentUser ? <ChangeUserPanel userName={currentUser.name} onClick={updateUser} avatarUrl={currentUser.avatarUrl}/> : undefined}
 
-        </div>
+        </DocsWrapper>
     )
 }
 export default User;

@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from "react";
-import CodeWrapper from "../components/ui/CodeWrapper";
-import Button from "../components/ui/Button";
-import useDigitalStage, {useCurrentStageId, useCustomGroups, useGroupsByStage} from "../..";
-import RangeSlider from "../components/ui/RangeSlider";
+import CodeWrapper from "../../components/ui/CodeWrapper";
+import Button from "../../components/ui/Button";
+import {useCurrentStageId, useCustomGroups, useGroupsByStage, useStageActions} from "use-digital-stage";
+import RangeSlider from "../../components/ui/RangeSlider";
+import DocsWrapper from "../../components/docs/DocsWrapper";
 
 const StageMembers = () => {
-    const {actions} = useDigitalStage();
+    const {setCustomGroup, removeCustomGroup} = useStageActions();
 
     const customGroups = useCustomGroups();
 
@@ -19,7 +20,7 @@ const StageMembers = () => {
     }, [groups])
 
     return (
-        <div>
+        <DocsWrapper>
             <h2>Usage</h2>
             <h3>Fetch</h3>
             <p>
@@ -68,23 +69,23 @@ const StageMembers = () => {
                     <RangeSlider
                         volume={customGroups.byId[customGroups.byGroup[groupId]].volume}
                         onChange={(v) => {
-                            actions.setCustomGroup(
-                                groupId, v, true
+                            setCustomGroup(
+                                groupId, v, false
                             );
                         }}/>
                     <Button
                         onClick={() =>
-                            actions.removeCustomGroup(customGroups.byGroup[groupId])
+                            removeCustomGroup(customGroups.byGroup[groupId])
                         }>delete</Button>
                 </CodeWrapper>
             ) : (
-                <Button onClick={() => actions.setCustomGroup(groupId, 0.2, false)}>
+                <Button onClick={() => setCustomGroup(groupId, 0.2, false)}>
                     Add
                 </Button>
             )}
 
 
-        </div>
+        </DocsWrapper>
     )
 }
 export default StageMembers;
