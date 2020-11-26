@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import {styled} from 'styletron-react';
 import React from 'react';
-import useDigitalStage from '../../..';
+import useDigitalStage from '../../../dist';
 import useAuth from "../../lib/useAuth";
 
 const Container = styled('div', {

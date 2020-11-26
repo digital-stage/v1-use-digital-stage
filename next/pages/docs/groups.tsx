@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import CodeWrapper from "../../components/ui/CodeWrapper";
 import AddGroupPanel from "../../components/docs/AddGroupPanel";
-import useDigitalStage, {useCurrentUser, useGroup, useGroups, useGroupsByStage, useStages} from "../../..";
+import useDigitalStage, {useCurrentUser, useGroup, useGroups, useGroupsByStage, useStages} from "../../../dist";
 import Button from "../../components/ui/Button";
 import DocsWrapper from "../../components/docs/DocsWrapper";
 

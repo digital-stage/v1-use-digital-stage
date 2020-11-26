@@ -1,7 +1,7 @@
 import Button from "../ui/Button";
 import {withStyleDeep} from "styletron-react";
 import {useRouter} from "next/router";
-import {useCurrentStageId} from "../../..";
+import {useCurrentStageId} from "../../../dist";
 import Link from "next/link";
 
 

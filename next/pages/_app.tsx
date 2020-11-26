@@ -1,6 +1,6 @@
 import React from "react";
 import {Provider as StyletronProvider} from 'styletron-react'
-import {DigitalStageProvider} from "../..";
+import {DigitalStageProvider} from "../../dist";
 import {debug, styletron} from "../styletron";
 import './../styles.css'
 import StatusInformer from "../components/StatusInformer";

@@ -1,27 +1,37 @@
 import React, {useEffect, useState} from 'react';
-import {useCurrentStageId, useGroupsByStage, useStages} from '../../..';
+import { useCurrentStageId, useGroups, useStages} from '../../../dist';
 import Button from "../../components/ui/Button";
 import DocsWrapper from "../../components/docs/DocsWrapper";
-import {useStageActions} from "../../..";
+import {useStageActions} from "../../../dist";
 
 const StageManagement = () => {
     const currentStageId = useCurrentStageId();
     const stages = useStages();
-    const [stageId, setStageId] = useState<string>();
-    const [groupId, setGroupId] = useState<string>();
-    const groups = useGroupsByStage(stageId);
+    const [stageId, setStageId] = useState<string>(currentStageId);
+    const [groupId, setGroupId] = useState<string>(undefined);
+    const groups = useGroups();
     const [error, setError] = useState<string>();
     const {leaveStage, joinStage} = useStageActions();
 
     useEffect(() => {
-        if( !stageId ) {
+        if( currentStageId ) {
+            setStageId(currentStageId);
+        } else if( !stageId ) {
             setStageId(stages.allIds[0]);
         }
-    }, [stages])
+    }, [stages, currentStageId])
+
+    useEffect(() => {
+        if( stageId && groups.byStage[stageId] && groups.byStage[stageId].length > 0 ) {
+            setGroupId(groups.byStage[stageId][0]);
+        }
+    }, [stageId, groups])
 
     if( currentStageId ) {
         return (
-            <Button onClick={() => leaveStage()}>Leave stage</Button>
+            <DocsWrapper>
+                <Button onClick={() => leaveStage()}>Leave stage</Button>
+            </DocsWrapper>
         )
     }
 
@@ -35,14 +45,17 @@ const StageManagement = () => {
                     )
                 })}
             </select>
-            <select onChange={(event) => setGroupId(event.target.value)}>
-                {groups.map(group => {
-                    return (
-                        <option key={group._id} value={group._id}>{group.name}</option>
-                    )
-                })}
-            </select>
+            {groups.byStage[stageId] ? (
+                <select onChange={(event) => setGroupId(event.target.value)}>
+                    {groups.byStage[stageId].map(id => groups.byId[id]).map(group => {
+                        return (
+                            <option key={group._id} value={group._id}>{group.name}</option>
+                        )
+                    })}
+                </select>
+            ) :  undefined}
             <Button onClick={() => {
+                if( stageId && groupId )
                 joinStage(stageId, groupId)
                     .then(() => setError(undefined))
                     .catch((err) => {

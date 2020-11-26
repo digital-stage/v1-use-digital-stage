@@ -1,7 +1,8 @@
 import React, {useEffect} from 'react';
-import useDigitalStage, {useCurrentUser} from '../../..';
+import useDigitalStage, {useCurrentUser} from '../../../dist';
 import useAuth from "../../lib/useAuth";
 import {useRouter} from "next/router";
+import DocsWrapper from "../../components/docs/DocsWrapper";
 
 const Index = () => {
     const auth = useAuth();
@@ -15,7 +16,7 @@ const Index = () => {
     }, [auth, push])
 
     return (
-        <div>
+        <DocsWrapper>
             READY
             <div>
                 <h2>Connection information</h2>
@@ -29,7 +30,7 @@ const Index = () => {
                         Your user ID:{currentUser._id}</li> : null}
                 </ul>
             </div>
-        </div>
+        </DocsWrapper>
     );
 };
 export default Index;

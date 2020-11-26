@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import CodeWrapper from "../../components/ui/CodeWrapper";
-import {useCurrentUser, useStage, useStageActions, useStages} from "../../..";
+import {useCurrentUser, useStage, useStageActions, useStages} from "../../../dist";
 import Button from "../../components/ui/Button";
 import AddStagePanel from "../../components/docs/AddStagePanel";
 import DocsWrapper from "../../components/docs/DocsWrapper";

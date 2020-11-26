@@ -1,5 +1,5 @@
 import React, {useCallback} from "react";
-import useDigitalStage, {useCurrentUser} from "../../..";
+import useDigitalStage, {useCurrentUser} from "../../../dist";
 import CodeWrapper from "../../components/ui/CodeWrapper";
 import ChangeUserPanel from "../../components/docs/ChangeUserPanel";
 import DocsWrapper from "../../components/docs/DocsWrapper";

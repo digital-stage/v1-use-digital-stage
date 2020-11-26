@@ -3,7 +3,7 @@ import * as cookie from 'js-cookie';
 import fetch from 'isomorphic-unfetch';
 import debug from 'debug';
 import useErrors from '../useErrors';
-import {AuthUser} from '../../..';
+import {AuthUser} from "./AuthUser";
 
 const d = debug('digitalstage:auth');
 

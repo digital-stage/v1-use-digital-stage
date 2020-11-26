@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import CodeWrapper from "../../components/ui/CodeWrapper";
-import {useDevice, useDevices} from "../../..";
+import {useDevice, useDevices} from "../../../dist";
 import DocsWrapper from "../../components/docs/DocsWrapper";
 
 const Devices = () => {

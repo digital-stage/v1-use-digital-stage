@@ -1,6 +1,6 @@
 import {styled} from "styletron-react";
 import React, {useCallback} from "react";
-import { useStageActions, Group, useGroupsByStage, useVideoConsumers, useStageMembersByGroup, LocalConsumer, StageMemberWithUserData, useCurrentStageId, useLocalDevice, useSelector} from "../../..";
+import { useStageActions, Group, useGroupsByStage, useVideoConsumers, useStageMembersByGroup, LocalConsumer, StageMemberWithUserData, useCurrentStageId, useLocalDevice, useSelector} from "../../../dist";
 
 import DocsWrapper from "../../components/docs/DocsWrapper";
 import VideoPlayer from "../../components/ui/VideoPlayer";
@@ -54,9 +54,11 @@ const GroupView = (props: {
 
     const stageMembers = useStageMembersByGroup(group._id);
 
+    console.debug(stageMembers);
+
     return (
         <div>
-            <h3>{group.name}</h3>
+            <h3>{group.name} {group._id}</h3>
             {stageMembers.map(stageMember => <StageMemberView key={stageMember._id} stageMember={stageMember}/>)}
         </div>
     )
@@ -77,13 +79,13 @@ const Chat = () => {
 
     const toggleWebcam = useCallback(() => {
         updateDevice(localDevice._id, {
-            sendVideo: localDevice.sendVideo
+            sendVideo: !localDevice.sendVideo
         })
     }, [updateDevice, localDevice]);
 
     const toggleMic = useCallback(() => {
         updateDevice(localDevice._id, {
-            sendAudio: localDevice.sendAudio
+            sendAudio: !localDevice.sendAudio
         })
     }, [updateDevice, localDevice]);
 
@@ -102,7 +104,8 @@ const Chat = () => {
                             onClick={toggleWebcam}
                         >
                             <img
-                                src={localDevice.sendVideo ? "static/videocam-18dp.svg" : "static/videocam_off-18dp.svg"}
+                                alt={localDevice.sendVideo ? "enable webcam" : "disable webcam"}
+                                src={localDevice.sendVideo ? "/static/videocam-18dp.svg" : "/static/videocam_off-18dp.svg"}
                             />
                         </ToggleButton>
                         <ToggleButton
@@ -110,7 +113,8 @@ const Chat = () => {
                             onClick={toggleMic}
                         >
                             <img
-                                src={localDevice.sendAudio ? "static/mic-18dp.svg" : "static/mic_off-18dp.svg"}
+                                alt={localDevice.sendVideo ? "enable microphone" : "disable microphone"}
+                                src={localDevice.sendAudio ? "/static/mic-18dp.svg" : "/static/mic_off-18dp.svg"}
                             />
                         </ToggleButton>
                     </Wrapper>
@@ -119,7 +123,7 @@ const Chat = () => {
         )
     }
     return (
-        <div>Not inside a stage</div>
+        <DocsWrapper>Not inside a stage</DocsWrapper>
     )
 };
 export default Chat;
