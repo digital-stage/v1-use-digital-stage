@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {LocalConsumer} from "use-digital-stage";
+import {LocalConsumer} from "../../../..";
 import {styled} from "styletron-react";
 
 interface CanvasElement extends HTMLCanvasElement {

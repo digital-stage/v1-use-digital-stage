@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {styled} from 'styletron-react';
 import ChannelStrip from '../../ChannelStrip';
-import {useStageActions, CustomStageMember, useIsStageAdmin, useSelector, useStageMember} from "use-digital-stage";
+import {useStageActions, CustomStageMember, useIsStageAdmin, useSelector, useStageMember} from "../../../../..";
 import {useStageWebAudio} from "../../../../lib/useStageWebAudio";
 import Button from "../../../ui/Button";
 import AudioProducerChannel from "./AudioProducerChannel";

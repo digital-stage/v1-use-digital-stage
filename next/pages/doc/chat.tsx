@@ -1,6 +1,6 @@
 import {styled} from "styletron-react";
 import React, {useCallback} from "react";
-import { useStageActions, Group, useGroupsByStage, useVideoConsumers, useStageMembersByGroup, LocalConsumer, StageMemberWithUserData, useCurrentStageId, useLocalDevice, useSelector} from "use-digital-stage";
+import { useStageActions, Group, useGroupsByStage, useVideoConsumers, useStageMembersByGroup, LocalConsumer, StageMemberWithUserData, useCurrentStageId, useLocalDevice, useSelector} from "../../..";
 
 import DocsWrapper from "../../components/docs/DocsWrapper";
 import VideoPlayer from "../../components/ui/VideoPlayer";

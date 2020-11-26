@@ -12,7 +12,7 @@ import {
   useCustomStageMembers,
   useGroups,
   useStageMembersRaw
-} from "use-digital-stage";
+} from "../..";
 
 export interface StageWebAudioNodes {
   [id: string]: {

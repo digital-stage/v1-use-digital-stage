@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import CodeWrapper from "../../components/ui/CodeWrapper";
-import {useStageMember, useStageMembers, useStageMembersByStage, useStages} from "use-digital-stage";
+import {useStageMember, useStageMembers, useStageMembersByStage, useStages} from "../../..";
 import DocsWrapper from "../../components/docs/DocsWrapper";
 
 const StageMembers = () => {

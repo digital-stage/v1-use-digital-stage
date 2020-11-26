@@ -8,7 +8,7 @@ import
     RemoteAudioProducer,
     useIsStageAdmin,
     useSelector
-} from 'use-digital-stage';
+} from '../../../../..';
 import {useStageWebAudio} from "../../../../lib/useStageWebAudio";
 
 const Panel = styled('div', {

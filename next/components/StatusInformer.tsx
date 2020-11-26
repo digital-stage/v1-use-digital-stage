@@ -1,4 +1,4 @@
-import useDigitalStage, {Status} from "use-digital-stage";
+import useDigitalStage, {Status} from "../..";
 import React from "react";
 import {styled} from "styletron-react";
 

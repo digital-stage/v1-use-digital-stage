@@ -23,13 +23,13 @@ function MyApp({Component, pageProps}) {
                     <ErrorsConsumer>
                         {({reportError}) => (
                             <AuthProvider
-                                authUrl="https://auth.digital-stage.org"
+                                authUrl={process.env.NEXT_PUBLIC_AUTH_URL}
                             >
                                 <AuthConsumer>
                                     {({token}) => (
                                         <DigitalStageProvider
-                                            apiUrl="wss://api.digital-stage.org"
-                                            routerDistUrl="https://routers.digital-stage.org"
+                                            apiUrl={process.env.NEXT_PUBLIC_API_URL}
+                                            routerDistUrl={process.env.NEXT_PUBLIC_ROUTERS_URL}
                                             token={token}
                                             addErrorHandler={reportError}
                                         >

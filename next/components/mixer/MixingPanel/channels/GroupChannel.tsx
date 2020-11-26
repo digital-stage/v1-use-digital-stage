@@ -2,7 +2,7 @@ import * as React from 'react';
 import {styled} from 'styletron-react';
 import StageMemberChannel from './StageMemberChannel';
 import ChannelStrip from '../../ChannelStrip';
-import {CustomGroup, useGroup, useIsStageAdmin, useSelector, useStageActions} from "use-digital-stage";
+import {CustomGroup, useGroup, useIsStageAdmin, useSelector, useStageActions} from "../../../../..";
 import Button from "../../../ui/Button";
 import {useStageWebAudio} from "../../../../lib/useStageWebAudio";
 

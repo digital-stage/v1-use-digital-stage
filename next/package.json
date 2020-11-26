@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prepare": "cd .. && yarn install",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -12,13 +13,7 @@
   },
   "alias": {
     "react": "../node_modules/react",
-    "react-dom": "../node_modules/react-dom",
-    "ws": "../node_modules/ws",
-    "redux": "../node_modules/redux",
-    "react-redux": "../node_modules/react-redux",
-    "isomorphic-ws": "../node_modules/isomorphic-ws",
-    "teckos-client": "../node_modules/teckos-client",
-    "use-digital-stage": "../.."
+    "react-dom": "../node_modules/react-dom"
   },
   "author": "delude88",
   "license": "MIT",
@@ -35,7 +30,6 @@
     "react-range": "^1.8.3",
     "standardized-audio-context": "^25.1.6",
     "styletron-engine-atomic": "^1.4.6",
-    "styletron-react": "^5.2.7",
-    "use-digital-stage": "file:./.."
+    "styletron-react": "^5.2.7"
   }
 }
