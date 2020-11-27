@@ -26,7 +26,6 @@ import {
   SetCustomStageMemberOvPayload,
   SetCustomStageMemberPayload,
 } from '../global/SocketPayloads';
-import useStageHandling from '../useStageHandling';
 
 const d = debug('useStageActions');
 
@@ -145,7 +144,6 @@ const StageActionsProvider = (props: {
   const { children, handleError } = props;
   const socketAPI = useSocket();
   const { socket } = socketAPI;
-  const { requestLeave } = useStageHandling();
   const stageId = useCurrentStageId();
 
   const updateDevice = useCallback(
@@ -263,10 +261,7 @@ const StageActionsProvider = (props: {
       handleError(new Error("Socket connection wasn't ready"));
       throw new Error("Socket connection wasn't ready");
     }
-
-    // Also update request handler
-    requestLeave();
-  }, [socket, requestLeave, handleError]);
+  }, [socket, handleError]);
 
   const leaveStageForGood = useCallback(
     (id: string) => {
@@ -277,12 +272,8 @@ const StageActionsProvider = (props: {
         handleError(new Error("Socket connection wasn't ready"));
         throw new Error("Socket connection wasn't ready");
       }
-      if (stageId && stageId === id) {
-        // Also update request handler
-        requestLeave();
-      }
     },
-    [socket, requestLeave, stageId, handleError]
+    [socket, stageId, handleError]
   );
 
   const removeStage = useCallback(

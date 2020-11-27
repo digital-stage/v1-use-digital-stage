@@ -8,7 +8,13 @@ import A from "../../components/ui/A";
 
 const Login = () => {
     const auth = useAuth();
-    const {push} = useRouter();
+    const {push, prefetch} = useRouter();
+
+    useEffect(() => {
+        if (prefetch) {
+            prefetch('/auth/signup');
+        }
+    }, [prefetch]);
 
     useEffect(() => {
         if (push && !auth.loading && auth.user) {

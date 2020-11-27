@@ -4,13 +4,15 @@ import {DigitalStageProvider} from "../../dist";
 import {debug, styletron} from "../styletron";
 import './../styles.css'
 import StatusInformer from "../components/StatusInformer";
-import {AuthConsumer,  AuthProvider} from "../lib/useAuth";
+import {AuthConsumer, AuthProvider} from "../lib/useAuth";
 import Head from 'next/head';
 import StageOrMixerToggle from "../components/navigation/StageOrMixerToggle";
 import StageWebAudioProvider from "../lib/useStageWebAudio";
 import {AudioContextProvider} from "../lib/useAudioContext";
 import StartPlaybackInformer from "../components/StartPlaybackInformer";
 import {ErrorsConsumer, ErrorsProvider} from "../lib/useErrors";
+import StageJoiner from "../components/StageJoiner";
+import {StageJoinerProvider} from "../lib/useStageJoiner";
 
 function MyApp({Component, pageProps}) {
     return (
@@ -35,10 +37,13 @@ function MyApp({Component, pageProps}) {
                                         >
                                             <AudioContextProvider>
                                                 <StageWebAudioProvider>
-                                                    <Component {...pageProps} />
-                                                    <StageOrMixerToggle/>
-                                                    <StartPlaybackInformer/>
-                                                    <StatusInformer/>
+                                                    <StageJoinerProvider>
+                                                        <Component {...pageProps} />
+                                                        <StageOrMixerToggle/>
+                                                        <StartPlaybackInformer/>
+                                                        <StageJoiner/>
+                                                        <StatusInformer/>
+                                                    </StageJoinerProvider>
                                                 </StageWebAudioProvider>
                                             </AudioContextProvider>
                                         </DigitalStageProvider>
