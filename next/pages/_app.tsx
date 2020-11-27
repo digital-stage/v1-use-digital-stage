@@ -6,13 +6,15 @@ import './../styles.css'
 import StatusInformer from "../components/StatusInformer";
 import {AuthConsumer, AuthProvider} from "../lib/useAuth";
 import Head from 'next/head';
-import StageOrMixerToggle from "../components/navigation/StageOrMixerToggle";
+import StageOrMixerToggle from "../components/global/StageOrMixerToggle";
 import StageWebAudioProvider from "../lib/useStageWebAudio";
 import {AudioContextProvider} from "../lib/useAudioContext";
 import StartPlaybackInformer from "../components/StartPlaybackInformer";
 import {ErrorsConsumer, ErrorsProvider} from "../lib/useErrors";
 import StageJoiner from "../components/StageJoiner";
 import {StageJoinerProvider} from "../lib/useStageJoiner";
+import WebcamToggle from "../components/global/WebcamToggle";
+import MicrophoneToggle from "../components/global/MicrophoneToggle";
 
 function MyApp({Component, pageProps}) {
     return (
@@ -40,6 +42,8 @@ function MyApp({Component, pageProps}) {
                                                     <StageJoinerProvider>
                                                         <Component {...pageProps} />
                                                         <StageOrMixerToggle/>
+                                                        <WebcamToggle/>
+                                                        <MicrophoneToggle/>
                                                         <StartPlaybackInformer/>
                                                         <StageJoiner/>
                                                         <StatusInformer/>

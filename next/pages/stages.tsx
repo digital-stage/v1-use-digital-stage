@@ -7,6 +7,8 @@ import {CopyToClipboard} from 'react-copy-to-clipboard';
 import Button from "../components/ui/Button";
 import Notification from "../components/ui/Notification";
 import useStageJoiner from "../lib/useStageJoiner";
+import useAuth from "../lib/useAuth";
+import {useRouter} from "next/router";
 
 
 const List = styled("div", {
@@ -50,7 +52,14 @@ const Stages = () => {
     const [copied, setCopied] = useState<boolean>(false);
     const currentStageId = useCurrentStageId();
     const currentGroupId = useCurrentGroupId();
+    const auth = useAuth();
+    const {push} = useRouter();
 
+    useEffect(() => {
+        if (!auth.loading && !auth.user) {
+            push("/auth/login")
+        }
+    }, [push, auth]);
 
     useEffect(() => {
         if (copied) {

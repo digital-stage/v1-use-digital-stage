@@ -1,5 +1,8 @@
 import useAudioContext from "../lib/useAudioContext";
 import {styled} from "styletron-react";
+import debug from "debug";
+
+const d = debug("StartPlaybackInformer");
 
 const Overlay = styled("div", {
     position: 'absolute',
@@ -25,11 +28,14 @@ const Box = styled('div', {
 });
 
 const StartPlaybackInformer = () => {
-    const {audioContext, createAudioContext} = useAudioContext();
+    const {audioContext, started} = useAudioContext();
 
-    if (!audioContext) {
+    if (audioContext && !started) {
         return (
-            <Overlay onClick={() => createAudioContext()}>
+            <Overlay onClick={() => {
+                d('Starting audio context');
+                audioContext.resume()
+            }}>
                 <Box>
                     Click to start audio engine
                 </Box>

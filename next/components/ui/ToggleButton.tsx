@@ -10,11 +10,12 @@ const ToggleButton = (props: {
     children: React.ReactNode;
     active: boolean;
     onToggle: (active: boolean) => void;
+    className?: string
 }) => {
-    const {children, active, onToggle} = props;
+    const {className,  children, active, onToggle} = props;
 
     return (
-        <ButtonComponent $active={active} onClick={() => onToggle(!active)}>
+        <ButtonComponent className={className} $active={active} onClick={() => onToggle(!active)}>
             {children}
         </ButtonComponent>
     )
