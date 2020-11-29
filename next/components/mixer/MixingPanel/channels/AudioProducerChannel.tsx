@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {styled} from 'styletron-react';
 import ChannelStrip from '../../ChannelStrip';
 import
@@ -9,7 +9,7 @@ import
     useIsStageAdmin,
     useSelector
 } from '../../../../../dist';
-import {useStageWebAudio} from "../../../../lib/useStageWebAudio";
+import useStageWebAudio from "../../../../lib/useStageWebAudio";
 
 const Panel = styled('div', {
     display: 'flex',
@@ -58,6 +58,27 @@ const AudioProducerChannel = (props: { audioProducerId: string }) => {
         removeCustomStageMemberAudio,
     } = useStageActions();
 
+    const handleVolumeChange = useCallback((volume: number, muted: boolean) => {
+        if( isAdmin ) {
+            updateStageMemberAudio(audioProducer._id, {
+                volume,
+                muted,
+            })
+        }
+    }, [isAdmin, audioProducer, updateStageMemberAudio]);
+
+    const handleCustomVolumeChange = useCallback((volume: number, muted: boolean) => {
+        setCustomStageMemberAudio(audioProducer._id, {
+            volume,
+            muted,
+        })
+    }, [audioProducer, setCustomStageMemberAudio]);
+
+    const handleCustomVolumeReset = useCallback(() => {
+        if(customAudioProducer)
+        removeCustomStageMemberAudio(customAudioProducer._id);
+    }, [customAudioProducer, removeCustomStageMemberAudio]);
+
     return (
         <Panel>
             <Row>
@@ -77,22 +98,9 @@ const AudioProducerChannel = (props: { audioProducerId: string }) => {
                         muted={audioProducer.muted}
                         customVolume={customAudioProducer ? customAudioProducer.volume : undefined}
                         customMuted={customAudioProducer ? customAudioProducer.muted : undefined}
-                        onVolumeChanged={(volume, muted) =>
-                            updateStageMemberAudio(audioProducer._id, {
-                                volume,
-                                muted,
-                            })
-                        }
-                        onCustomVolumeChanged={(volume, muted) =>
-                            setCustomStageMemberAudio(audioProducer._id, {
-                                volume,
-                                muted,
-                            })
-                        }
-                        onCustomVolumeReset={() => {
-                            if (customAudioProducer) return removeCustomStageMemberAudio(customAudioProducer._id);
-                            return null;
-                        }}
+                        onVolumeChanged={handleVolumeChange}
+                        onCustomVolumeChanged={handleCustomVolumeChange}
+                        onCustomVolumeReset={handleCustomVolumeReset}
                         isAdmin={isAdmin}
                     />
                 </Column>

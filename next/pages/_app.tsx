@@ -7,7 +7,7 @@ import StatusInformer from "../components/StatusInformer";
 import {AuthConsumer, AuthProvider} from "../lib/useAuth";
 import Head from 'next/head';
 import StageOrMixerToggle from "../components/global/StageOrMixerToggle";
-import StageWebAudioProvider from "../lib/useStageWebAudio";
+import {StageWebAudioProvider} from "../lib/useStageWebAudio";
 import {AudioContextProvider} from "../lib/useAudioContext";
 import StartPlaybackInformer from "../components/StartPlaybackInformer";
 import {ErrorsConsumer, ErrorsProvider} from "../lib/useErrors";

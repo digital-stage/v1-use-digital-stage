@@ -67,53 +67,48 @@ const ChannelStrip = (props: {
   muted: boolean;
   customVolume?: number;
   customMuted?: boolean;
-  onVolumeChanged?: (volume: number, muted: boolean) => void;
-  onCustomVolumeChanged?: (volume: number, muted: boolean) => void;
-  onCustomVolumeReset?: () => void;
+  onVolumeChanged: (volume: number, muted: boolean) => void;
+  onCustomVolumeChanged: (volume: number, muted: boolean) => void;
+  onCustomVolumeReset: () => void;
 
   className?: string;
 }) => {
+  const {addHeader, className, analyser, isAdmin, volume, muted, customVolume, customMuted, onVolumeChanged, onCustomVolumeChanged, onCustomVolumeReset} = props;
+
   const addCustom = useCallback(() => {
-    if (props.onCustomVolumeChanged) props.onCustomVolumeChanged(props.volume, props.muted);
-  }, [props.volume, props.muted]);
+    props.onCustomVolumeChanged(volume, muted);
+  }, [volume, muted]);
 
   return (
-    <Strip className={props.className}>
-      {props.addHeader && <StripHeader>{props.addHeader}</StripHeader>}
+    <Strip className={className}>
+      {addHeader && <StripHeader>{addHeader}</StripHeader>}
 
       <ChannelActions>
-        {props.customVolume ? (
+        {customVolume ? (
           <Button
-            onClick={() => {
-              if (props.onCustomVolumeReset) props.onCustomVolumeReset();
-            }}
-          >
+            onClick={() => onCustomVolumeReset()}>
             Reset
           </Button>
         ) : (
-          props.isAdmin && <Button onClick={addCustom}>Custom</Button>
+          isAdmin && <Button onClick={addCustom}>Custom</Button>
         )}
       </ChannelActions>
 
       <VolumeFader>
-        {props.isAdmin ? (
+        {isAdmin ? (
           <>
             <LeftVolumeFader
-              volume={props.volume}
-              muted={props.muted}
-              onChanged={(value, muted) => {
-                if (props.onVolumeChanged) props.onVolumeChanged(value, muted);
-              }}
+              volume={volume}
+              muted={muted}
+              onChanged={(value, muted) => onVolumeChanged(value, muted)}
               color={[255, 255, 255]}
               alignLabel="left"
             />
-            {props.customVolume ? (
+            {customVolume ? (
               <RightVolumeFader
-                volume={props.customVolume || props.volume}
-                muted={props.customMuted}
-                onChanged={(value, muted) => {
-                  if (props.onCustomVolumeChanged) props.onCustomVolumeChanged(value, muted);
-                }}
+                volume={customVolume || volume}
+                muted={customMuted}
+                onChanged={(value, muted) => onCustomVolumeChanged(value, muted)}
                 color={[255, 0, 0]}
                 alignLabel="right"
               />
@@ -121,15 +116,13 @@ const ChannelStrip = (props: {
           </>
         ) : (
           <LeftVolumeFader
-            volume={props.customVolume || props.volume}
-            muted={props.muted || props.customMuted}
-            onChanged={(value, muted) => {
-              if (props.onCustomVolumeChanged) props.onCustomVolumeChanged(value, muted);
-            }}
-            color={props.customVolume ? [255, 0, 0] : [255, 255, 255]}
+            volume={customVolume || volume}
+            muted={muted || customMuted}
+            onChanged={(value, muted) => onCustomVolumeChanged(value, muted)}
+            color={customVolume ? [255, 0, 0] : [255, 255, 255]}
           />
         )}
-        {props.analyser ? <VolumeMeter analyser={props.analyser} /> : undefined}
+        {analyser ? <VolumeMeter analyser={analyser} /> : undefined}
       </VolumeFader>
     </Strip>
   );

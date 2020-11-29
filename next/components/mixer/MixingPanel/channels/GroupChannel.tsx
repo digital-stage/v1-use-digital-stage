@@ -4,7 +4,8 @@ import StageMemberChannel from './StageMemberChannel';
 import ChannelStrip from '../../ChannelStrip';
 import {CustomGroup, useGroup, useIsStageAdmin, useSelector, useStageActions} from "../../../../../dist";
 import Button from "../../../ui/Button";
-import {useStageWebAudio} from "../../../../lib/useStageWebAudio";
+import useStageWebAudio from "../../../../lib/useStageWebAudio";
+import {useCallback} from "react";
 
 const PanelRow = styled("div", {
     display: 'flex',
@@ -48,7 +49,7 @@ const Header = styled('div', {
 
 const GroupChannel = (props: { groupId: string }) => {
     const {groupId} = props;
-    const isAdmin: boolean = useIsStageAdmin();
+    const isAdmin = useIsStageAdmin();
     const group = useGroup(groupId);
     const customGroup = useSelector<CustomGroup>((state) =>
         state.customGroups.byGroup[groupId]
@@ -59,10 +60,30 @@ const GroupChannel = (props: { groupId: string }) => {
         state.stageMembers.byGroup[groupId] ? state.stageMembers.byGroup[groupId] : []
     );
 
-    const {updateGroup, setCustomGroup, removeCustomGroup} = useStageActions();
     const {byGroup} = useStageWebAudio();
 
+    const {updateGroup, setCustomGroup, removeCustomGroup} = useStageActions();
+
     const [expanded, setExpanded] = React.useState<boolean>();
+
+    const handleVolumeChange = useCallback((volume: number, muted: boolean) => {
+        console.debug(group._id,volume, muted)
+        if( isAdmin ) {
+            updateGroup(group._id, {
+                volume,
+                muted,
+            })
+        }
+    }, [isAdmin, group, updateGroup]);
+
+    const handleCustomVolumeChange = useCallback((volume: number, muted: boolean) => {
+        setCustomGroup(group._id, volume, muted)
+    }, [group, setCustomGroup]);
+
+    const handleCustomVolumeReset = useCallback(() => {
+        if( customGroup )
+        removeCustomGroup(customGroup._id);
+    }, [customGroup, setCustomGroup]);
 
     return (
         <PanelRow>
@@ -87,22 +108,9 @@ const GroupChannel = (props: { groupId: string }) => {
                     muted={group.muted}
                     customVolume={customGroup ? customGroup.volume : undefined}
                     customMuted={customGroup ? customGroup.muted : undefined}
-                    onVolumeChanged={
-                        isAdmin
-                            ? (volume, muted) => {
-                                console.debug("onVolumeChanged");
-                                updateGroup(group._id, {
-                                    volume,
-                                    muted,
-                                })
-                            }
-                            : undefined
-                    }
-                    onCustomVolumeChanged={(volume, muted) => setCustomGroup(group._id, volume, muted)}
-                    onCustomVolumeReset={() => {
-                        if (removeCustomGroup) return removeCustomGroup(customGroup._id);
-                        return null;
-                    }}
+                    onVolumeChanged={handleVolumeChange}
+                    onCustomVolumeChanged={handleCustomVolumeChange}
+                    onCustomVolumeReset={handleCustomVolumeReset}
                     isAdmin={isAdmin}
                 />
             </Column>
