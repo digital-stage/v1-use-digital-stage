@@ -70,7 +70,7 @@ const StageMembers = () => {
                         volume={customGroups.byId[customGroups.byGroup[groupId]].volume}
                         onChange={(v) => {
                             setCustomGroup(
-                                groupId, v, false
+                                groupId, {volume: v, muted: false}
                             );
                         }}/>
                     <Button
@@ -79,7 +79,7 @@ const StageMembers = () => {
                         }>delete</Button>
                 </CodeWrapper>
             ) : (
-                <Button onClick={() => setCustomGroup(groupId, 0.2, false)}>
+                <Button onClick={() => setCustomGroup(groupId, {volume: 0.2, muted: false})}>
                     Add
                 </Button>
             )}

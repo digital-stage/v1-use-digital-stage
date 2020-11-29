@@ -19,6 +19,9 @@ interface Props {
     consumers: LocalConsumer[];
 }
 
+const Wrapper = styled("div", {
+    width: '100%', height: '100%', stroke: 'red'
+})
 const Canvas = styled("canvas", {
     width: '100%', height: '100%', stroke: 'red'
 })
@@ -200,14 +203,14 @@ class VideoPlayer extends React.Component<Props, States> {
     render() {
         const {size} = this.state;
         return (
-            <div ref={this.wrapperRef}>
+            <Wrapper ref={this.wrapperRef}>
                 <Canvas
                     ref={this.canvasRef}
                     width={size && size.width}
                     height={size && size.height}
                 />
                 <HiddenTrackPlayer ref={this.videoContainerRef}/>
-            </div>
+            </Wrapper>
         );
     }
 }

@@ -77,7 +77,7 @@ const GroupChannel = (props: { groupId: string }) => {
     }, [isAdmin, group, updateGroup]);
 
     const handleCustomVolumeChange = useCallback((volume: number, muted: boolean) => {
-        setCustomGroup(group._id, volume, muted)
+        setCustomGroup(group._id, {volume, muted})
     }, [group, setCustomGroup]);
 
     const handleCustomVolumeReset = useCallback(() => {
@@ -103,7 +103,7 @@ const GroupChannel = (props: { groupId: string }) => {
                             )}
                         </Header>
                     }
-                    analyser={byGroup[groupId] ? byGroup[groupId].analyserNode : undefined}
+                    analyser={byGroup[groupId] ? byGroup[groupId].analyserNodeL : undefined}
                     volume={group.volume}
                     muted={group.muted}
                     customVolume={customGroup ? customGroup.volume : undefined}

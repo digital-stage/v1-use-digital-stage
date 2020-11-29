@@ -112,7 +112,7 @@ const StageMemberChannel = (props: { stageMemberId: string }) => {
                     customVolume={customStageMember ? customStageMember.volume : undefined}
                     customMuted={customStageMember ? customStageMember.muted : undefined}
                     analyser={
-                        byStageMember[stageMemberId] ? byStageMember[stageMemberId].analyserNode : undefined
+                        byStageMember[stageMemberId] ? byStageMember[stageMemberId].analyserNodeL : undefined
                     }
                     onVolumeChanged={handleVolumeChange}
                     onCustomVolumeChanged={handleCustomVolumeChange}

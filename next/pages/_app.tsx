@@ -38,7 +38,7 @@ function MyApp({Component, pageProps}) {
                                             addErrorHandler={reportError}
                                         >
                                             <AudioContextProvider>
-                                                <StageWebAudioProvider>
+                                                <StageWebAudioProvider handleError={reportError}>
                                                     <StageJoinerProvider>
                                                         <Component {...pageProps} />
                                                         <StageOrMixerToggle/>

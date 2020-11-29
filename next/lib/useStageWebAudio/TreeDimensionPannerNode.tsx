@@ -88,7 +88,7 @@ class TreeDimensionPannerNode {
     }
 
     public connect = (destinationNode: IAudioNode<IAudioContext>, output?: number, input?: number) => {
-        return this.node.connect(destinationNode, output);
+        return this.node.connect(destinationNode, output, input);
     }
 
     public disconnect = (output?: number) => {
