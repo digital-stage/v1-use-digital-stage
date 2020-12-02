@@ -38,7 +38,7 @@ const SocketProvider = (props: {
   const [status, setStatus] = useState<IStatus[keyof IStatus]>(
     Status.disconnected
   );
-  const handler = useSocketToDispatch();
+  const { registerHandler: registerSocketHandler } = useSocketToDispatch();
 
   const connect = useCallback(
     (token: string, initialDevice: Partial<Device>): Promise<TeckosClient> => {
@@ -58,10 +58,8 @@ const SocketProvider = (props: {
                 device: initialDevice,
               }
             );
-            if (handler) {
-              d('Attaching handler to socket');
-              handler(nSocket);
-            }
+            d('Attaching handler to socket');
+            registerSocketHandler(nSocket);
             nSocket.on('disconnect', () => {
               d('Disconnected');
               setStatus(Status.connecting);
@@ -90,7 +88,7 @@ const SocketProvider = (props: {
         }
       });
     },
-    [apiUrl, socket, handler, status]
+    [apiUrl, socket, registerSocketHandler, status]
   );
 
   const disconnect = useCallback(() => {
@@ -118,6 +116,7 @@ const SocketProvider = (props: {
       d('Attaching connection cleanup handler');
       return () => {
         d('Cleaning up connection');
+        if (socket) socket.removeAllListeners();
         setStatus(Status.disconnected);
         setSocket(undefined);
       };

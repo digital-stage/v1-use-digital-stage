@@ -2,6 +2,8 @@ import omit from 'lodash/omit';
 import without from 'lodash/without';
 import { LocalConsumer, LocalConsumersCollection } from '../../types';
 import AdditionalReducerTypes from '../actions/AdditionalReducerTypes';
+import upsert from '../utils/upsert';
+import { ServerGlobalEvents } from '../../global/SocketEvents';
 
 function videoConsumers(
   state: LocalConsumersCollection = {
@@ -47,7 +49,7 @@ function videoConsumers(
           ...state.byProducer,
           [videoConsumer.producerId]: videoConsumer._id,
         },
-        allIds: [...state.allIds, videoConsumer._id],
+        allIds: upsert<string>(state.allIds, videoConsumer._id),
       };
     }
     case AdditionalReducerTypes.REMOVE_VIDEO_CONSUMER: {

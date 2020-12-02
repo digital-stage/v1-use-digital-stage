@@ -82,7 +82,7 @@ const GroupChannel = (props: { groupId: string }) => {
 
     const handleCustomVolumeReset = useCallback(() => {
         if( customGroup )
-        removeCustomGroup(customGroup._id);
+            removeCustomGroup(customGroup._id);
     }, [customGroup, setCustomGroup]);
 
     return (

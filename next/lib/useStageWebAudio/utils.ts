@@ -1,5 +1,5 @@
 import {CustomGroup, CustomStageMember, Group, StageMember} from "../../../dist/types";
-import {ThreeDimensionAudioProperties} from "../../../src/types";
+import {ThreeDimensionAudioProperties} from "../../../dist/types";
 
 
 const calculate3DAudioParameters = (
