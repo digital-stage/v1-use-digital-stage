@@ -54,11 +54,11 @@ const StageWebAudioProvider = (props: {
   handleError: (error: Error) => void;
 }): JSX.Element => {
   const { children, handleError } = props;
-  const { destination } = useAudioContext();
+  const { destination, started } = useAudioContext();
   const [destinationNodes, setDestinationNodes] = useState<{
     left: IGainNode<IAudioContext>;
     right: IGainNode<IAudioContext>;
-  }>();
+  }>(undefined);
   const [groupNodes, setGroupNodes] = useState<GainAudioNode>(undefined);
   const [stageMemberNodes, setStageMemberNodes] = useState<GainAudioNode>(undefined);
   const [audioProducerNodes, setAudioProducerNodes] = useState<TrackAudioNode>(undefined);
@@ -77,7 +77,7 @@ const StageWebAudioProvider = (props: {
    * ROOT NODES
    */
   useEffect(() => {
-    if (handleError && destination) {
+    if (handleError && destination && started) {
       try {
         const audioContext = destination.context;
         report('Creating both root nodes');
@@ -95,12 +95,13 @@ const StageWebAudioProvider = (props: {
           reportCleanup('Removing and disconnecting both root nodes');
           createdRootNodeL.disconnect();
           createdRootNodeR.disconnect();
+          setDestinationNodes(undefined);
         };
       } catch (error) {
         handleError(error);
       }
     }
-  }, [destination, handleError]);
+  }, [started, destination, handleError]);
 
   useEffect(() => {
     if (destinationNodes && handleError && stageId && groups.byStage[stageId]) {
@@ -430,23 +431,26 @@ const StageWebAudioProvider = (props: {
                   pannerNode.setOrientation(params.rX, params.rY, params.rZ);
                 }
               }
-              if (!element && audioConsumers.byProducer[item._id]) {
-                report('Attaching consumer to producer node ' + id);
-                // See, if there is a consumer
-                const audioConsumer = audioConsumers.byId[audioConsumers.byProducer[item._id]];
-                const stream = new MediaStream([audioConsumer.consumer.track]);
+              if( audioConsumers.byProducer[item._id] ) {
+                if( !element || element.id !== audioConsumers.byProducer[item._id] ) {
+                  report('Attaching consumer to producer node ' + id);
+                  // See, if there is a consumer
+                  const audioConsumer = audioConsumers.byId[audioConsumers.byProducer[item._id]];
+                  const stream = new MediaStream([audioConsumer.consumer.track]);
 
-                element = new Audio();
-                element.srcObject = stream;
-                element.autoplay = true;
-                element.muted = true;
-                element.play();
+                  element = new Audio();
+                  element.id = audioConsumer._id;
+                  element.srcObject = stream;
+                  element.autoplay = true;
+                  element.muted = true;
+                  element.play();
 
-                // sourceNode = audioContext.createMediaElementSource(element);
-                // sourceNode.connect(gainNode);
+                  // sourceNode = audioContext.createMediaElementSource(element);
+                  // sourceNode.connect(gainNode);
 
-                sourceNode = audioContext.createMediaStreamSource(stream);
-                sourceNode.connect(gainNode);
+                  sourceNode = audioContext.createMediaStreamSource(stream);
+                  sourceNode.connect(gainNode);
+                }
               }
               return {
                 ...items,

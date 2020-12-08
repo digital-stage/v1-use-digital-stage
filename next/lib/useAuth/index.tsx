@@ -4,7 +4,7 @@ import fetch from 'isomorphic-unfetch';
 import debug from 'debug';
 import useErrors from '../useErrors';
 import {AuthUser} from "./AuthUser";
-import {AuthError} from "../../../../webclient/lib/useAuth";
+import AuthError from "./AuthError";
 
 export const ErrorCodes = {
     Unauthorized: 401,
