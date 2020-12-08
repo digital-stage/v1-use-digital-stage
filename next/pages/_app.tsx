@@ -1,6 +1,6 @@
 import React from "react";
 import {Provider as StyletronProvider} from 'styletron-react'
-import {DigitalStageProvider} from "../../dist";
+import {DigitalStageProvider} from "use-digital-stage";
 import {debug, styletron} from "../styletron";
 import './../styles.css'
 import StatusInformer from "../components/StatusInformer";
@@ -13,8 +13,7 @@ import StartPlaybackInformer from "../components/StartPlaybackInformer";
 import {ErrorsConsumer, ErrorsProvider} from "../lib/useErrors";
 import StageJoiner from "../components/StageJoiner";
 import {StageJoinerProvider} from "../lib/useStageJoiner";
-import WebcamToggle from "../components/global/WebcamToggle";
-import MicrophoneToggle from "../components/global/MicrophoneToggle";
+import LocalDeviceControl from "../components/global/LocalDeviceControl";
 
 function MyApp({Component, pageProps}) {
     return (
@@ -42,8 +41,7 @@ function MyApp({Component, pageProps}) {
                                                     <StageJoinerProvider>
                                                         <Component {...pageProps} />
                                                         <StageOrMixerToggle/>
-                                                        <WebcamToggle/>
-                                                        <MicrophoneToggle/>
+                                                        <LocalDeviceControl/>
                                                         <StartPlaybackInformer/>
                                                         <StageJoiner/>
                                                         <StatusInformer/>

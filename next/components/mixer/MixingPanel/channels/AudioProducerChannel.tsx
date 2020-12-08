@@ -8,7 +8,7 @@ import
     RemoteAudioProducer,
     useIsStageAdmin,
     useSelector
-} from '../../../../../dist';
+} from 'use-digital-stage';
 import useStageWebAudio from "../../../../lib/useStageWebAudio";
 
 const Panel = styled('div', {
@@ -52,32 +52,28 @@ const AudioProducerChannel = (props: { audioProducerId: string }) => {
 
     const {byAudioProducer} = useStageWebAudio();
 
-    const {
-        updateStageMemberAudio,
-        setCustomStageMemberAudio,
-        removeCustomStageMemberAudio,
-    } = useStageActions();
+    const stageActions = useStageActions();
 
     const handleVolumeChange = useCallback((volume: number, muted: boolean) => {
-        if( isAdmin ) {
-            updateStageMemberAudio(audioProducer._id, {
+        if (isAdmin) {
+            stageActions.updateStageMemberAudio(audioProducer._id, {
                 volume,
                 muted,
             })
         }
-    }, [isAdmin, audioProducer, updateStageMemberAudio]);
+    }, [isAdmin, audioProducer, stageActions]);
 
     const handleCustomVolumeChange = useCallback((volume: number, muted: boolean) => {
-        setCustomStageMemberAudio(audioProducer._id, {
+        stageActions.setCustomStageMemberAudio(audioProducer._id, {
             volume,
             muted,
         })
-    }, [audioProducer, setCustomStageMemberAudio]);
+    }, [audioProducer, stageActions]);
 
     const handleCustomVolumeReset = useCallback(() => {
-        if(customAudioProducer)
-        removeCustomStageMemberAudio(customAudioProducer._id);
-    }, [customAudioProducer, removeCustomStageMemberAudio]);
+        if (customAudioProducer)
+            stageActions.removeCustomStageMemberAudio(customAudioProducer._id);
+    }, [customAudioProducer, stageActions]);
 
     return (
         <Panel>

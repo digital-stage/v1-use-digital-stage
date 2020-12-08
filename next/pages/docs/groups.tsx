@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from "react";
 import CodeWrapper from "../../components/ui/CodeWrapper";
 import AddGroupPanel from "../../components/docs/AddGroupPanel";
-import useDigitalStage, {useCurrentUser, useGroup, useGroups, useGroupsByStage, useStages} from "../../../dist";
+import {useCurrentUser, useGroup, useGroups, useGroupsByStage, useStageActions, useStages} from "use-digital-stage";
 import Button from "../../components/ui/Button";
 import DocsWrapper from "../../components/docs/DocsWrapper";
 
 const Groups = () => {
-    const {actions} = useDigitalStage();
+    const {createGroup, removeGroup} = useStageActions();
     const user = useCurrentUser();
     const groups = useGroups();
     const stages = useStages();
@@ -109,7 +109,7 @@ const Groups = () => {
                                 {group._id} - {group.name}
                                 <Button
                                     disabled={!user || !stages.byId[stageId].admins.find(adminId => adminId === user._id)}
-                                    onClick={() => actions.removeGroup(group._id)}>
+                                    onClick={() => removeGroup(group._id)}>
                                     delete
                                 </Button>
                             </li>
@@ -117,7 +117,7 @@ const Groups = () => {
                     })}
                 </ul>
             </CodeWrapper>
-            <AddGroupPanel onClick={(groupName) => actions.createGroup(stageId, groupName)}/>
+            <AddGroupPanel onClick={(groupName) => createGroup(stageId, groupName)}/>
             <h3>Single group</h3>
             <select onChange={(event) => setGroupId(event.target.value)}>
                 {groups.allIds.map(sId => {

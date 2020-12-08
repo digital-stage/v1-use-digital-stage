@@ -1,7 +1,7 @@
 import Button from "../ui/Button";
 import {styled, withStyleDeep} from "styletron-react";
 import {useRouter} from "next/router";
-import {useCurrentStageId} from "../../../dist";
+import {useCurrentStageId} from "use-digital-stage";
 import Link from "next/link";
 import {breakpoints} from "../ui/Theme";
 import React from "react";

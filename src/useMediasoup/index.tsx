@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import debug from 'debug';
+import omit from 'lodash/omit';
 import {
   useAudioConsumers,
   useAudioProducers,
@@ -16,12 +17,12 @@ import {
   RemoteAudioProducer,
   RemoteVideoProducer,
 } from '../types';
+import { getAudioTracks, getVideoTracks } from './util';
 
-const d = debug('useMediasoup');
-const trace = d.extend('info');
-const err = d.extend('err');
+const report = debug('useMediasoup');
+const reportError = report.extend('error');
 
-const debugEffect = debug('useEffect:useMediasoup');
+const reportEffect = debug('useEffect:useMediasoup');
 
 function isAudioProducer(
   producer: RemoteVideoProducer | RemoteAudioProducer
@@ -38,7 +39,6 @@ const MediasoupProvider = (props: {
 
   // Local device handling
   const localDevice = useLocalDevice();
-  // const [working, setWorking] = useState<boolean>(false);
   const [sendAudio, setSendAudio] = useState<boolean>(false);
   const [sendVideo, setSendVideo] = useState<boolean>(false);
   const [receiveVideo, setReceiveVideo] = useState<boolean>(false);
@@ -59,69 +59,69 @@ const MediasoupProvider = (props: {
   const audioConsumers = useAudioConsumers();
   const videoConsumers = useVideoConsumers();
 
-  const [localVideoProducers, setLocalVideoProducers] = useState<
-    LocalProducer[]
-  >([]);
-  const [localAudioProducers, setLocalAudioProducers] = useState<
-    LocalProducer[]
-  >([]);
+  const [, setLocalVideoProducers] = useState<LocalProducer[]>([]);
+  const [, setLocalAudioProducers] = useState<LocalProducer[]>([]);
 
-  const getVideoTracks = useCallback((): Promise<MediaStreamTrack[]> => {
-    return navigator.mediaDevices
-      .getUserMedia({
-        audio: false,
-        video: inputVideoDeviceId
-          ? {
-              deviceId: inputVideoDeviceId,
-            }
-          : true,
-      })
-      .then((stream) => stream.getVideoTracks());
-  }, [inputVideoDeviceId]);
-
-  const getAudioTracks = useCallback((): Promise<MediaStreamTrack[]> => {
-    return navigator.mediaDevices
-      .getUserMedia({
-        video: false,
-        audio: {
-          deviceId: inputAudioDeviceId || undefined,
-          autoGainControl: false,
-          echoCancellation: false,
-          noiseSuppression: false,
-        },
-      })
-      .then((stream) => stream.getAudioTracks());
-  }, [inputAudioDeviceId]);
+  const [, setConsumerList] = useState<{
+    [producerId: string]: boolean;
+  }>({});
 
   const createConsumer = useCallback(
-    (producer: RemoteVideoProducer | RemoteAudioProducer): Promise<void> => {
-      return consume(producer).then((consumer) => {
-        if (isAudioProducer(producer)) {
-          dispatch(allActions.stageActions.client.addAudioConsumer(consumer));
-        } else {
-          dispatch(allActions.stageActions.client.addVideoConsumer(consumer));
+    (producer: RemoteVideoProducer | RemoteAudioProducer): void => {
+      setConsumerList((prev) => {
+        if (!prev[producer._id]) {
+          // CONSUME
+          consume(producer)
+            .then((consumer) => {
+              if (isAudioProducer(producer)) {
+                dispatch(
+                  allActions.stageActions.client.addAudioConsumer(consumer)
+                );
+              } else {
+                dispatch(
+                  allActions.stageActions.client.addVideoConsumer(consumer)
+                );
+              }
+              return undefined;
+            })
+            .catch((error) => reportError(error));
+          return {
+            ...prev,
+            [producer._id]: true,
+          };
         }
-        return undefined;
+        return prev;
       });
     },
     [consume, dispatch]
   );
 
   const removeConsumer = useCallback(
-    (consumer: LocalConsumer, type: 'audio' | 'video'): Promise<void> => {
-      return stopConsuming(consumer)
-        .then(() => undefined)
-        .finally(() => {
-          if (type === 'video') {
-            dispatch(
-              allActions.stageActions.client.removeVideoConsumer(consumer._id)
-            );
-          } else {
-            dispatch(
-              allActions.stageActions.client.removeAudioConsumer(consumer._id)
-            );
-          }
-        });
+    (consumer: LocalConsumer, type: 'audio' | 'video'): void => {
+      setConsumerList((prev) => {
+        if (prev[consumer.producerId]) {
+          stopConsuming(consumer)
+            .then(() => undefined)
+            .finally(() => {
+              if (type === 'video') {
+                dispatch(
+                  allActions.stageActions.client.removeVideoConsumer(
+                    consumer._id
+                  )
+                );
+              } else {
+                dispatch(
+                  allActions.stageActions.client.removeAudioConsumer(
+                    consumer._id
+                  )
+                );
+              }
+            })
+            .catch((error) => reportError(error));
+          return omit(prev, consumer.producerId);
+        }
+        return prev;
+      });
     },
     [stopConsuming, dispatch]
   );
@@ -144,11 +144,9 @@ const MediasoupProvider = (props: {
       .map((id) => videoConsumers.byId[id])
       .filter((consumer) => !videoProducers.byId[consumer.producerId]);
     return Promise.all([
-      producersWithoutConsumer.map((producer) =>
-        createConsumer(producer).catch((error) => err(error))
-      ),
+      producersWithoutConsumer.map((producer) => createConsumer(producer)),
       consumersWithoutProducer.map((consumer) =>
-        removeConsumer(consumer, 'video').catch((error) => err(error))
+        removeConsumer(consumer, 'video')
       ),
     ]);
   }, [videoProducers, videoConsumers, createConsumer, removeConsumer]);
@@ -159,46 +157,52 @@ const MediasoupProvider = (props: {
         .map((consumer) => removeConsumer(consumer, 'video'))
     );
   }, [videoConsumers, removeConsumer]);
-  const shareVideo = useCallback(() => {
-    return getVideoTracks()
-      .then((tracks) => Promise.all(tracks.map((track) => produce(track))))
-      .then((localProducers) =>
+  const shareVideo = useCallback(
+    (tracks: MediaStreamTrack[]) => {
+      return Promise.all(
+        tracks.map((track) => produce(track))
+      ).then((localProducers) =>
         setLocalVideoProducers((prev) => [...prev, ...localProducers])
       );
-  }, [getVideoTracks, produce]);
+    },
+    [produce]
+  );
   const stopSharingVideo = useCallback(() => {
-    return Promise.all(
-      localVideoProducers.map((localProducer) => stopProducing(localProducer))
-    ).finally(() => setLocalVideoProducers([]));
-  }, [localVideoProducers, stopProducing]);
+    setLocalVideoProducers((prev) => {
+      prev.forEach((localProducer) => stopProducing(localProducer));
+      return [];
+    });
+  }, [stopProducing]);
   useEffect(() => {
     if (ready) {
-      debugEffect('ready receiveVideo');
+      reportEffect('ready receiveVideo');
       if (receiveVideo) {
-        consumeAllVideos().catch((error) => err(error));
+        consumeAllVideos().catch((error) => reportError(error));
       } else {
-        removeAllVideoConsumers().catch((error) => err(error));
+        removeAllVideoConsumers().catch((error) => reportError(error));
       }
     }
   }, [ready, receiveVideo]);
   useEffect(() => {
     if (ready) {
-      debugEffect('ready videoProducers');
+      reportEffect('ready videoProducers');
       if (receiveVideo) {
-        refreshVideoConsumers().catch((error) => err(error));
+        refreshVideoConsumers().catch((error) => reportError(error));
       }
     }
   }, [ready, videoProducers]);
   useEffect(() => {
     if (ready) {
-      debugEffect('ready sendVideo');
+      reportEffect('ready sendVideo');
       if (sendVideo) {
-        shareVideo().catch((error) => err(error));
-      } else {
-        stopSharingVideo().catch((error) => err(error));
+        getVideoTracks(inputVideoDeviceId)
+          .then((tracks) => shareVideo(tracks))
+          .catch((error) => reportError(error));
+        return () => stopSharingVideo();
       }
     }
-  }, [ready, sendVideo, shareVideo]);
+    return undefined;
+  }, [ready, sendVideo, inputVideoDeviceId, shareVideo, stopSharingVideo]);
 
   /** ******************************************
    * AUDIO HANDLING
@@ -218,11 +222,9 @@ const MediasoupProvider = (props: {
       .map((id) => audioConsumers.byId[id])
       .filter((consumer) => !audioProducers.byId[consumer.producerId]);
     return Promise.all([
-      producersWithoutConsumer.map((producer) =>
-        createConsumer(producer).catch((error) => err(error))
-      ),
+      producersWithoutConsumer.map((producer) => createConsumer(producer)),
       consumersWithoutProducer.map((consumer) =>
-        removeConsumer(consumer, 'audio').catch((error) => err(error))
+        removeConsumer(consumer, 'audio')
       ),
     ]);
   }, [audioProducers, audioConsumers, createConsumer, removeConsumer]);
@@ -234,25 +236,28 @@ const MediasoupProvider = (props: {
     );
   }, [audioConsumers, removeConsumer]);
   const shareAudio = useCallback(
-    () =>
-      getAudioTracks()
-        .then((tracks) => Promise.all(tracks.map((track) => produce(track))))
-        .then((localProducers) =>
-          setLocalAudioProducers((prev) => [...prev, ...localProducers])
-        ),
-    [getAudioTracks, produce]
+    (tracks: MediaStreamTrack[]) => {
+      return Promise.all(
+        tracks.map((track) => produce(track))
+      ).then((localProducers) =>
+        setLocalAudioProducers((prev) => [...prev, ...localProducers])
+      );
+    },
+    [produce]
   );
   const stopSharingAudio = useCallback(() => {
-    return Promise.all(
-      localAudioProducers.map((localProducer) => stopProducing(localProducer))
-    ).finally(() => setLocalAudioProducers([]));
-  }, [localAudioProducers, stopProducing]);
+    report('Stop sharing audio');
+    setLocalAudioProducers((prev) => {
+      prev.forEach((localProducer) => stopProducing(localProducer));
+      return [];
+    });
+  }, [stopProducing]);
   useEffect(() => {
     if (ready) {
       if (receiveAudio) {
-        consumeAllAudio().catch((error) => err(error));
+        consumeAllAudio().catch((error) => reportError(error));
       } else {
-        removeAllAudioConsumers().catch((error) => err(error));
+        removeAllAudioConsumers().catch((error) => reportError(error));
       }
     }
     return undefined;
@@ -260,7 +265,7 @@ const MediasoupProvider = (props: {
   useEffect(() => {
     if (ready) {
       if (receiveAudio) {
-        refreshAudioConsumers().catch((error) => err(error));
+        refreshAudioConsumers().catch((error) => reportError(error));
       }
     }
     return undefined;
@@ -268,12 +273,14 @@ const MediasoupProvider = (props: {
   useEffect(() => {
     if (ready) {
       if (sendAudio) {
-        shareAudio().catch((error) => err(error));
-      } else {
-        stopSharingAudio().catch((error) => err(error));
+        getAudioTracks(inputAudioDeviceId)
+          .then((tracks) => shareAudio(tracks))
+          .catch((error) => reportError(error));
+        return () => stopSharingAudio();
       }
     }
-  }, [ready, sendAudio, shareAudio]);
+    return undefined;
+  }, [ready, sendAudio, inputAudioDeviceId, shareAudio, stopSharingAudio]);
 
   /** *
    * SYNC DEVICE
@@ -281,33 +288,33 @@ const MediasoupProvider = (props: {
   useEffect(() => {
     if (ready && localDevice) {
       if (localDevice.receiveAudio !== receiveAudio) {
-        trace('RECEIVE AUDIO CHANGED');
+        report('RECEIVE AUDIO CHANGED');
         setReceiveAudio(localDevice.receiveAudio);
       }
       if (localDevice.receiveVideo !== receiveVideo) {
-        trace('RECEIVE VIDEO CHANGED');
+        report('RECEIVE VIDEO CHANGED');
         setReceiveVideo(localDevice.receiveVideo);
       }
       if (localDevice.sendAudio !== sendAudio) {
-        trace('SEND AUDIO CHANGED');
+        report('SEND AUDIO CHANGED');
         setSendAudio(localDevice.sendAudio);
       }
       if (localDevice.sendVideo !== sendVideo) {
-        trace('SEND VIDEO CHANGED');
+        report('SEND VIDEO CHANGED');
         setSendVideo(localDevice.sendVideo);
       }
       if (localDevice.inputAudioDeviceId !== inputAudioDeviceId) {
-        trace('SEND AUDIO DEVICE ID CHANGED');
+        report('SEND AUDIO DEVICE ID CHANGED');
         setInputAudioDeviceId(localDevice.inputAudioDeviceId);
       }
       if (localDevice.inputVideoDeviceId !== inputVideoDeviceId) {
-        trace('SEND VIDEO DEVICE ID CHANGED');
+        report('SEND VIDEO DEVICE ID CHANGED');
         setInputVideoDeviceId(localDevice.inputVideoDeviceId);
       }
     }
   }, [ready, localDevice]);
   useEffect(() => {
-    trace('MEDIASOUP CHANGED');
+    report('MEDIASOUP CHANGED');
   }, [ready]);
 
   return <>{children}</>;

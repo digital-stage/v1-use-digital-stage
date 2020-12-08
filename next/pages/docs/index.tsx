@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import useDigitalStage, {useCurrentUser} from '../../../dist';
+import useDigitalStage, {useCurrentUser} from 'use-digital-stage';
 import useAuth from "../../lib/useAuth";
 import {useRouter} from "next/router";
 import DocsWrapper from "../../components/docs/DocsWrapper";

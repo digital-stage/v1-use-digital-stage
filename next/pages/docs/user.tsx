@@ -1,17 +1,13 @@
-import React, {useCallback} from "react";
-import useDigitalStage, {useCurrentUser} from "../../../dist";
+import React from "react";
+import {useStageActions, useCurrentUser, useUsers} from "use-digital-stage";
 import CodeWrapper from "../../components/ui/CodeWrapper";
 import ChangeUserPanel from "../../components/docs/ChangeUserPanel";
 import DocsWrapper from "../../components/docs/DocsWrapper";
 
 const User = () => {
-    const {actions} = useDigitalStage();
+    const {updateUser} = useStageActions();
     const currentUser = useCurrentUser();
-
-    const updateUser = useCallback((name: string, avatarUrl?: string) => {
-        if (actions)
-            actions.updateUser(name)
-    }, [actions])
+    const users = useUsers();
 
     return (
         <DocsWrapper>
@@ -30,13 +26,21 @@ const User = () => {
                 actions.updateUser("Stage name", "my-password")
             </CodeWrapper>
             <h2>Result</h2>
+            <h3>All users</h3>
+            <CodeWrapper>
+                <pre>
+                {JSON.stringify(users, null, 2)}
+                </pre>
+            </CodeWrapper>
+            <h3>Current user</h3>
             <CodeWrapper>
                 <pre>
                 {JSON.stringify(currentUser, null, 2)}
                 </pre>
             </CodeWrapper>
 
-            {currentUser ? <ChangeUserPanel userName={currentUser.name} onClick={updateUser} avatarUrl={currentUser.avatarUrl}/> : undefined}
+            {currentUser ? <ChangeUserPanel userName={currentUser.name} onClick={updateUser}
+                                            avatarUrl={currentUser.avatarUrl}/> : undefined}
 
         </DocsWrapper>
     )

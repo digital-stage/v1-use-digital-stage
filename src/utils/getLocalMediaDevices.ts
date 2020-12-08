@@ -70,6 +70,10 @@ const getLocalMediaDevices = (
           inputVideoDeviceId = 'default';
         }
       }
+
+      console.debug('MEDIA DEVICES');
+      console.debug(mediaDevices.outputAudioDevices);
+
       return {
         inputAudioDeviceId,
         inputVideoDeviceId,

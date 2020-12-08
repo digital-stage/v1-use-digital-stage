@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {styled} from "styletron-react";
 import Container from "../components/ui/Container";
 import Accordion from "../components/ui/Accordion";
-import {useCurrentGroupId, useCurrentStageId, useGroups, useStageActions, useStages} from "../../dist";
+import {useCurrentGroupId, useCurrentStageId, useGroups, useStageActions, useStages} from "use-digital-stage";
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import Button from "../components/ui/Button";
 import Notification from "../components/ui/Notification";
@@ -48,7 +48,7 @@ const Stages = () => {
     const stages = useStages();
     const groups = useGroups();
     const {requestJoin} = useStageJoiner();
-    const {leaveStage} = useStageActions();
+    const stageActions = useStageActions();
     const [copied, setCopied] = useState<boolean>(false);
     const currentStageId = useCurrentStageId();
     const currentGroupId = useCurrentGroupId();
@@ -71,6 +71,10 @@ const Stages = () => {
             }
         }
     }, [copied]);
+
+    const leaveStage = useCallback(() => {
+        stageActions.leaveStage();
+    }, [stageActions])
 
     console.log(stages.allIds);
 
@@ -95,9 +99,7 @@ const Stages = () => {
                                         </CopyToClipboard>
                                         {currentStageId === stage._id
                                         && currentGroupId === group._id ? (
-                                            <Button onClick={() => {
-                                                leaveStage();
-                                            }}>Leave</Button>
+                                            <Button onClick={leaveStage}>Leave</Button>
                                         ) : (
                                             <Button onClick={() => {
                                                 requestJoin(stage._id, group._id)

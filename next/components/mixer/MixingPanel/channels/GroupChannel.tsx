@@ -2,23 +2,25 @@ import * as React from 'react';
 import {styled} from 'styletron-react';
 import StageMemberChannel from './StageMemberChannel';
 import ChannelStrip from '../../ChannelStrip';
-import {CustomGroup, useGroup, useIsStageAdmin, useSelector, useStageActions} from "../../../../../dist";
+import {CustomGroup, useGroup, useIsStageAdmin, useSelector, useStageActions} from "use-digital-stage";
 import Button from "../../../ui/Button";
 import useStageWebAudio from "../../../../lib/useStageWebAudio";
 import {useCallback} from "react";
+import {colors} from "../../../ui/Theme";
 
 const PanelRow = styled("div", {
     display: 'flex',
     flexDirection: 'row',
     borderRadius: '20px',
     marginRight: '1rem',
+    backgroundColor: colors.mixer.group
 });
 const Column = styled('div', {
     paddingLeft: '1rem',
     paddingRight: '1rem',
     paddingTop: '3rem',
     paddingBottom: '3rem',
-    height: '100%',
+    height: '100%'
 });
 const Row = styled('div', {
     paddingTop: '1rem',
@@ -32,7 +34,7 @@ const Row = styled('div', {
 const InnerRow = styled('div', {
     display: 'flex',
     flexDirection: 'row',
-    backgroundColor: 'rgba(130,100,130,1)',
+    backgroundColor: colors.mixer.stageMember,
     borderRadius: '20px',
     height: '100%',
 });
@@ -62,28 +64,28 @@ const GroupChannel = (props: { groupId: string }) => {
 
     const {byGroup} = useStageWebAudio();
 
-    const {updateGroup, setCustomGroup, removeCustomGroup} = useStageActions();
+    const stageActions = useStageActions();
 
     const [expanded, setExpanded] = React.useState<boolean>();
 
     const handleVolumeChange = useCallback((volume: number, muted: boolean) => {
         console.debug(group._id,volume, muted)
         if( isAdmin ) {
-            updateGroup(group._id, {
+            stageActions.updateGroup(group._id, {
                 volume,
                 muted,
             })
         }
-    }, [isAdmin, group, updateGroup]);
+    }, [isAdmin, group, stageActions]);
 
     const handleCustomVolumeChange = useCallback((volume: number, muted: boolean) => {
-        setCustomGroup(group._id, {volume, muted})
-    }, [group, setCustomGroup]);
+        stageActions.setCustomGroup(group._id, {volume, muted})
+    }, [group, stageActions]);
 
     const handleCustomVolumeReset = useCallback(() => {
         if( customGroup )
-            removeCustomGroup(customGroup._id);
-    }, [customGroup, setCustomGroup]);
+            stageActions.removeCustomGroup(customGroup._id);
+    }, [customGroup, stageActions]);
 
     return (
         <PanelRow>

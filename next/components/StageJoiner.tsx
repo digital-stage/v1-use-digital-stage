@@ -1,9 +1,8 @@
 import React, {
     useCallback, useEffect, useRef, useState,
 } from 'react';
-import useDigitalStage, {useCurrentGroupId, useCurrentStageId} from "../../dist";
+import useDigitalStage, {useStageActions} from "use-digital-stage";
 import useStageJoiner, {Errors} from "../lib/useStageJoiner";
-import {useStageActions} from "../../dist";
 import Modal, {ModalBody, ModalButton, ModalFooter, ModalHeader} from "./ui/Modal";
 import Input from "./ui/Input";
 
@@ -18,7 +17,7 @@ const StageJoiner = () => {
     const {
         stageId, groupId, password, reset
     } = useStageJoiner();
-    const { joinStage } = useStageActions();
+    const stageActions = useStageActions();
     const [retries, setRetries] = useState<number>(0);
     const [wrongPassword, setWrongPassword] = useState<boolean>();
     const [notFound, setNotFound] = useState<boolean>();
@@ -32,7 +31,7 @@ const StageJoiner = () => {
 
     const retryJoiningStage = useCallback((stageId: string, groupId: string, password?: string) => {
         // Try to connect
-        joinStage(stageId, groupId, password)
+        stageActions.joinStage(stageId, groupId, password)
             .then(() => {
                 console.log('Joined');
                 clear();
@@ -46,7 +45,7 @@ const StageJoiner = () => {
                     setNotFound(true);
                 }
             })
-    }, [joinStage, clear]);
+    }, [stageActions, clear]);
 
     useEffect(() => {
         if (ready) {

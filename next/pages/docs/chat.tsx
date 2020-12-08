@@ -1,6 +1,6 @@
 import {styled} from "styletron-react";
 import React, {useCallback} from "react";
-import { useStageActions, Group, useGroupsByStage, useVideoConsumers, useStageMembersByGroup, LocalConsumer, StageMemberWithUserData, useCurrentStageId, useLocalDevice, useSelector} from "../../../dist";
+import { useStageActions, Group, useGroupsByStage, useVideoConsumers, useStageMembersByGroup, LocalConsumer, StageMemberWithUserData, useCurrentStageId, useLocalDevice, useSelector} from "use-digital-stage";
 
 import DocsWrapper from "../../components/docs/DocsWrapper";
 import VideoPlayer from "../../components/ui/VideoPlayer";
@@ -66,7 +66,7 @@ const GroupView = (props: {
 
 
 const Chat = () => {
-    const {updateDevice} = useStageActions();
+    const stageActions = useStageActions();
     const localDevice = useLocalDevice();
 
     const consumers = useVideoConsumers();
@@ -78,16 +78,16 @@ const Chat = () => {
     const groups = useGroupsByStage(stageId);
 
     const toggleWebcam = useCallback(() => {
-        updateDevice(localDevice._id, {
+        stageActions.updateDevice(localDevice._id, {
             sendVideo: !localDevice.sendVideo
         })
-    }, [updateDevice, localDevice]);
+    }, [stageActions, localDevice]);
 
     const toggleMic = useCallback(() => {
-        updateDevice(localDevice._id, {
+        stageActions.updateDevice(localDevice._id, {
             sendAudio: !localDevice.sendAudio
         })
-    }, [updateDevice, localDevice]);
+    }, [stageActions, localDevice]);
 
 
     if (stageId) {

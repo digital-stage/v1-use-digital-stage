@@ -3,7 +3,7 @@ import {useRouter} from "next/router";
 import useAuth from "../lib/useAuth";
 import Link from "next/link";
 import {styled} from "styletron-react";
-import {useCurrentStageId} from "../../dist";
+import {useCurrentStageId} from "use-digital-stage";
 import Container from "../components/ui/Container";
 
 const List = styled("div", {

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import CodeWrapper from "../../components/ui/CodeWrapper";
 import Button from "../../components/ui/Button";
-import {useStageActions, useCurrentStageId, useCustomStageMembers, useStageMembersByStage} from "../../../dist";
+import {useStageActions, useCurrentStageId, useCustomStageMembers, useStageMembersByStage} from "use-digital-stage";
 import RangeSlider from "../../components/ui/RangeSlider";
 import DocsWrapper from "../../components/docs/DocsWrapper";
 

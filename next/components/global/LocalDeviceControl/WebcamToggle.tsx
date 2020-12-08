@@ -1,14 +1,11 @@
-import {useLocalDevice, useStageActions} from "../../../dist";
-import ToggleButton from "../ui/ToggleButton";
-import React from "react";
-import {styled} from "styletron-react";
-import {breakpoints} from "../ui/Theme";
 
-const ToggleWebcamButton = styled(ToggleButton, {
-    position: "fixed",
-    right: "50%",
-    bottom: "1rem",
-    marginRight: "1rem",
+import {useStageActions, useLocalDevice} from "use-digital-stage";
+import ToggleButton from "../../ui/ToggleButton";
+import React, {useCallback} from "react";
+import {styled} from "styletron-react";
+import {breakpoints} from "../../ui/Theme";
+
+const StyledToggleButton = styled(ToggleButton, {
     borderRadius: "50%",
     padding: ".5rem",
     [breakpoints.TABLET]: {
@@ -24,23 +21,23 @@ const Icon = styled("img", {
 });
 
 const WebcamToggle = () => {
-    const {updateDevice} = useStageActions();
+    const stageActions = useStageActions();
     const localDevice = useLocalDevice();
+
+    const toggleWebcam = useCallback((active: boolean) => {
+        stageActions.updateDevice(localDevice._id, {
+            sendVideo: active
+        });
+    }, [stageActions])
 
     if (localDevice) {
         return (
-            <ToggleWebcamButton active={localDevice.sendVideo} onToggle={
-                (active) => {
-                    updateDevice(localDevice._id, {
-                        sendVideo: active
-                    });
-                }
-            }>
+            <StyledToggleButton active={localDevice.sendVideo} onToggle={toggleWebcam}>
                 <Icon
                     alt={localDevice.sendVideo ? "enable webcam" : "disable webcam"}
                     src={localDevice.sendVideo ? "/static/videocam-18dp.svg" : "/static/videocam_off-18dp.svg"}
                 />
-            </ToggleWebcamButton>
+            </StyledToggleButton>
         )
     }
 

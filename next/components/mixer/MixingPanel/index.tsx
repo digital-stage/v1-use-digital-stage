@@ -1,7 +1,7 @@
 import {styled} from 'styletron-react';
 import React from 'react';
 import GroupChannel from './channels/GroupChannel';
-import {useSelector} from "../../../../dist";
+import {useSelector} from "use-digital-stage";
 
 const Wrapper = styled('div', {
   width: '100%',
@@ -14,7 +14,7 @@ const Wrapper = styled('div', {
   alignItems: 'stretch',
   justifyContent: 'flex-start',
   flexWrap: 'nowrap',
-  padding: '1rem',
+  padding: '1rem'
 });
 
 /** *

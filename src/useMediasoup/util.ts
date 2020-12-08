@@ -147,6 +147,41 @@ function ping(url: string, multiplier?: number): Promise<number> {
   });
 }
 
+export const getVideoTracks = (
+  inputVideoDeviceId?: string
+): Promise<MediaStreamTrack[]> => {
+  return navigator.mediaDevices
+    .getUserMedia({
+      audio: false,
+      video: inputVideoDeviceId
+        ? {
+            deviceId: inputVideoDeviceId,
+          }
+        : true,
+    })
+    .then((stream) => stream.getVideoTracks());
+};
+
+export const getAudioTracks = (
+  inputAudioDeviceId?: string
+): Promise<MediaStreamTrack[]> => {
+  const sampleRate = process.env.NEXT_PUBLIC_FIXED_SAMPLERATE
+    ? parseInt(process.env.NEXT_PUBLIC_FIXED_SAMPLERATE, 10)
+    : undefined;
+  return navigator.mediaDevices
+    .getUserMedia({
+      video: false,
+      audio: {
+        deviceId: inputAudioDeviceId || undefined,
+        sampleRate,
+        autoGainControl: false,
+        echoCancellation: false,
+        noiseSuppression: false,
+      },
+    })
+    .then((stream) => stream.getAudioTracks());
+};
+
 export const createWebRTCTransport = (
   routerConnection: ITeckosClient,
   device: mediasoupClient.Device,

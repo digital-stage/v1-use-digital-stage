@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from "react";
 import CodeWrapper from "../../components/ui/CodeWrapper";
 import Button from "../../components/ui/Button";
-import {useCurrentStageId, useCustomGroups, useGroupsByStage, useStageActions} from "../../../dist";
+import {useCurrentStageId, useCustomGroups, useGroupsByStage, useStageActions} from "use-digital-stage";
 import RangeSlider from "../../components/ui/RangeSlider";
 import DocsWrapper from "../../components/docs/DocsWrapper";
 
 const StageMembers = () => {
-    const {setCustomGroup, removeCustomGroup} = useStageActions();
+    const stageActions = useStageActions();
 
     const customGroups = useCustomGroups();
 
@@ -69,17 +69,17 @@ const StageMembers = () => {
                     <RangeSlider
                         volume={customGroups.byId[customGroups.byGroup[groupId]].volume}
                         onChange={(v) => {
-                            setCustomGroup(
+                            stageActions.setCustomGroup(
                                 groupId, {volume: v, muted: false}
                             );
                         }}/>
                     <Button
                         onClick={() =>
-                            removeCustomGroup(customGroups.byGroup[groupId])
+                            stageActions.removeCustomGroup(customGroups.byGroup[groupId])
                         }>delete</Button>
                 </CodeWrapper>
             ) : (
-                <Button onClick={() => setCustomGroup(groupId, {volume: 0.2, muted: false})}>
+                <Button onClick={() =>  stageActions.setCustomGroup(groupId, {volume: 0.2, muted: false})}>
                     Add
                 </Button>
             )}

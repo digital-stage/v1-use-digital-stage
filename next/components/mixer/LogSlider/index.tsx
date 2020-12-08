@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {convertRangeToDbMeasure, formatDbMeasure} from './utils';
 import VerticalSlider from "./VerticalSlider";
-import {useStyletron} from "styletron-react";
 
 export type RGBColor = [number, number, number];
 
@@ -38,60 +37,60 @@ const LogSlider = (props: {
     className?: string;
     alignLabel?: "left" | "right";
 }) => {
+    const {volume, min, middle, max, color, onChange, onEnd, width, className, alignLabel} = props;
     const [value, setValue] = useState<number>();
-    const [dbValue, setDbValue] = useState<number>(props.volume);
-    const [css] = useStyletron();
+    const [dbValue, setDbValue] = useState<number>(volume);
 
     const convertLinearToLog = useCallback((value: number): number => {
         if (value > NULL_VALUE) {
             const y = (value - NULL_VALUE) / (MAX - NULL_VALUE);
-            return (Math.pow(y, UPPER_BASE) * (props.max - props.middle)) + props.middle;
+            return (Math.pow(y, UPPER_BASE) * (max - middle)) + middle;
         } else {
             const y = ((value / NULL_VALUE) * (LOWER_BASE - 1)) + 1;
             return getBaseLog(LOWER_BASE, y);
         }
-    }, [props.middle, props.max]);
+    }, [middle, max]);
 
     const convertLogToLinear = useCallback((value: number): number => {
-        if (value > props.middle) {
-            return Math.round(Math.pow(((value - props.middle) / (props.max - props.middle)), (1 / UPPER_BASE)) * (MAX - NULL_VALUE)) + NULL_VALUE;
+        if (value > middle) {
+            return Math.round(Math.pow(((value - middle) / (max - middle)), (1 / UPPER_BASE)) * (MAX - NULL_VALUE)) + NULL_VALUE;
         } else {
             return Math.round(((Math.pow(LOWER_BASE, value) - 1) / (LOWER_BASE - 1)) * NULL_VALUE);
         }
-    }, [props.middle, props.max]);
+    }, [middle, max]);
 
     useEffect(() => {
-        setValue(convertLogToLinear(props.volume));
-        setDbValue(convertRangeToDbMeasure(props.volume));
-    }, [props.volume])
+        setValue(convertLogToLinear(volume));
+        setDbValue(convertRangeToDbMeasure(volume));
+    }, [volume, convertLogToLinear])
 
     const handleSliderChange = useCallback((value: number) => {
-        if (props.onChange) {
+        if (onChange) {
             const volume = convertLinearToLog(value);
-            props.onChange(volume);
+            onChange(volume);
         }
-    }, [props.onChange])
+    }, [onChange, convertLinearToLog])
 
     const handleFinalSliderChange = useCallback((value: number) => {
-        if (props.onEnd) {
+        if (onEnd) {
             const volume = convertLinearToLog(value);
-            props.onEnd(volume);
+            onEnd(volume);
         }
-    }, [props.onEnd])
+    }, [onEnd, convertLinearToLog])
 
     return (
         <VerticalSlider
-            className={props.className}
+            className={className}
             min={MIN}
             max={MAX}
             step={STEP}
             value={value}
             onChange={handleSliderChange}
             onFinalChange={handleFinalSliderChange}
-            color={props.color}
-            width={props.width}
+            color={color}
+            width={width}
             text={formatDbMeasure(dbValue, true)}
-            alignLabel={props.alignLabel}
+            alignLabel={alignLabel}
             showMarks={true}
             renderMarks={(index) => {
                 const value = MAX - (index * STEP);

@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import { useCurrentStageId, useGroups, useStages} from '../../../dist';
+import { useCurrentStageId, useGroups, useStages, useStageActions} from 'use-digital-stage';
 import Button from "../../components/ui/Button";
 import DocsWrapper from "../../components/docs/DocsWrapper";
-import {useStageActions} from "../../../dist";
 
 const StageManagement = () => {
     const currentStageId = useCurrentStageId();

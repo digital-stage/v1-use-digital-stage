@@ -2,7 +2,6 @@ import debug from 'debug';
 import React, { useCallback } from 'react';
 import { Device, Stage, Group, ThreeDimensionAudioProperties } from '../types';
 import useSocket from '../useSocket';
-import useCurrentStageId from '../hooks/useCurrentStageId';
 import {
   ClientDeviceEvents,
   ClientStageEvents,
@@ -147,7 +146,6 @@ const StageActionsProvider = (props: {
   const { children, handleError } = props;
   const socketAPI = useSocket();
   const { socket } = socketAPI;
-  const stageId = useCurrentStageId();
 
   const updateDevice = useCallback(
     (deviceId: string, device: Partial<Omit<Device, '_id'>>) => {
@@ -276,7 +274,7 @@ const StageActionsProvider = (props: {
         throw new Error("Socket connection wasn't ready");
       }
     },
-    [socket, stageId, handleError]
+    [socket, handleError]
   );
 
   const removeStage = useCallback(

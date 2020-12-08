@@ -1,11 +1,12 @@
 import * as React from 'react';
 import {styled} from 'styletron-react';
 import ChannelStrip from '../../ChannelStrip';
-import {useStageActions, CustomStageMember, useIsStageAdmin, useSelector, useStageMember} from "../../../../../dist";
+import {useStageActions, CustomStageMember, useIsStageAdmin, useSelector, useStageMember} from "use-digital-stage";
 import useStageWebAudio from "../../../../lib/useStageWebAudio";
 import Button from "../../../ui/Button";
 import AudioProducerChannel from "./AudioProducerChannel";
 import {useCallback} from "react";
+import {colors} from "../../../ui/Theme";
 
 const Panel = styled('div', {
     display: 'flex',
@@ -24,7 +25,7 @@ const Row = styled('div', {
 const InnerRow = styled('div', {
     display: 'flex',
     flexDirection: 'row',
-    backgroundColor: 'rgba(100,100,130,1)',
+    backgroundColor: colors.mixer.track,
     borderRadius: '20px',
     height: '100%',
 });
@@ -63,30 +64,30 @@ const StageMemberChannel = (props: { stageMemberId: string }) => {
 
     const {byStageMember} = useStageWebAudio();
 
-    const {updateStageMember, setCustomStageMember, removeCustomStageMember} = useStageActions();
+    const stageActions = useStageActions();
 
     const [expanded, setExpanded] = React.useState<boolean>();
 
     const handleVolumeChange = useCallback((volume: number, muted: boolean) => {
         if( isAdmin ) {
-            updateStageMember(stageMember._id, {
+            stageActions.updateStageMember(stageMember._id, {
                 volume,
                 muted,
             })
         }
-    }, [isAdmin, stageMember, updateStageMember]);
+    }, [isAdmin, stageMember, stageActions]);
 
     const handleCustomVolumeChange = useCallback((volume: number, muted: boolean) => {
-        setCustomStageMember(stageMember._id, {
+        stageActions.setCustomStageMember(stageMember._id, {
             volume,
             muted,
         })
-    }, [stageMember, setCustomStageMember]);
+    }, [stageMember, stageActions]);
 
     const handleCustomVolumeReset = useCallback(() => {
         if(customStageMember)
-            removeCustomStageMember(customStageMember._id);
-    }, [customStageMember, removeCustomStageMember]);
+            stageActions.removeCustomStageMember(customStageMember._id);
+    }, [customStageMember, stageActions]);
 
     return (
         <Panel>

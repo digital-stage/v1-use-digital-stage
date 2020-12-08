@@ -1,4 +1,10 @@
-import {Group, LocalConsumer, StageMemberWithUserData, useSelector, useStageMembersByGroup} from "../../dist";
+import {
+    Group,
+    LocalConsumer,
+    StageMemberWithUserData,
+    useSelector,
+    useStageMembersByGroup
+} from "use-digital-stage";
 import VideoPlayer from "../components/ui/VideoPlayer";
 import {styled} from "styletron-react";
 import {breakpoints} from "../components/ui/Theme";
@@ -70,7 +76,7 @@ const GroupGrid = (props: {
     return (
         <GroupWrapper>
             <GroupTitle>{group.name}</GroupTitle>
-            {stageMembers.map(stageMember => <StageMemberContainer stageMember={stageMember}/>)}
+            {stageMembers.map(stageMember => <StageMemberContainer key={stageMember._id} stageMember={stageMember}/>)}
         </GroupWrapper>
     )
 }
@@ -89,7 +95,8 @@ const Stage = () => {
 
     return (
         <StageWrapper>
-            {groups.map(group => <GroupGrid group={group}/>)}
+            STAGE
+            {groups.map(group => <GroupGrid key={group._id} group={group}/>)}
         </StageWrapper>
     )
 }

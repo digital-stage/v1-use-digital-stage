@@ -280,8 +280,6 @@ const useMediasoupTransport = (
         sendTransport &&
         router
       ) {
-        console.debug('sendTransport');
-        console.debug(sendTransport);
         return createProducer(sendTransport, track)
           .then((producer) => {
             if (producer.paused) {
