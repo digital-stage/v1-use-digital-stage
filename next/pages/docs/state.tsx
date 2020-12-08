@@ -8,11 +8,11 @@ const State = () => {
 
     return (
         <DocsWrapper>
-        <CodeWrapper>
+            <CodeWrapper>
                     <pre>
                         {JSON.stringify(state, null, 2)}
                     </pre>
-        </CodeWrapper>
+            </CodeWrapper>
         </DocsWrapper>
     )
 }
