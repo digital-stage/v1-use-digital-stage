@@ -34,7 +34,7 @@ const ReceiveVideoToggle = () => {
             <StyledToggleButton active={localDevice.receiveVideo} onToggle={toggleReceive}>
                 <Icon
                     alt={localDevice.receiveVideo ? "enable video playback" : "disable video playback"}
-                    src={localDevice.receiveVideo ? "/static/live_tv-white-18dp.svg" : "/static/tv_off-white-18dp.svg"}
+                    src={localDevice.receiveVideo ? "/static/live_tv-18dp.svg" : "/static/tv_off-18dp.svg"}
                 />
             </StyledToggleButton>
         )

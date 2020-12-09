@@ -1,20 +1,25 @@
-import {Stage, Layer, Image, Text, Transformer} from 'react-konva';
+import {Stage, Layer, Image, Transformer} from 'react-konva';
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {styled} from "styletron-react";
 import Konva from "konva";
 import useImage from "../../lib/useImage";
+import {
+    ThreeDimensionAudioProperties
+} from "use-digital-stage";
+import debug from "debug";
+
+const report = debug("ThreeDAudio:editor");
 
 const Wrapper = styled("div", {
     width: '100%',
-    height: '100%'
+    height: '100%',
+    overflow: 'scroll',
+    border: "1px solid black"
 })
 
-export interface RoomElement {
+export interface RoomElement extends ThreeDimensionAudioProperties {
     _id: string;
-    x: number;
-    y: number;
-    rX: number;
-    rY: number;
+    name: string;
     width: number;
     height: number;
     src: string;
@@ -47,13 +52,13 @@ const Element = (props: {
     }) => {
         const {evt} = event;
         if (onChange) {
-            console.log("Was: ", element.x, element.y);
-            console.log("Is: ", event)
             const el = {
                 ...element,
                 x: evt.layerX - (element.width / 2),
                 y: evt.layerY - (element.height / 2),
             };
+            report("Was: ", element.x, element.y);
+            report("Is: ", el.x, el.y)
             onChange(el)
         }
 
@@ -66,18 +71,22 @@ const Element = (props: {
                 ref={imageRef}
                 x={element.x}
                 y={element.y}
+                image={image}
                 width={element.width}
                 height={element.height}
-                image={image}
+                sceneFunc={(context, shape) => {
+                    if (image)
+                        context.drawImage(image, 0, 0, element.width, element.height)
+                    context.fillText(element.name, 0, element.height);
+                    context.fillText("(" + element.x + " " + element.y + ")", 0, 0);
+                }}
                 draggable={true}
                 onDragEnd={handleDragEnd}
                 onClick={() => onClick && onClick(element)}
                 onTap={() => onClick && onClick(element)}
-
                 onTransformEnd={(e) => {
                     const rotation = transformerRef.current.attrs.rotation;
-                    console.log("TRASNFORM END");
-                    console.log(rotation);
+                    //console.log(rotation);
                 }}
             />
             {selected ? (
@@ -106,8 +115,18 @@ const RoomEditor = (props: {
     className?: string;
     onChange?: (element: RoomElement) => void;
 }) => {
+    const wrapperRef = useRef<HTMLDivElement>();
     const {width, height, elements, onChange} = props;
     const [selected, setSelected] = useState<RoomElement>(undefined);
+    const centeredImage = useImage("/static/person_pin-red-18dp.svg", 96, 96);
+
+    useEffect(() => {
+        if( wrapperRef.current ) {
+            const rect = wrapperRef.current.getBoundingClientRect();
+            wrapperRef.current.scrollTop = (height / 2) - (rect.height / 2);
+            wrapperRef.current.scrollLeft = (width / 2) - (rect.width / 2);
+        }
+    }, [wrapperRef, width, height])
 
     const handleChange = useCallback((element: RoomElement) => {
         if (onChange) {
@@ -118,13 +137,14 @@ const RoomEditor = (props: {
     const deselect = useCallback((e) => {
         const clickedOnEmpty = e.target === e.target.getStage();
         if (clickedOnEmpty) {
-            console.log("deselect")
             setSelected(undefined);
         }
     }, []);
 
     return (
-        <Wrapper>
+        <Wrapper
+            ref={wrapperRef}
+        >
             <Stage
                 width={width}
                 height={height}
@@ -132,7 +152,13 @@ const RoomEditor = (props: {
                 onTouchStart={deselect}
             >
                 <Layer>
-                    <Text text="Try to drag a star"/>
+                    <Image
+                        width={96}
+                        height={96}
+                        x={width / 2}
+                        y={height / 2}
+                        image={centeredImage}
+                    />
                     {elements.map((element) => (
                         <Element
                             key={element._id}

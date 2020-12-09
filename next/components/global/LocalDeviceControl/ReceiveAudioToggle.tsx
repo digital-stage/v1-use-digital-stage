@@ -34,7 +34,7 @@ const ReceiveAudioToggle = () => {
             <StyledToggleButton active={localDevice.receiveAudio} onToggle={toggleReceive}>
                 <Icon
                     alt={localDevice.receiveAudio ? "enable audio playback" : "disable audio playback"}
-                    src={localDevice.receiveAudio ? "/static/volume_up-white-18dp.svg" : "/static/volume_off-white-18dp.svg"}
+                    src={localDevice.receiveAudio ? "/static/volume_up-18dp.svg" : "/static/volume_off-18dp.svg"}
                 />
             </StyledToggleButton>
         )

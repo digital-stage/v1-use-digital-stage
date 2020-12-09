@@ -12,7 +12,7 @@ const Strip = styled('div', {
     display: 'flex',
     flexDirection: 'column',
     flexGrow: 1,
-    flexShrink: 0,
+    flexShrink: 0
 });
 
 const StripHeader = styled('div', {
@@ -39,7 +39,7 @@ const VolumeFader = styled('div', {
     minHeight: '100px',
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'center'
 });
 
 const LeftVolumeFader = styled(LevelControlFader, {

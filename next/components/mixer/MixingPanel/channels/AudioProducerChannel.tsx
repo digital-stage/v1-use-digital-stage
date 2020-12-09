@@ -10,6 +10,8 @@ import
     useSelector
 } from 'use-digital-stage';
 import useStageWebAudio from "../../../../lib/useStageWebAudio";
+import HSLColor from "../../../../lib/useColors/HSLColor";
+import {Property} from "csstype";
 
 const Panel = styled('div', {
     display: 'flex',
@@ -28,16 +30,18 @@ const Column = styled('div', {
     paddingBottom: '1rem',
     height: '100%',
 });
-const Header = styled('div', {
+const Header = styled('div', (props: { $color?: Property.BackgroundColor }) => ({
     width: '100%',
     height: '64px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-});
+    borderRadius: '10px',
+    backgroundColor: props.$color,
+}));
 
-const AudioProducerChannel = (props: { audioProducerId: string }) => {
-    const {audioProducerId} = props;
+const AudioProducerChannel = (props: { audioProducerId: string, color?: HSLColor }) => {
+    const {audioProducerId, color} = props;
     const isAdmin: boolean = useIsStageAdmin();
     const audioProducer = useSelector<RemoteAudioProducer>(
         (state) => state.audioProducers.byId[props.audioProducerId]
@@ -81,7 +85,7 @@ const AudioProducerChannel = (props: { audioProducerId: string }) => {
                 <Column>
                     <ChannelStrip
                         addHeader={
-                            <Header>
+                            <Header $color={color?.toProperty()}>
                                 <h4>Track</h4>
                             </Header>
                         }

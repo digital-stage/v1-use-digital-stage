@@ -1,9 +1,10 @@
-import {Direction, getTrackBackground, Range} from 'react-range';
-import React, {useCallback} from 'react';
+import {Direction, Range} from 'react-range';
+import React, {useCallback, useEffect, useState} from 'react';
 import {styled, useStyletron} from 'styletron-react';
 import {RGBColor} from './index';
 
 const Wrapper = styled("div", {
+    position: 'relative',
     display: "flex",
     height: '100%',
     flexDirection: 'column',
@@ -29,6 +30,12 @@ const VerticalSlider = (props: {
 }) => {
     const {onChange, onFinalChange, min, max, step, value, alignLabel, renderMarks, className, color, width, text, showMarks} = props;
     const [css] = useStyletron();
+    const [solidColor, setSolidColor] = useState<string>();
+
+    useEffect(() => {
+        setSolidColor(`rgba(${color[0]},${color[1]},${color[2]},0.6)`);
+    }, [color])
+
 
     const renderSingleMark = useCallback((index: number, style: React.CSSProperties) => {
         const mark = renderMarks(index);
@@ -48,18 +55,17 @@ const VerticalSlider = (props: {
     }, [renderMarks, alignLabel]);
 
     const handleChange = useCallback((value: number) => {
-        if( onChange ) {
+        if (onChange) {
             onChange(value)
         }
     }, [onChange])
 
     const handleFinalChange = useCallback((value: number) => {
-        if( onFinalChange ) {
+        if (onFinalChange) {
             onFinalChange(value)
         }
-    }, [onFinalChange])
+    }, [onFinalChange]);
 
-    const solidColor = `rgba(${color[0]},${color[1]},${color[2]},0.6)`;
     return (
         <Wrapper className={className}>
             <Range
@@ -84,6 +90,7 @@ const VerticalSlider = (props: {
                         {renderSingleMark(index, markProps.style)}
                     </div>
                 ) : null}
+                /*
                 renderTrack={({props: trackProps, children}) => (
                     <div
                         {...trackProps}
@@ -127,14 +134,12 @@ const VerticalSlider = (props: {
                         </div>
                     </div>
                 )}
-
                 renderThumb={({props: thumbProps, isDragged}) => {
                     return (
                         <div
                             {...thumbProps}
                             ref={thumbProps.ref}
                             className={css({
-                                ...thumbProps.style,
                                 height: width + "px",
                                 width: width + "px",
                                 borderRadius: '4px',
@@ -145,6 +150,7 @@ const VerticalSlider = (props: {
                                 outlineColor: solidColor,
                                 boxShadow: '0px 1px 6px #AAA'
                             })}
+                            style={thumbProps.style}
                         >
                             {text && (
                                 <div
@@ -173,7 +179,64 @@ const VerticalSlider = (props: {
                             />
                         </div>
                     )
-                }}
+                }}*/
+                renderTrack={({props, children}) => (
+                    <div
+                        {...props}
+                        style={{
+                            flexGrow: 1,
+                            display: 'flex',
+                            height: '100%',
+                            ...props.style
+                        }}
+                    >
+                        {children}
+                    </div>
+                )}
+                renderThumb={(params) => (
+                    <div
+                        {...params.props}
+                        style={{
+                            height: width + "px",
+                            width: width + "px",
+                            borderRadius: '4px',
+                            backgroundColor: '#FFF',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            outlineColor: solidColor,
+                            boxShadow: '0px 1px 6px #AAA',
+                            ...params.props.style
+
+                        }}
+                    >
+                        {text && (
+                            <div
+                                style={{
+                                    position: 'absolute',
+                                    top: "0px",
+                                    right: alignLabel && alignLabel === "left" ? (width + 4) + "px" : undefined,
+                                    left: !alignLabel || alignLabel === "right" ? (width + 4) + "px" : undefined,
+                                    color: '#000',
+                                    fontWeight: 'bold',
+                                    padding: '4px',
+                                    borderRadius: '4px',
+                                    backgroundColor: solidColor,
+                                    whiteSpace: 'nowrap'
+                                }}
+                            >
+                                {text}
+                            </div>
+                        )}
+                        <div
+                            style={{
+                                width: '16px',
+                                height: '4px',
+                                backgroundColor: params.isDragged ? solidColor : '#CCC'
+                            }}
+                        />
+                    </div>
+                )}
             />
         </Wrapper>
     );

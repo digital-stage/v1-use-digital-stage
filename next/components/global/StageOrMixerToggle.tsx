@@ -28,20 +28,18 @@ const StageOrMixerToggle = () => {
     const router = useRouter();
     const stageId = useCurrentStageId();
 
-    if (router) {
-        const isMixerVisible = router.pathname === "/mixer";
+    if (router && stageId) {
+        const isStageVisible = router.pathname === "/stage";
 
-        if (isMixerVisible || stageId) {
-            return (
-                <Link href={isMixerVisible ? "/stage" : "/mixer"}>
-                    <FixedButton>
-                        <Icon
-                            src={isMixerVisible ? "/static/view_quilt-white-18dp.svg" : "/static/leaderboard-white-18dp.svg"}
-                            alt={isMixerVisible ? "Goto stage" : "Goto mixer"}/>
-                    </FixedButton>
-                </Link>
-            );
-        }
+        return (
+            <Link href={isStageVisible ? "/mixer" : "/stage"}>
+                <FixedButton>
+                    <Icon
+                        src={isStageVisible ? "/static/leaderboard-18dp.svg" : "/static/view_quilt-18dp.svg"}
+                        alt={isStageVisible ? "Goto mixer" : "Goto stage"}/>
+                </FixedButton>
+            </Link>
+        );
     }
 
     return null;

@@ -1,4 +1,3 @@
-
 /* Document
    ========================================================================== */
 
@@ -394,5 +393,12 @@ fieldset {
     margin: 0;
 }
 
-h1,h2,h3,h4,h5 {
+body {
+    background-color: rgb(135,135,135);
+    font-family: 'Arial', serif;
+    font-size: 12px;
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: 'Lato', serif
 }

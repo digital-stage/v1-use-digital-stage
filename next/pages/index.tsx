@@ -19,7 +19,7 @@ const Index = () => {
 
     useEffect(() => {
         if (!auth.loading && !auth.user) {
-            push("/auth/signup")
+            push("/auth/login")
         }
     }, [push, auth]);
 

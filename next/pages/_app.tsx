@@ -14,6 +14,8 @@ import {ErrorsConsumer, ErrorsProvider} from "../lib/useErrors";
 import StageJoiner from "../components/StageJoiner";
 import {StageJoinerProvider} from "../lib/useStageJoiner";
 import LocalDeviceControl from "../components/global/LocalDeviceControl";
+import ShowRoomButton from "../components/global/ShowRoomButton";
+import {ColorProvider} from "../lib/useColors";
 
 function MyApp({Component, pageProps}) {
     return (
@@ -39,8 +41,11 @@ function MyApp({Component, pageProps}) {
                                             <AudioContextProvider>
                                                 <StageWebAudioProvider handleError={reportError}>
                                                     <StageJoinerProvider>
-                                                        <Component {...pageProps} />
+                                                        <ColorProvider>
+                                                            <Component {...pageProps} />
+                                                        </ColorProvider>
                                                         <StageOrMixerToggle/>
+                                                        <ShowRoomButton/>
                                                         <LocalDeviceControl/>
                                                         <StartPlaybackInformer/>
                                                         <StageJoiner/>

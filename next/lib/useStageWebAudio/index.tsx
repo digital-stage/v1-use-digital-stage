@@ -271,7 +271,7 @@ const StageWebAudioProvider = (props: {
                     prev[item._id].gainNodeL.gain.setValueAtTime(0, audioContext.currentTime);
                     prev[item._id].gainNodeR.gain.setValueAtTime(0, audioContext.currentTime);
                   }
-                } else if (prev[item._id].gainNodeL.gain.value !== customItem.volume) {
+                } else if (customItem.volume && prev[item._id].gainNodeL.gain.value !== customItem.volume) {
                   prev[item._id].gainNodeL.gain.setValueAtTime(
                     customItem.volume,
                     audioContext.currentTime
@@ -287,7 +287,7 @@ const StageWebAudioProvider = (props: {
                     prev[item._id].gainNodeL.gain.setValueAtTime(0, audioContext.currentTime);
                     prev[item._id].gainNodeR.gain.setValueAtTime(0, audioContext.currentTime);
                   }
-                } else if (prev[item._id].gainNodeL.gain.value !== item.volume) {
+                } else if (item.volume && prev[item._id].gainNodeL.gain.value !== item.volume) {
                   prev[item._id].gainNodeL.gain.setValueAtTime(
                     item.volume,
                     audioContext.currentTime

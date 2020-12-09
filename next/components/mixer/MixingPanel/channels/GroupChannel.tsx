@@ -3,17 +3,18 @@ import {styled} from 'styletron-react';
 import StageMemberChannel from './StageMemberChannel';
 import ChannelStrip from '../../ChannelStrip';
 import {CustomGroup, useGroup, useIsStageAdmin, useSelector, useStageActions} from "use-digital-stage";
-import Button from "../../../ui/Button";
 import useStageWebAudio from "../../../../lib/useStageWebAudio";
 import {useCallback} from "react";
 import {colors} from "../../../ui/Theme";
+import useColors from "../../../../lib/useColors";
+import {Property} from "csstype";
 
 const PanelRow = styled("div", {
     display: 'flex',
     flexDirection: 'row',
     borderRadius: '20px',
     marginRight: '1rem',
-    backgroundColor: colors.mixer.group
+    backgroundColor: colors.background.dark
 });
 const Column = styled('div', {
     paddingLeft: '1rem',
@@ -34,23 +35,34 @@ const Row = styled('div', {
 const InnerRow = styled('div', {
     display: 'flex',
     flexDirection: 'row',
-    backgroundColor: colors.mixer.stageMember,
+    backgroundColor: colors.background.default,
     borderRadius: '20px',
     height: '100%',
 });
 const ColumnWithChildren = styled('div', {
     height: '100%',
 });
-const Header = styled('div', {
+const Header = styled('div', (props: { $color?: Property.BackgroundColor }) => ({
     width: '100%',
     height: '64px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: '10px',
+    backgroundColor: props.$color,
+}));
+const HeaderButton = styled("div", {
+    width: '100%',
+    height: '64px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    cursor: "pointer"
 });
 
 const GroupChannel = (props: { groupId: string }) => {
     const {groupId} = props;
+    const color = useColors(groupId);
     const isAdmin = useIsStageAdmin();
     const group = useGroup(groupId);
     const customGroup = useSelector<CustomGroup>((state) =>
@@ -69,8 +81,8 @@ const GroupChannel = (props: { groupId: string }) => {
     const [expanded, setExpanded] = React.useState<boolean>();
 
     const handleVolumeChange = useCallback((volume: number, muted: boolean) => {
-        console.debug(group._id,volume, muted)
-        if( isAdmin ) {
+        console.debug(group._id, volume, muted)
+        if (isAdmin) {
             stageActions.updateGroup(group._id, {
                 volume,
                 muted,
@@ -83,7 +95,7 @@ const GroupChannel = (props: { groupId: string }) => {
     }, [group, stageActions]);
 
     const handleCustomVolumeReset = useCallback(() => {
-        if( customGroup )
+        if (customGroup)
             stageActions.removeCustomGroup(customGroup._id);
     }, [customGroup, stageActions]);
 
@@ -92,14 +104,15 @@ const GroupChannel = (props: { groupId: string }) => {
             <Column>
                 <ChannelStrip
                     addHeader={
-                        <Header>
+                        <Header $color={color?.toProperty()}>
                             {stageMemberIds.length > 0 ? (
-                                <Button
+                                <HeaderButton
                                     onClick={() => setExpanded((prev) => !prev)}
                                 >
                                     <h3>{group.name}</h3>
-                                    {expanded ? <img src="/static/chevron_left-white-18dp.svg" alt="collapse"/> : <img src="/static/chevron_right-white-18dp.svg" alt="expand"/>}
-                                </Button>
+                                    {expanded ? <img src="/static/chevron_left-18dp.svg" alt="collapse"/> :
+                                        <img src="/static/chevron_right-18dp.svg" alt="expand"/>}
+                                </HeaderButton>
                             ) : (
                                 <h3>{group.name}</h3>
                             )}
@@ -122,7 +135,9 @@ const GroupChannel = (props: { groupId: string }) => {
                     <InnerRow>
                         {stageMemberIds.map((id, index) => (
                             <ColumnWithChildren key={index}>
-                                <StageMemberChannel key={id} stageMemberId={id}/>
+                                <StageMemberChannel key={id}
+                                                    color={color?.luminance(color.l + 6)}
+                                                    stageMemberId={id}/>
                             </ColumnWithChildren>
                         ))}
                     </InnerRow>

@@ -3,17 +3,18 @@ import {styled} from 'styletron-react';
 import ChannelStrip from '../../ChannelStrip';
 import {useStageActions, CustomStageMember, useIsStageAdmin, useSelector, useStageMember} from "use-digital-stage";
 import useStageWebAudio from "../../../../lib/useStageWebAudio";
-import Button from "../../../ui/Button";
 import AudioProducerChannel from "./AudioProducerChannel";
 import {useCallback} from "react";
 import {colors} from "../../../ui/Theme";
+import HSLColor from "../../../../lib/useColors/HSLColor";
+import {Property} from "csstype";
 
 const Panel = styled('div', {
     display: 'flex',
     flexDirection: 'row',
     height: '100%',
 });
-const Row = styled('div', {
+const Row = styled("div", {
     display: 'flex',
     flexDirection: 'row',
     height: '100%',
@@ -22,10 +23,10 @@ const Row = styled('div', {
     paddingTop: '1rem',
     paddingBottom: '1rem',
 });
-const InnerRow = styled('div', {
+const InnerRow = styled("div", {
     display: 'flex',
     flexDirection: 'row',
-    backgroundColor: colors.mixer.track,
+    backgroundColor: colors.background.light,
     borderRadius: '20px',
     height: '100%',
 });
@@ -39,16 +40,26 @@ const Column = styled('div', {
 const ColumnWithChildren = styled('div', {
     height: '100%',
 });
-const Header = styled('div', {
+const Header = styled('div', (props: { $color?: Property.BackgroundColor }) => ({
     width: '100%',
     height: '64px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: '10px',
+    backgroundColor: props.$color,
+}));
+const HeaderButton = styled("div", {
+    width: '100%',
+    height: '64px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    cursor: "pointer"
 });
 
-const StageMemberChannel = (props: { stageMemberId: string }) => {
-    const {stageMemberId} = props;
+const StageMemberChannel = (props: { stageMemberId: string, color?: HSLColor }) => {
+    const {stageMemberId, color} = props;
     const isAdmin: boolean = useIsStageAdmin();
     const stageMember = useStageMember(stageMemberId);
     const customStageMember = useSelector<CustomStageMember>((state) =>
@@ -69,7 +80,7 @@ const StageMemberChannel = (props: { stageMemberId: string }) => {
     const [expanded, setExpanded] = React.useState<boolean>();
 
     const handleVolumeChange = useCallback((volume: number, muted: boolean) => {
-        if( isAdmin ) {
+        if (isAdmin) {
             stageActions.updateStageMember(stageMember._id, {
                 volume,
                 muted,
@@ -85,7 +96,7 @@ const StageMemberChannel = (props: { stageMemberId: string }) => {
     }, [stageMember, stageActions]);
 
     const handleCustomVolumeReset = useCallback(() => {
-        if(customStageMember)
+        if (customStageMember)
             stageActions.removeCustomStageMember(customStageMember._id);
     }, [customStageMember, stageActions]);
 
@@ -94,15 +105,15 @@ const StageMemberChannel = (props: { stageMemberId: string }) => {
             <Column>
                 <ChannelStrip
                     addHeader={
-                        <Header>
+                        <Header $color={color.toProperty()}>
                             {audioProducers.length > 0 ? (
-                                <Button
+                                <HeaderButton
                                     onClick={() => setExpanded((prev) => !prev)}
                                 >
                                     <h3>{stageMember.name}</h3> {expanded ?
-                                    <img src="/static/chevron_left-white-18dp.svg"/> :
-                                    <img src="/static/chevron_right-white-18dp.svg"/>}
-                                </Button>
+                                    <img src="/static/chevron_left-18dp.svg"/> :
+                                    <img src="/static/chevron_right-18dp.svg"/>}
+                                </HeaderButton>
                             ) : (
                                 <h3>{stageMember.name}</h3>
                             )}
@@ -124,10 +135,14 @@ const StageMemberChannel = (props: { stageMemberId: string }) => {
 
             {expanded && audioProducers && (
                 <Row>
-                    <InnerRow>
+                    <InnerRow color={color.toProperty()}>
                         {audioProducers.map((id, index) => (
                             <ColumnWithChildren key={index}>
-                                <AudioProducerChannel key={id} audioProducerId={id}/>
+                                <AudioProducerChannel
+                                    key={id}
+                                    audioProducerId={id}
+                                    color={color?.luminance(color.l + 6)}
+                                />
                             </ColumnWithChildren>
                         ))}
                     </InnerRow>
