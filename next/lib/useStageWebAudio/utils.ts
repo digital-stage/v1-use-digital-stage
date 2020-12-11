@@ -68,10 +68,17 @@ const zRotationToVector = (degrees: number) => {
 };
 
 const calculateDirectionVector = (x: number, y: number, z: number, rX: number, rY: number, rZ: number) => {
-  const x1 = Math.sin(x) * Math.cos(rX);
-  const y1 = Math.sin(rY);
-  const z1 = Math.cos(z) * Math.cos(rZ);
-  return [x1, y1, z1];
+  console.log("Rotation (degrees):", rZ);
+  const radiansZ = (rZ - 90) * (Math.PI / 180);
+  console.log("Rotation (radians):", radiansZ);
+  //const y1 = y + (y*Math.cos(radiansZ) - x*Math.sin(radiansZ));
+  //const x1 = x + (y*(Math.sin(radiansZ) + x*Math.cos(radiansZ)));
+  //const z1 = z;
+  const x1 = Math.cos(radiansZ);
+  const y1 = Math.sin(radiansZ);
+  //return [Math.round(x1), Math.round(y1), z];
+
+  return [x1, y1, 0]
 }
 
 export { calculate3DAudioParameters, zRotationToVector, calculateDirectionVector };

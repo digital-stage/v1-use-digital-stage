@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {
     useIsStageAdmin,
     useStageActions,
@@ -9,9 +9,11 @@ import {
 } from "use-digital-stage";
 import Button from "../components/ui/Button";
 import debug from "debug";
-import {styled} from "styletron-react";
+import {styled, withStyleDeep} from "styletron-react";
 import Editor from "../components/room/Editor";
 import useImage from "../lib/useImage";
+import RoomElement from "../components/room/RoomElement";
+import Select from "../components/ui/Select";
 
 const report = debug("ThreeDAudio");
 
@@ -26,13 +28,21 @@ const InnerWrapper = styled("div", {
     top: 0,
     left: 0,
 });
-const ResetButton = styled(Button, {
+const ResetAllButton = withStyleDeep(Button, {
     position: 'fixed',
-    top: '1rem',
+    top: '2rem',
+    right: '1rem',
+});
+const ResetSingle = withStyleDeep(Button, {
+    position: 'fixed',
+    top: '4rem',
+    right: '1rem',
+});
+const ModeSelect = styled(Select, {
+    position: 'fixed',
+    top: '2rem',
     left: '1rem',
 });
-
-
 
 const Room = () => {
     const {updateStageMember, setCustomStageMember, removeCustomStageMember} = useStageActions()
@@ -41,15 +51,26 @@ const Room = () => {
     const stage = useStage(stageId);
     const stageMembers = useStageMembersByStage(stageId);
     const customStageMembers = useCustomStageMembers();
-    const image = useImage("/static/person_pin-18dp.svg", 96, 96);
+    const image = useImage("/static/person_pin-inverted-18dp.svg", 96, 96);
+    const [selected, setSelected] = useState<RoomElement>(undefined);
+    const [isAdminMode, setAdminMode] = useState<boolean>(false);
+
 
     if (stage) {
         return (
             <Wrapper>
                 <InnerWrapper>
+                    <ModeSelect
+                        options={[{
+                            id: 1,
+                            value: "Global"
+                        }, {
+                            id: 2,
+                            value: "Private"
+                        }]}/>
                     <Editor
                         elements={stageMembers.map(stageMember => {
-                            if( customStageMembers.byStageMember[stageMember._id] ) {
+                            if (customStageMembers.byStageMember[stageMember._id]) {
                                 const customStageMember = customStageMembers.byId[customStageMembers.byStageMember[stageMember._id]];
                                 return {
                                     ...stageMember,
@@ -91,14 +112,15 @@ const Room = () => {
                                 })
                             }
                         }}
-
+                        onSelected={element => setSelected(element)}
+                        onDeselected={() => setSelected(undefined)}
                     />
-                    <ResetButton
+                    <ResetAllButton
                         onClick={() => {
                             customStageMembers.allIds.forEach(id => {
                                 removeCustomStageMember(id)
                             });
-                            if( isStageAdmin ) {
+                            if (isStageAdmin) {
                                 // Also reset stage members
                                 stageMembers.forEach(stageMember => {
                                     updateStageMember(stageMember._id, {
@@ -110,8 +132,21 @@ const Room = () => {
                                 });
                             }
                         }}>
+                        RESET ALL
+                    </ResetAllButton>
+                    <ResetSingle
+                        onClick={() => {
+                            if (selected) {
+                                const customStageMember = customStageMembers.byId[selected._id];
+                                if (customStageMember) {
+                                    removeCustomStageMember(customStageMember._id);
+                                }
+                            }
+                        }}
+                        disabled={!selected}
+                    >
                         RESET
-                    </ResetButton>
+                    </ResetSingle>
                 </InnerWrapper>
             </Wrapper>
         )

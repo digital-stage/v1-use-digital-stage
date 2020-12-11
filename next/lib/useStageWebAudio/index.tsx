@@ -165,7 +165,7 @@ const StageWebAudioProvider = (props: {
                                 }
                             } else if (customItem.volume && prev[item._id].gainNodeL.gain.value !== customItem.volume) {
                                 prev[item._id].gainNodeL.gain.setValueAtTime(
-                                    customItem.volume,
+                                   0,
                                     audioContext.currentTime
                                 );
                                 prev[item._id].gainNodeR.gain.setValueAtTime(
@@ -424,22 +424,15 @@ const StageWebAudioProvider = (props: {
                                     customStageMember,
                                     item
                                 );
-                                pannerNode.setMaxDistance(Math.max(stage.width, stage.height));
+                                //pannerNode.setMaxDistance(Math.max(stage.width, stage.height));
                                 pannerNode.setPosition(params.x, params.y, params.z);
-                                const [x1, y1, z1] = zRotationToVector(params.rZ);
-                                console.log(params.rZ);
 
-                                const [x2, y2, z2] = calculateDirectionVector(params.x, params.y, params.z, params.rX, params.rY, params.rZ);
+                                const [x1, y1, z1] = calculateDirectionVector(params.x, params.y, params.z, params.rX, params.rY, params.rZ);
+
                                 console.log(params.x, params.y, params.z);
-                                console.log(x2, y2, z2);
+                                console.log(x1, y1, z1);
 
-                                const targetX = Math.round(x1 * params.x);
-                                const targetY = Math.round(y1 * params.y);
-                                console.log(params.x, params.y, z1);
-                                console.log(targetX, targetY, z1);
-                                //pannerNode.setOrientation(x1, y1, z1);
-
-                                pannerNode.setOrientation(targetX, targetY, 0);
+                                pannerNode.setOrientation(x1, y1, z1);
                             }
                             if (audioConsumers.byProducer[item._id]) {
                                 if (!element || element.id !== audioConsumers.byProducer[item._id]) {

@@ -5,14 +5,6 @@ import Konva from "konva";
 
 const SIZE: number = 96;
 
-function degreesToRadians(degrees: number): number {
-    return degrees * (Math.PI / 180)
-}
-
-function radiansToDegrees(radians: number): number {
-    return radians * (180 / Math.PI);
-}
-
 const Item = (props: {
     element: RoomElement;
     onFinalChange?: (x: number, y: number, rZ: number) => void;
@@ -119,6 +111,7 @@ const Item = (props: {
                     if (element.image)
                         context.drawImage(element.image, 0, 0, SIZE, SIZE)
                     context.fillText(element.name, 0, SIZE);
+                    context.fillText("("+element.x+"|"+element.y+"|0)", 0, 0)
                 }}
                 onDragStart={handleDragStart}
                 onDragMove={handleDragMove}

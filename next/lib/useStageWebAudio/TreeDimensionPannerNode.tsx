@@ -45,10 +45,10 @@ class TreeDimensionPannerNode {
       this.node.maxDistance = 10000;
       this.node.refDistance = 1;
       this.node.rolloffFactor = 1;
-      this.node.coneInnerAngle = 30;
-      this.node.coneOuterAngle = 45;
+      this.node.coneInnerAngle = 45;
+      this.node.coneOuterAngle = 230;
       //TODO: Remove:
-      this.node.coneOuterGain = 0.2;
+      this.node.coneOuterGain = 0.1;
     }
   }
 
