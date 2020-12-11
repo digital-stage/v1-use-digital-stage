@@ -53,7 +53,7 @@ const createBuffer = (sampleRate?: number): IAudioContext => {
     context.listener.forwardZ.value = 0;
     context.listener.upX.value = 0;
     context.listener.upY.value = 0;
-    context.listener.upZ.value = 1;
+    context.listener.upZ.value = -1;
     /*
     context.listener.positionX.setValueAtTime(0, context.currentTime);
     context.listener.positionY.setValueAtTime(0, context.currentTime);
