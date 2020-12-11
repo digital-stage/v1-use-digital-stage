@@ -51,9 +51,8 @@ const Room = () => {
     const stage = useStage(stageId);
     const stageMembers = useStageMembersByStage(stageId);
     const customStageMembers = useCustomStageMembers();
-    const image = useImage("/static/person_pin-inverted-18dp.svg", 96, 96);
+    const image = useImage("/static/room-member.svg", 96, 96);
     const [selected, setSelected] = useState<RoomElement>(undefined);
-    const [isAdminMode, setAdminMode] = useState<boolean>(false);
 
 
     if (stage) {

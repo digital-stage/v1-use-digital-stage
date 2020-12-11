@@ -1,7 +1,8 @@
 import React, {useCallback, useState} from 'react';
-import {Stage as KonvaStage, Layer, Star as KonvaStar} from 'react-konva';
+import {Stage as KonvaStage, Layer, Image} from 'react-konva';
 import RoomElement from "./RoomElement";
 import Item from "./Item";
+import useImage from "../../lib/useImage";
 
 const FACTOR: number = 100;
 
@@ -19,6 +20,7 @@ const Editor = (props: {
     const fullHeight = height * FACTOR;
     const centerX = (fullWidth / 2);
     const centerY = (fullHeight / 2);
+    const centerImage = useImage("/static/room-center.svg", 96, 96);
 
     const deselect = useCallback((e) => {
         const clickedOnEmpty = e.target === e.target.getStage();
@@ -32,19 +34,18 @@ const Editor = (props: {
     return (
         <>
             <KonvaStage
-                width={width * FACTOR}
-                height={height * FACTOR}
+                width={(width * FACTOR) - 96}
+                height={(height * FACTOR) - 96}
                 onMouseDown={deselect}
                 onTouchStart={deselect}
             >
                 <Layer>
-                    <KonvaStar
+                    <Image
                         x={(width * FACTOR) / 2}
                         y={(height * FACTOR) / 2}
-                        innerRadius={20}
-                        outerRadius={40}
-                        numPoints={5}
-                        fill="#33333"
+                        width={128}
+                        height={128}
+                        image={centerImage}
                     />
                     {elements.map((element) => {
                         return (
