@@ -60,7 +60,8 @@ const VolumeMeter = styled(LevelMeter, {
 const ChannelStrip = (props: {
     addHeader?: React.ReactNode;
 
-    analyser?: IAnalyserNode<IAudioContext>;
+    analyserL?: IAnalyserNode<IAudioContext>;
+    analyserR?: IAnalyserNode<IAudioContext>;
 
     isAdmin?: boolean;
     volume: number;
@@ -73,7 +74,7 @@ const ChannelStrip = (props: {
 
     className?: string;
 }) => {
-    const {addHeader, className, analyser, isAdmin, volume, muted, customVolume, customMuted, onVolumeChanged, onCustomVolumeChanged, onCustomVolumeReset} = props;
+    const {addHeader, className, analyserL, analyserR, isAdmin, volume, muted, customVolume, customMuted, onVolumeChanged, onCustomVolumeChanged, onCustomVolumeReset} = props;
 
     const addCustom = useCallback(() => {
         props.onCustomVolumeChanged(volume, muted);
@@ -137,7 +138,8 @@ const ChannelStrip = (props: {
                         color={customVolume ? [255, 0, 0] : [255, 255, 255]}
                     />
                 )}
-                {analyser ? <VolumeMeter analyser={analyser}/> : undefined}
+                {analyserL ? <VolumeMeter analyser={analyserL}/> : undefined}
+                {analyserR ? <VolumeMeter analyser={analyserR}/> : undefined}
             </VolumeFader>
         </Strip>
     );

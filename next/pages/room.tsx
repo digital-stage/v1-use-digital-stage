@@ -1,125 +1,119 @@
-import React, {useEffect, useState} from "react";
-import Container from "../components/ui/Container";
-import RoomEditor, {RoomElement} from "../components/room/RoomEditor";
+import React from "react";
 import {
-    useSelector,
     useIsStageAdmin,
     useStageActions,
     useCurrentStageId,
     useStage,
-    CustomStageMember
+    useStageMembersByStage,
+    useCustomStageMembers
 } from "use-digital-stage";
 import Button from "../components/ui/Button";
 import debug from "debug";
+import {styled} from "styletron-react";
+import Editor from "../components/room/Editor";
+import useImage from "../lib/useImage";
 
 const report = debug("ThreeDAudio");
 
-const useElements = () => {
-    const stageMembers = useSelector(state => state.stageMembers);
-    const users = useSelector(state => state.users);
-    const customStageMembers = useSelector(state => state.customStageMembers);
-    const [elements, setElements] = useState<RoomElement[]>([]);
+const Wrapper = styled("div", {
+    width: '100vw',
+    height: '100vh',
+    overflow: 'scroll'
+});
+const InnerWrapper = styled("div", {
+    position: 'absolute',
+    width: '100%',
+    top: 0,
+    left: 0,
+});
+const ResetButton = styled(Button, {
+    position: 'fixed',
+    top: '1rem',
+    left: '1rem',
+});
 
-    useEffect(() => {
-        report("changed")
-    }, [stageMembers])
-
-    useEffect(() => {
-        const createdElements: RoomElement[] = [];
-        stageMembers.allIds.map(id => stageMembers.byId[id]).forEach(stageMember => {
-            const name = users.byId[stageMember.userId] ? users.byId[stageMember.userId].name : stageMember._id;
-            if (customStageMembers.byStageMember[stageMember._id]) {
-                const customStageMember: CustomStageMember = customStageMembers.byId[customStageMembers.byStageMember[stageMember._id]];
-                createdElements.push({
-                    ...customStageMember,
-                    name,
-                    width: 96,
-                    height: 96,
-                    src: "/static/person_pin-blue-18dp.svg"
-                })
-            } else {
-                createdElements.push({
-                    ...stageMember,
-                    name,
-                    width: 96,
-                    height: 96,
-                    src: "/static/person_pin-black-18dp.svg"
-                })
-            }
-        });
-        setElements(createdElements);
-    }, [stageMembers, users, customStageMembers])
-
-    return {elements};
-}
 
 
 const Room = () => {
     const {updateStageMember, setCustomStageMember, removeCustomStageMember} = useStageActions()
     const stageId = useCurrentStageId();
-    const {elements} = useElements();
     const isStageAdmin = useIsStageAdmin();
     const stage = useStage(stageId);
-    const [width, setWidth] = useState<number>();
-    const [height, setHeight] = useState<number>();
-
-    useEffect(() => {
-        if (stage) {
-            setWidth(stage.width * 100)
-            setHeight(stage.height * 100)
-        }
-    }, [stage])
-
+    const stageMembers = useStageMembersByStage(stageId);
+    const customStageMembers = useCustomStageMembers();
+    const image = useImage("/static/person_pin-18dp.svg", 96, 96);
 
     if (stage) {
         return (
-            <Container>
-                <RoomEditor
-                    elements={elements}
-                    width={width}
-                    height={height}
-                    onChange={(element) => {
-                        report("Element changed: ", element.x, element.y, element.rX, element.rY);
-                        if (isStageAdmin) {
-                            report("Updating stage member");
-                            updateStageMember(element._id, {
-                                x: element.x,
-                                y: element.y,
-                                rX: element.rX,
-                                rY: element.rY
-                            })
-                        } else {
-                            report("Updating custom stage member " + element._id);
-                            setCustomStageMember(element._id, {
-                                x: element.x,
-                                y: element.y,
-                                rX: element.rX,
-                                rY: element.rY
-                            })
-                        }
-                    }}
+            <Wrapper>
+                <InnerWrapper>
+                    <Editor
+                        elements={stageMembers.map(stageMember => {
+                            if( customStageMembers.byStageMember[stageMember._id] ) {
+                                const customStageMember = customStageMembers.byId[customStageMembers.byStageMember[stageMember._id]];
+                                return {
+                                    ...stageMember,
+                                    image: image,
+                                    name: stageMember.name || stageMember._id,
+                                    x: customStageMember.x,
+                                    y: customStageMember.y,
+                                    z: customStageMember.z,
+                                    rX: customStageMember.rX,
+                                    rY: customStageMember.rY,
+                                    rZ: customStageMember.rZ,
+                                    isGlobal: false
+                                }
+                            }
+                            return {
+                                ...stageMember,
+                                image: image,
+                                name: stageMember.name || stageMember._id,
+                                isGlobal: true
+                            }
+                        })}
+                        width={stage.width}
+                        height={stage.height}
+                        onChange={(element) => {
+                            if (isStageAdmin) {
+                                report("Updating stage member");
+                                updateStageMember(element._id, {
+                                    x: element.x,
+                                    y: element.y,
+                                    rZ: element.rZ
+                                })
+                            } else {
+                                report("Updating custom stage member");
+                                report(element.x, element.y, element.rZ);
+                                setCustomStageMember(element._id, {
+                                    x: element.x,
+                                    y: element.y,
+                                    rZ: element.rZ
+                                })
+                            }
+                        }}
 
-                />
-                <Button onClick={() => {
-                    elements.forEach(element => {
-                        if (isStageAdmin) {
-                            report("Reset stage member");
-                            updateStageMember(element._id, {
-                                x: 0,
-                                y: 0,
-                                rX: 0,
-                                rY: 0,
-                            })
-                        } else {
-                            report("Reset custom stage member");
-                            removeCustomStageMember(element._id);
-                        }
-                    })
-                }}>
-                    RESET
-                </Button>
-
-            </Container>
+                    />
+                    <ResetButton
+                        onClick={() => {
+                            customStageMembers.allIds.forEach(id => {
+                                removeCustomStageMember(id)
+                            });
+                            if( isStageAdmin ) {
+                                // Also reset stage members
+                                stageMembers.forEach(stageMember => {
+                                    updateStageMember(stageMember._id, {
+                                        x: 0,
+                                        y: 0,
+                                        rX: 0,
+                                        rY: 0,
+                                    })
+                                });
+                            }
+                        }}>
+                        RESET
+                    </ResetButton>
+                </InnerWrapper>
+            </Wrapper>
         )
     }
 

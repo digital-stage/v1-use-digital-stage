@@ -42,6 +42,13 @@ class TreeDimensionPannerNode {
       this.node = audioContext.createPanner();
       this.node.panningModel = 'HRTF';
       this.node.distanceModel = 'inverse';
+      this.node.maxDistance = 10000;
+      this.node.refDistance = 1;
+      this.node.rolloffFactor = 1;
+      this.node.coneInnerAngle = 30;
+      this.node.coneOuterAngle = 45;
+      //TODO: Remove:
+      this.node.coneOuterGain = 0.2;
     }
   }
 
@@ -93,6 +100,12 @@ class TreeDimensionPannerNode {
       this.node.orientationZ.setValueAtTime(value, this.audioContext.currentTime);
     }
   };
+
+  public setMaxDistance = (value: number): void => {
+    if( isPannerNode(this.node) && !isNaN(value) ) {
+      this.node.maxDistance = value;
+    }
+  }
 
   public connect = (
     destinationNode: IAudioNode<IAudioContext>,

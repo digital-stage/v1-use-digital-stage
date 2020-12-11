@@ -44,6 +44,16 @@ const createBuffer = (sampleRate?: number): IAudioContext => {
             });
         }
     }
+    // Add 3D stuff
+    context.listener.positionX.setValueAtTime(0, context.currentTime);
+    context.listener.positionY.setValueAtTime(0, context.currentTime);
+    context.listener.positionZ.setValueAtTime(-1, context.currentTime);
+    context.listener.forwardX.setValueAtTime(0, context.currentTime);
+    context.listener.forwardY.setValueAtTime(-1, context.currentTime);
+    context.listener.forwardZ.setValueAtTime(0, context.currentTime);
+    context.listener.upX.setValueAtTime(0, context.currentTime);
+    context.listener.upY.setValueAtTime(0, context.currentTime);
+    context.listener.upZ.setValueAtTime(-1, context.currentTime);
     return context;
 };
 

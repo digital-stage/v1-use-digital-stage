@@ -89,7 +89,7 @@ const AudioProducerChannel = (props: { audioProducerId: string, color?: HSLColor
                                 <h4>Track</h4>
                             </Header>
                         }
-                        analyser={
+                        analyserL={
                             byAudioProducer[audioProducerId]
                                 ? byAudioProducer[audioProducerId].analyserNode
                                 : undefined

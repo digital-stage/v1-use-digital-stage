@@ -118,7 +118,8 @@ const GroupChannel = (props: { groupId: string }) => {
                             )}
                         </Header>
                     }
-                    analyser={byGroup && byGroup[groupId] ? byGroup[groupId].analyserNodeL : undefined}
+                    analyserL={byGroup && byGroup[groupId] ? byGroup[groupId].analyserNodeL : undefined}
+                    analyserR={byGroup && byGroup[groupId] ? byGroup[groupId].analyserNodeR : undefined}
                     volume={group.volume}
                     muted={group.muted}
                     customVolume={customGroup ? customGroup.volume : undefined}
