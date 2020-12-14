@@ -22,16 +22,27 @@ const List = styled("ul", {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    padding: '4rem',
+    width: '80vw',
+    maxWidth: '800px'
 });
 const ListItem = styled("li", {
     display: 'flex',
+    width: '100%',
+});
+const A = styled("a", {
+    display: 'flex',
     fontSize: '3rem',
+    padding: '3rem',
+    width: '100%',
+    cursor: 'pointer',
+    ":hover": {
+        backgroundColor: colors.background.active
+    }
 });
 const BurgerButton = withStyleDeep(Button, {
     position: 'fixed',
-    top: '1rem',
-    left: '1rem',
+    bottom: '1rem',
+    right: '1rem',
     padding: ".5rem",
     borderRadius: "50%",
     display: 'flex',
@@ -62,7 +73,6 @@ const AppNavigation = () => {
         }
     }, [open, menuRef])
 
-
     return (
         <>
             {open ? (
@@ -72,26 +82,33 @@ const AppNavigation = () => {
                             <>
                                 <ListItem>
                                     <Link href="/stage">
-                                        Stage
+                                        <A>
+                                            Stage
+                                        </A>
                                     </Link>
                                 </ListItem>
                                 <ListItem>
                                     <Link href="/mixer">
-                                        Mixer
+                                        <A>
+                                            Mixer
+                                        </A>
                                     </Link>
                                 </ListItem>
                                 <ListItem>
                                     <Link href="/room">
-                                        3D Audio
+                                        <A>
+                                            3D Audio
+                                        </A>
                                     </Link>
                                 </ListItem>
                             </>
                         ) : null}
                         <ListItem>
                             <Link href="/stages">
-                                All stages
+                                <A>
+                                    All stages
+                                </A>
                             </Link>
-
                         </ListItem>
                     </List>
                 </Overlay>
@@ -101,7 +118,7 @@ const AppNavigation = () => {
             >
                 <BurgerIcon
                     alt="Toggle navigation"
-                    src="/static/menu-white-18dp.svg"
+                    src="/static/more_horiz-18dp.svg"
                 />
             </BurgerButton>
         </>

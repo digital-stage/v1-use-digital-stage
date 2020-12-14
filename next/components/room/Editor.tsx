@@ -12,8 +12,12 @@ const Wrapper = styled("div", {
     position: 'absolute',
     width: '100vw',
     height: '100vh',
-    overflow: 'hidden',
-    border: '1px solid red'
+    overflow: 'scroll'
+});
+const ScrollPane = styled("div", {
+    position: 'absolute',
+    top: 0,
+    left: 0
 });
 
 const Editor = (props: {
@@ -33,6 +37,7 @@ const Editor = (props: {
     const centerY: number = (fullHeight / 2);
     const centerImage = useImage("/static/room-center.svg", 96, 96);
     const wrapperRef = useRef<HTMLDivElement>();
+    const stageRef = useRef();
 
     const deselect = (e) => {
         const clickedOnEmpty = e.target === e.target.getStage();
@@ -55,28 +60,21 @@ const Editor = (props: {
 
     }, [wrapperRef, fullWidth, fullHeight]);
 
+
     return (
         <Wrapper
             className={className}
             ref={wrapperRef}
         >
+            <ScrollPane>
                 <KonvaStage
+                    ref={stageRef}
                     width={fullWidth}
                     height={fullHeight}
-                    x={500}
-                    draggable={true}
+                    x={0}
+                    y={0}
                     onMouseDown={deselect}
                     onTouchStart={deselect}
-                    dragBoundFunc={(pos) => {
-                        const x = Math.max(0, pos.x);
-                        const y = Math.max(0, pos.y);
-                        console.log(pos.x, pos.y);
-                        console.log(x, y)
-                        return {
-                            x: x,
-                            y: y,
-                        };
-                    }}
                 >
                     <Layer>
                         <Image
@@ -125,6 +123,7 @@ const Editor = (props: {
                         })}
                     </Layer>
                 </KonvaStage>
+            </ScrollPane>
         </Wrapper>
     );
 };

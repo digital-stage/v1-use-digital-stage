@@ -10,10 +10,11 @@ import React from "react";
 const FixedButton = withStyleDeep(Button, {
     position: "fixed",
     right: '1rem',
-    bottom: '1rem',
     borderRadius: '50%',
     padding: ".5rem",
+    bottom: '4rem',
     [breakpoints.TABLET]: {
+        bottom: '8rem',
         padding: "1rem",
     }
 })

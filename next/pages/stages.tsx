@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {styled} from "styletron-react";
+import {styled, withStyleDeep} from "styletron-react";
 import Container from "../components/ui/Container";
 import Accordion from "../components/ui/Accordion";
 import {useCurrentGroupId, useCurrentStageId, useGroups, useStageActions, useStages} from "use-digital-stage";
@@ -9,11 +9,16 @@ import Notification from "../components/ui/Notification";
 import useStageJoiner from "../lib/useStageJoiner";
 import useAuth from "../lib/useAuth";
 import {useRouter} from "next/router";
+import {breakpoints, colors} from "../components/ui/Theme";
 
 
 const List = styled("div", {
     display: "flex",
     flexDirection: "column",
+    paddingBottom: '8rem',
+    [breakpoints.TABLET]: {
+        paddingBottom: '16rem',
+    }
 })
 const ListItem = styled("div", {})
 
@@ -23,11 +28,16 @@ const StageHeader = styled("div", {
     paddingRight: '1rem',
     paddingTop: '.2rem',
     paddingBottom: '.2rem',
-    backgroundColor: '#ccc'
+    fontSize: '1.2rem',
+    backgroundColor: colors.background.darker,
 })
 const GroupContainer = styled("div", {
     padding: '1rem',
-    backgroundColor: '#eee',
+    backgroundColor: colors.background.lighter,
+    borderColor: colors.background.darker,
+    borderSize: '1px',
+    borderStyle: 'solid',
+    borderTopWidth: 0,
     display: 'flex',
     flexDirection: 'row',
 })
@@ -35,12 +45,21 @@ const GroupTitle = styled("div", {
     flexGrow: 2
 })
 const GroupActions = styled("div", {
-    flexGrow: 1
+    flexGrow: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end'
 })
+
+const JoinButton = withStyleDeep(Button, {
+    backgroundColor: colors.background.active
+});
+const LeaveButton = withStyleDeep(Button, {
+    backgroundColor: colors.background.record,
+});
 
 const generateLink = (stageId: string, groupId: string, password: string | null) => {
     const port: string = window.location.port ? `:${window.location.port}` : '';
-    //const addPassword = password ? '?password=' + password : "";
     return `${window.location.protocol}/${window.location.hostname}${port}/join/${stageId}/${groupId}`;
 }
 
@@ -100,11 +119,11 @@ const Stages = () => {
                                         </CopyToClipboard>
                                         {currentStageId === stage._id
                                         && currentGroupId === group._id ? (
-                                            <Button onClick={leaveStage}>Leave</Button>
+                                            <LeaveButton onClick={leaveStage}>Leave</LeaveButton>
                                         ) : (
-                                            <Button onClick={() => {
+                                            <JoinButton onClick={() => {
                                                 requestJoin(stage._id, group._id)
-                                            }}>Join</Button>
+                                            }}>Join</JoinButton>
                                         )}
                                     </GroupActions>
                                 </GroupContainer>
@@ -112,8 +131,8 @@ const Stages = () => {
                         </Accordion>
                     </ListItem>
                 ))}
+                {copied ? <Notification>Link copied!</Notification> : null}
             </List>
-            {copied ? <Notification>Link copied!</Notification> : null}
         </Container>
     )
 }

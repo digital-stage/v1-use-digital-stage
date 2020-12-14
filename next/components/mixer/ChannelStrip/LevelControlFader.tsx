@@ -48,7 +48,7 @@ const LevelControlFader = (props: {
             >
                 <ToggleButton
                     aria-label="mute"
-                    active={!muted}
+                    active={muted}
                     onToggle={handleMuteClicked}
                 >
                     M

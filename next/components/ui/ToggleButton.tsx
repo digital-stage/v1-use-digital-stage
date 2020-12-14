@@ -12,8 +12,6 @@ const ButtonComponent = withStyleDeep(Button, (props: { $active: boolean, $activ
         ? props.$activeColor || colors.toggle.on.enabled.background
         : colors.toggle.off.enabled.background,
     ":hover": undefined
-
-
 }));
 
 const ToggleButton = (props: {

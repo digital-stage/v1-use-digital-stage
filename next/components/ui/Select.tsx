@@ -14,6 +14,12 @@ const Select = (props: {
     const [selected, setSelected] = useState<Option>();
 
     useEffect(() => {
+        if (selected && onSelected) {
+            onSelected(selected.id)
+        }
+    }, [onSelected, selected])
+
+    useEffect(() => {
         if (options) {
             if (selected && !options.find(o => o.id === selected.id)) {
                 setSelected(undefined);
@@ -24,11 +30,11 @@ const Select = (props: {
     }, [options]);
 
     const handleSelect = useCallback((event) => {
-        setSelected(options.find(o => o.value === event.target.value));
+        setSelected(options.find(o => o.id === event.target.value));
     }, [options])
 
     return (
-        <select className={className} onSelect={handleSelect}>
+        <select className={className} onChange={handleSelect}>
             {options && options.map(o => <option value={o.id}>{o.value}</option>)}
         </select>
     )

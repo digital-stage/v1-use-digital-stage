@@ -5,7 +5,6 @@ import MixingPanelView from "./MixingPanel";
 
 const Wrapper = styled('div', {
     position: 'relative',
-    border: '1px solid red',
     whiteSpace: 'nowrap',
     flexGrow: 1,
     display: 'flex',

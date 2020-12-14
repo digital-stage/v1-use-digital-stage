@@ -50,8 +50,8 @@ function MyApp({Component, pageProps}) {
                                                         <LocalDeviceControl/>
                                                         <StartPlaybackInformer/>
                                                         <StageJoiner/>
-                                                        <StatusInformer/>
                                                         <AppNavigation/>
+                                                        <StatusInformer/>
                                                     </StageJoinerProvider>
                                                 </StageWebAudioProvider>
                                             </AudioContextProvider>

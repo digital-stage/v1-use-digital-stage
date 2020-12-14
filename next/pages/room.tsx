@@ -14,6 +14,7 @@ import Editor from "../components/room/Editor";
 import useImage from "../lib/useImage";
 import RoomElement from "../components/room/RoomElement";
 import Select from "../components/ui/Select";
+import {colors} from "../components/ui/Theme";
 
 const report = debug("ThreeDAudio");
 
@@ -36,6 +37,12 @@ const ModeSelect = styled(Select, {
     top: '2rem',
     left: '1rem',
 });
+const ModeNotification = styled("div", {
+    position: 'fixed',
+    top: '4rem',
+    left: '1rem',
+    color: colors.background.record
+})
 
 const Room = () => {
     const {updateStageMember, setCustomStageMember, removeCustomStageMember} = useStageActions()
@@ -46,13 +53,14 @@ const Room = () => {
     const customStageMembers = useCustomStageMembers();
     const image = useImage("/static/room-member.svg", 96, 96);
     const [selected, setSelected] = useState<RoomElement>(undefined);
+    const [globalMode, setGlobalMode] = useState<boolean>(isStageAdmin);
 
     if (stage) {
         return (
             <>
                 <FullscreenEditor
                     elements={stageMembers.map(stageMember => {
-                        if (customStageMembers.byStageMember[stageMember._id]) {
+                        if (!globalMode && customStageMembers.byStageMember[stageMember._id]) {
                             const customStageMember = customStageMembers.byId[customStageMembers.byStageMember[stageMember._id]];
                             return {
                                 ...stageMember,
@@ -77,7 +85,7 @@ const Room = () => {
                     width={stage.width}
                     height={stage.height}
                     onChange={(element) => {
-                        if (isStageAdmin) {
+                        if (globalMode && isStageAdmin) {
                             report("Updating stage member");
                             updateStageMember(element._id, {
                                 x: element.x,
@@ -99,18 +107,18 @@ const Room = () => {
                 />
                 <ResetAllButton
                     onClick={() => {
-                        customStageMembers.allIds.forEach(id => {
-                            removeCustomStageMember(id)
-                        });
-                        if (isStageAdmin) {
+                        if (globalMode && isStageAdmin) {
                             // Also reset stage members
                             stageMembers.forEach(stageMember => {
                                 updateStageMember(stageMember._id, {
                                     x: 0,
                                     y: 0,
-                                    rX: 0,
-                                    rY: 0,
+                                    rZ: 0
                                 })
+                            });
+                        } else {
+                            customStageMembers.allIds.forEach(id => {
+                                removeCustomStageMember(id)
                             });
                         }
                     }}>
@@ -118,8 +126,9 @@ const Room = () => {
                 </ResetAllButton>
                 <ResetSingle
                     onClick={() => {
-                        if (selected) {
-                            const customStageMember = customStageMembers.byId[selected._id];
+                        if (selected && !selected.isGlobal && customStageMembers.byStageMember[selected._id]) {
+                            const customStageMember = customStageMembers.byId[customStageMembers.byStageMember[selected._id]];
+                            console.log(customStageMember);
                             if (customStageMember) {
                                 removeCustomStageMember(customStageMember._id);
                             }
@@ -129,14 +138,16 @@ const Room = () => {
                 >
                     RESET
                 </ResetSingle>
+                {globalMode && <ModeNotification>MODIFYING GLOBAL VALUES</ModeNotification>}
                 {isStageAdmin ? (
                     <ModeSelect
+                        onSelected={(value) => setGlobalMode(value === "global")}
                         options={[{
-                            id: 1,
+                            id: "global",
                             value: "Global"
                         }, {
-                            id: 2,
-                            value: "Private"
+                            id: "monitor",
+                            value: "Monitor"
                         }]}/>
                 ) : null}
             </>
