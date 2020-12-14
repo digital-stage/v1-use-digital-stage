@@ -16,12 +16,13 @@ import {StageJoinerProvider} from "../lib/useStageJoiner";
 import LocalDeviceControl from "../components/global/LocalDeviceControl";
 import ShowRoomButton from "../components/global/ShowRoomButton";
 import {ColorProvider} from "../lib/useColors";
+import AppNavigation from "../components/global/AppNavigation";
 
 function MyApp({Component, pageProps}) {
     return (
         <>
             <Head>
-                <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
             </Head>
             <StyletronProvider value={styletron} debug={debug} debugAfterHydration>
                 <ErrorsProvider>
@@ -50,6 +51,7 @@ function MyApp({Component, pageProps}) {
                                                         <StartPlaybackInformer/>
                                                         <StageJoiner/>
                                                         <StatusInformer/>
+                                                        <AppNavigation/>
                                                     </StageJoinerProvider>
                                                 </StageWebAudioProvider>
                                             </AudioContextProvider>

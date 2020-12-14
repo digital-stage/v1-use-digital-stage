@@ -13,6 +13,9 @@ const FixedButton = withStyleDeep(Button, {
     bottom: '1rem',
     borderRadius: '50%',
     padding: ".5rem",
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     [breakpoints.TABLET]: {
         padding: "1rem",
     }

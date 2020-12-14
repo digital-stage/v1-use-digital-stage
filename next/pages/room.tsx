@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {
     useIsStageAdmin,
     useStageActions,
@@ -58,8 +58,91 @@ const Room = () => {
 
     if (stage) {
         return (
-            <Wrapper>
-                <InnerWrapper>
+            <>
+                <Wrapper>
+                    <InnerWrapper>
+                        <Editor
+                            elements={stageMembers.map(stageMember => {
+                                if (customStageMembers.byStageMember[stageMember._id]) {
+                                    const customStageMember = customStageMembers.byId[customStageMembers.byStageMember[stageMember._id]];
+                                    return {
+                                        ...stageMember,
+                                        image: image,
+                                        name: stageMember.name || stageMember._id,
+                                        x: customStageMember.x,
+                                        y: customStageMember.y,
+                                        z: customStageMember.z,
+                                        rX: customStageMember.rX,
+                                        rY: customStageMember.rY,
+                                        rZ: customStageMember.rZ,
+                                        isGlobal: false
+                                    }
+                                }
+                                return {
+                                    ...stageMember,
+                                    image: image,
+                                    name: stageMember.name || stageMember._id,
+                                    isGlobal: true
+                                }
+                            })}
+                            width={stage.width}
+                            height={stage.height}
+                            onChange={(element) => {
+                                if (isStageAdmin) {
+                                    report("Updating stage member");
+                                    updateStageMember(element._id, {
+                                        x: element.x,
+                                        y: element.y,
+                                        rZ: element.rZ
+                                    })
+                                } else {
+                                    report("Updating custom stage member");
+                                    report(element.x, element.y, element.rZ);
+                                    setCustomStageMember(element._id, {
+                                        x: element.x,
+                                        y: element.y,
+                                        rZ: element.rZ
+                                    })
+                                }
+                            }}
+                            onSelected={element => setSelected(element)}
+                            onDeselected={() => setSelected(undefined)}
+                        />
+                        <ResetAllButton
+                            onClick={() => {
+                                customStageMembers.allIds.forEach(id => {
+                                    removeCustomStageMember(id)
+                                });
+                                if (isStageAdmin) {
+                                    // Also reset stage members
+                                    stageMembers.forEach(stageMember => {
+                                        updateStageMember(stageMember._id, {
+                                            x: 0,
+                                            y: 0,
+                                            rX: 0,
+                                            rY: 0,
+                                        })
+                                    });
+                                }
+                            }}>
+                            RESET ALL
+                        </ResetAllButton>
+                        <ResetSingle
+                            onClick={() => {
+                                if (selected) {
+                                    const customStageMember = customStageMembers.byId[selected._id];
+                                    if (customStageMember) {
+                                        removeCustomStageMember(customStageMember._id);
+                                    }
+                                }
+                            }}
+                            disabled={!selected}
+                        >
+                            RESET
+                        </ResetSingle>
+                    </InnerWrapper>
+                </Wrapper>
+                {isStageAdmin ? (
                     <ModeSelect
                         options={[{
                             id: 1,
@@ -68,87 +151,8 @@ const Room = () => {
                             id: 2,
                             value: "Private"
                         }]}/>
-                    <Editor
-                        elements={stageMembers.map(stageMember => {
-                            if (customStageMembers.byStageMember[stageMember._id]) {
-                                const customStageMember = customStageMembers.byId[customStageMembers.byStageMember[stageMember._id]];
-                                return {
-                                    ...stageMember,
-                                    image: image,
-                                    name: stageMember.name || stageMember._id,
-                                    x: customStageMember.x,
-                                    y: customStageMember.y,
-                                    z: customStageMember.z,
-                                    rX: customStageMember.rX,
-                                    rY: customStageMember.rY,
-                                    rZ: customStageMember.rZ,
-                                    isGlobal: false
-                                }
-                            }
-                            return {
-                                ...stageMember,
-                                image: image,
-                                name: stageMember.name || stageMember._id,
-                                isGlobal: true
-                            }
-                        })}
-                        width={stage.width}
-                        height={stage.height}
-                        onChange={(element) => {
-                            if (isStageAdmin) {
-                                report("Updating stage member");
-                                updateStageMember(element._id, {
-                                    x: element.x,
-                                    y: element.y,
-                                    rZ: element.rZ
-                                })
-                            } else {
-                                report("Updating custom stage member");
-                                report(element.x, element.y, element.rZ);
-                                setCustomStageMember(element._id, {
-                                    x: element.x,
-                                    y: element.y,
-                                    rZ: element.rZ
-                                })
-                            }
-                        }}
-                        onSelected={element => setSelected(element)}
-                        onDeselected={() => setSelected(undefined)}
-                    />
-                    <ResetAllButton
-                        onClick={() => {
-                            customStageMembers.allIds.forEach(id => {
-                                removeCustomStageMember(id)
-                            });
-                            if (isStageAdmin) {
-                                // Also reset stage members
-                                stageMembers.forEach(stageMember => {
-                                    updateStageMember(stageMember._id, {
-                                        x: 0,
-                                        y: 0,
-                                        rX: 0,
-                                        rY: 0,
-                                    })
-                                });
-                            }
-                        }}>
-                        RESET ALL
-                    </ResetAllButton>
-                    <ResetSingle
-                        onClick={() => {
-                            if (selected) {
-                                const customStageMember = customStageMembers.byId[selected._id];
-                                if (customStageMember) {
-                                    removeCustomStageMember(customStageMember._id);
-                                }
-                            }
-                        }}
-                        disabled={!selected}
-                    >
-                        RESET
-                    </ResetSingle>
-                </InnerWrapper>
-            </Wrapper>
+                ) : null}
+            </>
         )
     }
 

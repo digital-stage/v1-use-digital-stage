@@ -3,9 +3,9 @@ import {Stage as KonvaStage, Layer, Image} from 'react-konva';
 import RoomElement from "./RoomElement";
 import Item from "./Item";
 import useImage from "../../lib/useImage";
-import { debounce } from 'lodash';
 
 const FACTOR: number = 100.0;
+const BOUNDING_BUFFER: number = 42;
 
 const Editor = (props: {
     width: number;
@@ -63,8 +63,11 @@ const Editor = (props: {
                                     y: y,
                                 }}
                                 onFinalChange={(x, y, rZ) => {
-                                    const dX = (Math.round(x) - (fullWidth / 2)) / FACTOR;
-                                    const dY = (Math.round(y) - (fullHeight / 2)) / FACTOR;
+                                    const nX = Math.max(BOUNDING_BUFFER, Math.min(Math.round(x), (fullWidth - BOUNDING_BUFFER)));
+                                    const nY = Math.max(BOUNDING_BUFFER, Math.min(Math.round(y), (fullHeight - BOUNDING_BUFFER)));
+
+                                    const dX =(nX - (fullWidth / 2)) / FACTOR;
+                                    const dY = (nY - (fullHeight / 2)) / FACTOR;
                                     const dRZ = Math.round(rZ);
 
                                     onChange({

@@ -8,8 +8,9 @@ export interface Option {
 const Select = (props: {
     options?: Option[];
     onSelected?(id: any): void;
+    className?: string;
 }) => {
-    const {options, onSelected} = props;
+    const {options, onSelected, className} = props;
     const [selected, setSelected] = useState<Option>();
 
     useEffect(() => {
@@ -27,7 +28,7 @@ const Select = (props: {
     }, [options])
 
     return (
-        <select onSelect={handleSelect}>
+        <select className={className} onSelect={handleSelect}>
             {options && options.map(o => <option value={o.id}>{o.value}</option>)}
         </select>
     )
