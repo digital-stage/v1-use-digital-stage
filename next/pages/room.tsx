@@ -54,6 +54,7 @@ const Room = () => {
     const image = useImage("/static/room-member.svg", 96, 96);
     const [selected, setSelected] = useState<RoomElement>(undefined);
 
+    console.log("[RENDER] room");
 
     if (stage) {
         return (
