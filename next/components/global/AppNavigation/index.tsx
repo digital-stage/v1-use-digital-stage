@@ -1,9 +1,10 @@
-import {styled} from "styletron-react";
+import {styled, withStyleDeep} from "styletron-react";
 import React, {useEffect, useRef, useState} from "react";
 import {breakpoints, colors} from "../../ui/Theme";
 import Link from "next/link";
 import {disableBodyScroll, enableBodyScroll} from 'body-scroll-lock';
 import Button from "../../ui/Button";
+import {useCurrentStageId} from "use-digital-stage";
 
 const Overlay = styled("nav", {
     position: 'fixed',
@@ -27,7 +28,7 @@ const ListItem = styled("li", {
     display: 'flex',
     fontSize: '3rem',
 });
-const BurgerButton = styled(Button, {
+const BurgerButton = withStyleDeep(Button, {
     position: 'fixed',
     top: '1rem',
     left: '1rem',
@@ -48,6 +49,7 @@ const BurgerIcon = styled("img", {
 });
 
 const AppNavigation = () => {
+    const stageId = useCurrentStageId();
     const [open, setOpen] = useState<boolean>(false);
     const menuRef = useRef<HTMLDivElement>();
 
@@ -66,21 +68,25 @@ const AppNavigation = () => {
             {open ? (
                 <Overlay ref={menuRef} onClick={() => setOpen(false)}>
                     <List>
-                        <ListItem>
-                            <Link href="/stage">
-                                Stage
-                            </Link>
-                        </ListItem>
-                        <ListItem>
-                            <Link href="/mixer">
-                                Mixer
-                            </Link>
-                        </ListItem>
-                        <ListItem>
-                            <Link href="/room">
-                                3D Audio
-                            </Link>
-                        </ListItem>
+                        {stageId ? (
+                            <>
+                                <ListItem>
+                                    <Link href="/stage">
+                                        Stage
+                                    </Link>
+                                </ListItem>
+                                <ListItem>
+                                    <Link href="/mixer">
+                                        Mixer
+                                    </Link>
+                                </ListItem>
+                                <ListItem>
+                                    <Link href="/room">
+                                        3D Audio
+                                    </Link>
+                                </ListItem>
+                            </>
+                        ) : null}
                         <ListItem>
                             <Link href="/stages">
                                 All stages

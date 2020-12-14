@@ -7,13 +7,10 @@ import {useRouter} from "next/router";
 
 const StyledButton = styled(Button, {
     position: "fixed",
-    left: "1rem",
-    bottom: "1rem",
+    right: "1rem",
+    top: "1rem",
     borderRadius: "50%",
     padding: ".5rem",
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
     [breakpoints.TABLET]: {
         padding: "1rem",
     }
@@ -39,7 +36,7 @@ const LeaveStageButton = () => {
     if (stageId) {
         return (
             <StyledButton onClick={leave}>
-                <Icon src="/static/exit_to_app-white-18dp.svg" alt="Leave stage"/>
+                <Icon src="/static/exit_to_app-18dp.svg" alt="Leave stage"/>
             </StyledButton>
         )
     }

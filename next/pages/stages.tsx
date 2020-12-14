@@ -85,6 +85,7 @@ const Stages = () => {
                 {stages.allIds.map((id) => stages.byId[id]).map((stage) => (
                     <ListItem key={stage._id}>
                         <Accordion
+                            expanded={true}
                             header={<StageHeader>{stage.name}</StageHeader>}
                         >
                             {groups.byStage[stage._id] ? groups.byStage[stage._id].map(id => groups.byId[id]).map(group => (

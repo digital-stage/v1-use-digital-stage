@@ -13,17 +13,16 @@ const FixedButton = withStyleDeep(Button, {
     bottom: '1rem',
     borderRadius: '50%',
     padding: ".5rem",
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
     [breakpoints.TABLET]: {
         padding: "1rem",
     }
 })
 const Icon = styled("img", {
     width: '2rem',
+    height: '2rem',
     [breakpoints.TABLET]: {
         width: "4rem",
+        height: '4rem',
     }
 });
 

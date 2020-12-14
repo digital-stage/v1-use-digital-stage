@@ -4,6 +4,7 @@ const colors = {
         muted: 'rgb(80,80,80)',
     },
     background: {
+        black: 'rgba(31,31,31)',
         darker: 'rgb(90,90,90)',
         dark: 'rgb(110,110,110)',
         default: 'rgb(135,135,135)',
