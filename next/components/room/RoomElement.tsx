@@ -1,6 +1,7 @@
 interface RoomElement {
     _id: string;
     name: string;
+    opacity: number;
     isGlobal: boolean;
     x: number;
     y: number;

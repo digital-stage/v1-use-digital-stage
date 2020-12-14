@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useState} from "react";
 import {
     useIsStageAdmin,
     useStageActions,
@@ -73,14 +73,16 @@ const Room = () => {
                                 rX: customStageMember.rX,
                                 rY: customStageMember.rY,
                                 rZ: customStageMember.rZ,
-                                isGlobal: false
+                                isGlobal: false,
+                                opacity: 0.8
                             }
                         }
                         return {
                             ...stageMember,
                             image: image,
                             name: stageMember.name || stageMember._id,
-                            isGlobal: true
+                            isGlobal: true,
+                            opacity: globalMode ? 0.8 : 0.4
                         }
                     })}
                     width={stage.width}

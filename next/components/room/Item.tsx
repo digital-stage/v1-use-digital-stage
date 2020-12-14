@@ -97,7 +97,7 @@ const Item = (props: {
                 offsetX={SIZE / 2}
                 offsetY={SIZE / 2}
                 image={element.image}
-                opacity={0.8}
+                opacity={element.opacity}
                 draggable
                 rotation={position.rZ}
                 shadowColor="black"
