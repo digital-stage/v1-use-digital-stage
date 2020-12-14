@@ -52,6 +52,7 @@ const Room = () => {
     const stageMembers = useStageMembersByStage(stageId);
     const customStageMembers = useCustomStageMembers();
     const image = useImage("/static/room-member.svg", 96, 96);
+    const customImage = useImage("/static/room-member-custom.svg", 96, 96);
     const [selected, setSelected] = useState<RoomElement>(undefined);
     const [globalMode, setGlobalMode] = useState<boolean>(isStageAdmin);
 
@@ -64,7 +65,7 @@ const Room = () => {
                             const customStageMember = customStageMembers.byId[customStageMembers.byStageMember[stageMember._id]];
                             return {
                                 ...stageMember,
-                                image: image,
+                                image: customImage,
                                 name: stageMember.name || stageMember._id,
                                 x: customStageMember.x,
                                 y: customStageMember.y,

@@ -81,7 +81,6 @@ const GroupChannel = (props: { groupId: string }) => {
     const [expanded, setExpanded] = React.useState<boolean>();
 
     const handleVolumeChange = useCallback((volume: number, muted: boolean) => {
-        console.debug(group._id, volume, muted)
         if (isAdmin) {
             stageActions.updateGroup(group._id, {
                 volume,
@@ -91,7 +90,10 @@ const GroupChannel = (props: { groupId: string }) => {
     }, [isAdmin, group, stageActions]);
 
     const handleCustomVolumeChange = useCallback((volume: number, muted: boolean) => {
-        stageActions.setCustomGroup(group._id, {volume, muted})
+        stageActions.setCustomGroup(group._id, {
+            volume,
+            muted
+        })
     }, [group, stageActions]);
 
     const handleCustomVolumeReset = useCallback(() => {

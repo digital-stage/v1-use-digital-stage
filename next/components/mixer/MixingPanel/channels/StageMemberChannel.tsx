@@ -92,6 +92,9 @@ const StageMemberChannel = (props: { stageMemberId: string, color?: HSLColor }) 
         stageActions.setCustomStageMember(stageMember._id, {
             volume,
             muted,
+            x: stageMember.x,
+            y: stageMember.y,
+            rZ: stageMember.rZ
         })
     }, [stageMember, stageActions]);
 
