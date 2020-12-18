@@ -110,6 +110,13 @@ const AppNavigation = () => {
                                 </A>
                             </Link>
                         </ListItem>
+                        <ListItem>
+                            <Link href="/devices">
+                                <A>
+                                    Settings
+                                </A>
+                            </Link>
+                        </ListItem>
                     </List>
                 </Overlay>
             ) : null}

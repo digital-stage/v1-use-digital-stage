@@ -49,11 +49,11 @@ export enum Mode {
 const Options: Option[] = [
     {
         id: Mode.GLOBAL,
-        value: "Global"
+        label: "Global"
     },
     {
         id: Mode.MONITOR,
-        value: "Monitor"
+        label: "Monitor"
     }
 ];
 

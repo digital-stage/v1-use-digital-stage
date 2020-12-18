@@ -25,7 +25,6 @@ import {
   SetCustomStageMemberOvPayload,
   SetCustomStageMemberPayload,
 } from '../global/SocketPayloads';
-import Status from '../useSocket/Status';
 
 const d = debug('useStageActions');
 
@@ -149,11 +148,11 @@ const StageActionsProvider = (props: {
   handleError: (error: Error) => void;
 }): JSX.Element => {
   const { children, handleError } = props;
-  const { socket, status } = useSocket();
+  const { socket } = useSocket();
 
   const updateDevice = useCallback(
     (deviceId: string, device: Partial<Omit<Device, '_id'>>) => {
-      if (socket && status === Status.connected) {
+      if (socket) {
         socket.emit(ClientDeviceEvents.UPDATE_DEVICE, {
           ...device,
           _id: deviceId,
@@ -163,12 +162,12 @@ const StageActionsProvider = (props: {
         throw new Error("Socket connection wasn't ready");
       }
     },
-    [socket, status, handleError]
+    [socket, handleError]
   );
 
   const updateUser = useCallback(
     (name: string, avatarUrl?: string) => {
-      if (socket && status === Status.connected) {
+      if (socket) {
         socket.emit(ClientUserEvents.CHANGE_USER, {
           name,
           avatarUrl,
@@ -178,7 +177,7 @@ const StageActionsProvider = (props: {
         throw new Error("Socket connection wasn't ready");
       }
     },
-    [socket, status, handleError]
+    [socket, handleError]
   );
 
   const createStage = useCallback(
@@ -191,7 +190,7 @@ const StageActionsProvider = (props: {
       reflection?: number,
       absorption?: number
     ) => {
-      if (socket && status === Status.connected) {
+      if (socket) {
         d(`createStage(${name}, ...)`);
         const payload: AddStagePayload = {
           name,
@@ -208,12 +207,12 @@ const StageActionsProvider = (props: {
         throw new Error("Socket connection wasn't ready");
       }
     },
-    [socket, status, handleError]
+    [socket, handleError]
   );
 
   const updateStage = useCallback(
     (id: string, stage: Partial<Stage>) => {
-      if (socket && status === Status.connected) {
+      if (socket) {
         d(`updateStage(${id}, ...)`);
         const payload: ChangeStagePayload = {
           id,
@@ -225,7 +224,7 @@ const StageActionsProvider = (props: {
         throw new Error("Socket connection wasn't ready");
       }
     },
-    [socket, status, handleError]
+    [socket, handleError]
   );
 
   const joinStage = useCallback(
@@ -234,7 +233,7 @@ const StageActionsProvider = (props: {
       reqGroupId: string,
       password?: string
     ): Promise<void> => {
-      if (socket && status === Status.connected) {
+      if (socket) {
         d(`joinStage(${reqStageId}, ${reqGroupId}, ...)`);
         const payload: JoinStagePayload = {
           stageId: reqStageId,
@@ -255,22 +254,22 @@ const StageActionsProvider = (props: {
       handleError(new Error('Not connected'));
       return Promise.reject(new Error('Not connected'));
     },
-    [socket, status, handleError]
+    [socket, handleError]
   );
 
   const leaveStage = useCallback(() => {
-    if (socket && status === Status.connected) {
+    if (socket) {
       d(`leaveStage()`);
       socket.emit(ClientStageEvents.LEAVE_STAGE);
     } else {
       handleError(new Error("Socket connection wasn't ready"));
       throw new Error("Socket connection wasn't ready");
     }
-  }, [socket, status, handleError]);
+  }, [socket, handleError]);
 
   const leaveStageForGood = useCallback(
     (id: string) => {
-      if (socket && status === Status.connected) {
+      if (socket) {
         d(`leaveStageForGood(${id}, ...)`);
         socket.emit(ClientStageEvents.LEAVE_STAGE_FOR_GOOD, id);
       } else {
@@ -278,12 +277,12 @@ const StageActionsProvider = (props: {
         throw new Error("Socket connection wasn't ready");
       }
     },
-    [socket, status, handleError]
+    [socket, handleError]
   );
 
   const removeStage = useCallback(
     (id: string) => {
-      if (socket && status === Status.connected) {
+      if (socket) {
         d(`removeStage(${id}, ...)`);
         socket.emit(ClientStageEvents.REMOVE_STAGE, id);
       } else {
@@ -291,12 +290,12 @@ const StageActionsProvider = (props: {
         throw new Error("Socket connection wasn't ready");
       }
     },
-    [socket, status, handleError]
+    [socket, handleError]
   );
 
   const createGroup = useCallback(
     (createStageId: string, name: string) => {
-      if (socket && status === Status.connected) {
+      if (socket) {
         d(`createGroup(${createStageId}, ...)`);
         const payload: AddGroupPayload = {
           stageId: createStageId,
@@ -308,7 +307,7 @@ const StageActionsProvider = (props: {
         throw new Error("Socket connection wasn't ready");
       }
     },
-    [socket, status, handleError]
+    [socket, handleError]
   );
 
   const updateGroup = useCallback(
@@ -321,16 +320,16 @@ const StageActionsProvider = (props: {
         };
         socket.emit(ClientStageEvents.CHANGE_GROUP, payload);
       } else {
-        // handleError(new Error("Socket connection wasn't ready"));
+        handleError(new Error("Socket connection wasn't ready"));
         throw new Error("Socket connection wasn't ready");
       }
     },
-    [socket]
+    [socket, handleError]
   );
 
   const removeGroup = useCallback(
     (id: string) => {
-      if (socket && status === Status.connected) {
+      if (socket) {
         d(`removeGroup(${id}, ...)`);
         socket.emit(ClientStageEvents.REMOVE_GROUP, id);
       } else {
@@ -338,7 +337,7 @@ const StageActionsProvider = (props: {
         throw new Error("Socket connection wasn't ready");
       }
     },
-    [socket, status, handleError]
+    [socket, handleError]
   );
 
   const updateStageMember = useCallback(
@@ -352,7 +351,7 @@ const StageActionsProvider = (props: {
     ) => {
       d(`updateStageMember(${id}, ...)`);
       d(update);
-      if (socket && status === Status.connected) {
+      if (socket) {
         const payload: ChangeStageMemberPayload = {
           id,
           update,
@@ -360,15 +359,15 @@ const StageActionsProvider = (props: {
         socket.emit(ClientStageEvents.CHANGE_STAGE_MEMBER, payload);
       } else {
         handleError(new Error("Socket connection wasn't ready"));
-        // throw new Error("Socket connection wasn't ready");
+        throw new Error("Socket connection wasn't ready");
       }
     },
-    [socket, status, handleError]
+    [socket, handleError]
   );
 
   const updateStageMemberOv = useCallback(
     (id: string, update: Partial<ThreeDimensionAudioProperties>) => {
-      if (socket && status === Status.connected) {
+      if (socket) {
         d(`updateStageMemberOv(${id}, ...)`);
         const payload: ChangeStageMemberOvTrackPayload = {
           id,
@@ -380,12 +379,12 @@ const StageActionsProvider = (props: {
         throw new Error("Socket connection wasn't ready");
       }
     },
-    [socket, status, handleError]
+    [socket, handleError]
   );
 
   const updateStageMemberAudio = useCallback(
     (id: string, update: Partial<ThreeDimensionAudioProperties>) => {
-      if (socket && status === Status.connected) {
+      if (socket) {
         d(`updateStageMemberAudio(${id}, ...)`);
         const payload: ChangeStageMemberAudioProducerPayload = {
           id,
@@ -397,12 +396,12 @@ const StageActionsProvider = (props: {
         throw new Error("Socket connection wasn't ready");
       }
     },
-    [socket, status, handleError]
+    [socket, handleError]
   );
 
   const setCustomGroup = useCallback(
     (groupId: string, update: Partial<ThreeDimensionAudioProperties>) => {
-      if (socket && status === Status.connected) {
+      if (socket) {
         d(`setCustomGroup(${groupId}, ...)`);
         const payload: SetCustomGroupPayload = {
           groupId,
@@ -411,15 +410,15 @@ const StageActionsProvider = (props: {
         socket.emit(ClientStageEvents.SET_CUSTOM_GROUP, payload);
       } else {
         handleError(new Error("Socket connection wasn't ready"));
-        // throw new Error("Socket connection wasn't ready");
+        throw new Error("Socket connection wasn't ready");
       }
     },
-    [socket, status, handleError]
+    [socket, handleError]
   );
 
   const removeCustomGroup = useCallback(
     (id: string) => {
-      if (socket && status === Status.connected) {
+      if (socket) {
         d(`removeCustomGroup(${id}, ...)`);
         const payload: RemoveCustomGroupPayload = id;
         socket.emit(ClientStageEvents.REMOVE_CUSTOM_GROUP, payload);
@@ -428,12 +427,12 @@ const StageActionsProvider = (props: {
         throw new Error("Socket connection wasn't ready");
       }
     },
-    [socket, status, handleError]
+    [socket, handleError]
   );
 
   const setCustomStageMember = useCallback(
     (stageMemberId: string, update: Partial<ThreeDimensionAudioProperties>) => {
-      if (socket && status === Status.connected) {
+      if (socket) {
         d(`setCustomStageMember(${stageMemberId}, ...)`);
         d(update);
         const payload: SetCustomStageMemberPayload = {
@@ -443,15 +442,15 @@ const StageActionsProvider = (props: {
         socket.emit(ClientStageEvents.SET_CUSTOM_STAGE_MEMBER, payload);
       } else {
         handleError(new Error("Socket connection wasn't ready"));
-        // throw new Error("Socket connection wasn't ready");
+        throw new Error("Socket connection wasn't ready");
       }
     },
-    [socket, status, handleError]
+    [socket, handleError]
   );
 
   const removeCustomStageMember = useCallback(
     (id: string) => {
-      if (socket && status === Status.connected) {
+      if (socket) {
         d(`removeCustomStageMember(${id}, ...)`);
         const payload: RemoveCustomStageMemberPayload = id;
         socket.emit(ClientStageEvents.REMOVE_CUSTOM_STAGE_MEMBER, payload);
@@ -460,7 +459,7 @@ const StageActionsProvider = (props: {
         throw new Error("Socket connection wasn't ready");
       }
     },
-    [socket, status, handleError]
+    [socket, handleError]
   );
 
   const setCustomStageMemberAudio = useCallback(
@@ -468,7 +467,7 @@ const StageActionsProvider = (props: {
       stageMemberAudioId: string,
       update: Partial<ThreeDimensionAudioProperties>
     ) => {
-      if (socket && status === Status.connected) {
+      if (socket) {
         d(`setCustomStageMemberAudio(${stageMemberAudioId}, ...)`);
         const payload: SetCustomStageMemberAudioPayload = {
           stageMemberAudioId,
@@ -480,12 +479,12 @@ const StageActionsProvider = (props: {
         throw new Error("Socket connection wasn't ready");
       }
     },
-    [socket, status, handleError]
+    [socket, handleError]
   );
 
   const removeCustomStageMemberAudio = useCallback(
     (id: string) => {
-      if (socket && status === Status.connected) {
+      if (socket) {
         d(`removeCustomStageMemberAudio(${id}, ...)`);
         const payload: RemoveCustomStageMemberAudioPayload = id;
         socket.emit(
@@ -497,7 +496,7 @@ const StageActionsProvider = (props: {
         throw new Error("Socket connection wasn't ready");
       }
     },
-    [socket, status, handleError]
+    [socket, handleError]
   );
 
   const setCustomStageMemberOv = useCallback(
@@ -505,7 +504,7 @@ const StageActionsProvider = (props: {
       stageMemberOvTrackId: string,
       update: Partial<ThreeDimensionAudioProperties>
     ) => {
-      if (socket && status === Status.connected) {
+      if (socket) {
         d(`setCustomStageMemberOv(${stageMemberOvTrackId}, ...)`);
         const payload: SetCustomStageMemberOvPayload = {
           stageMemberOvTrackId,
@@ -517,12 +516,12 @@ const StageActionsProvider = (props: {
         throw new Error("Socket connection wasn't ready");
       }
     },
-    [socket, status, handleError]
+    [socket, handleError]
   );
 
   const removeCustomStageMemberOv = useCallback(
     (id: string) => {
-      if (socket && status === Status.connected) {
+      if (socket) {
         d(`removeCustomStageMemberOv(${id}, ...)`);
         const payload: RemoveCustomStageMemberOvPayload = id;
         socket.emit(ClientStageEvents.REMOVE_CUSTOM_STAGE_MEMBER_OV, payload);
@@ -531,7 +530,7 @@ const StageActionsProvider = (props: {
         throw new Error("Socket connection wasn't ready");
       }
     },
-    [socket, status, handleError]
+    [socket, handleError]
   );
 
   return (

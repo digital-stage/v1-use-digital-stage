@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as Yup from 'yup';
 import {Form, Field, Formik} from 'formik';
 import Modal, {ModalBody, ModalFooter, ModalHeader} from "../../ui/Modal";
-import {Stage, useStageActions} from "use-digital-stage";
+import {Group, useStageActions} from "use-digital-stage";
 import Input from "../../ui/Input";
 import Button from '../../ui/Button';
 import {styled, useStyletron, withStyleDeep} from "styletron-react";
@@ -17,7 +17,7 @@ interface Values {
     name: string;
 }
 
-const CreateGroupModalSchema = Yup.object().shape({
+const ModifyGroupModalSchema = Yup.object().shape({
     name: Yup.string()
         .min(2, 'Der Name ist zu kurz')
         .max(100, 'Der Name ist zu lang')
@@ -31,20 +31,20 @@ const Label = styled('label', {
     alignItems: 'center'
 })
 
-const CreateGroupModal = (props: {
-    stage: Stage;
+const ModifyGroupModal = (props: {
+    group: Group;
     onClose?(): void;
 }): JSX.Element => {
-    const {onClose, stage} = props;
+    const {onClose, group} = props;
     const [css] = useStyletron();
-    const {createGroup} = useStageActions();
+    const {updateGroup} = useStageActions();
 
     return (
         <Modal
             onClose={onClose}
         >
             <ModalHeader>
-                <Headline variant="caption">Create new group inside stage <i>{stage.name}</i></Headline>
+                <Headline variant="caption">Edit <i>{group.name}</i></Headline>
             </ModalHeader>
             <Formik
                 initialValues={{
@@ -56,11 +56,13 @@ const CreateGroupModal = (props: {
                     damping: 0.7,
                     absorption: 0.6,
                 }}
-                validationSchema={CreateGroupModalSchema}
+                validationSchema={ModifyGroupModalSchema}
                 onSubmit={(values: Values) => {
-                    createGroup(
-                        stage._id,
-                        values.name
+                    updateGroup(
+                        group._id,
+                        {
+                            name: values.name
+                        }
                     );
                     props.onClose();
                 }}
@@ -104,7 +106,7 @@ const CreateGroupModal = (props: {
                                 $border={true}
                                 $round={true}
                                 type="submit"
-                            >Create</Button>
+                            >Save</Button>
                         </ModalFooter>
                     </Form>
                 )}
@@ -112,4 +114,4 @@ const CreateGroupModal = (props: {
         </Modal>
     );
 };
-export default CreateGroupModal;
+export default ModifyGroupModal;

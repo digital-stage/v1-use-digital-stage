@@ -199,16 +199,29 @@ const StageList = () => {
                                                 }}>Join</JoinButton>
                                             )}
                                             {isCurrentUserAdmin && (
-                                                <Button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        setModal(<DeleteGroupModal
-                                                            group={group}
-                                                            onClose={() => setModal(undefined)}
-                                                        />)
-                                                    }}>
-                                                    Delete
-                                                </Button>
+                                                <>
+                                                    <Button
+                                                        $round={true}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setModal(<DeleteStageModal
+                                                                stage={stage}
+                                                                onClose={() => setModal(undefined)}
+                                                            />)
+                                                        }}>
+                                                        delete
+                                                    </Button>
+                                                    <Button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setModal(<DeleteGroupModal
+                                                                group={group}
+                                                                onClose={() => setModal(undefined)}
+                                                            />)
+                                                        }}>
+                                                        Delete
+                                                    </Button>
+                                                </>
                                             )}
                                         </GroupActions>
                                     </GroupContainer>

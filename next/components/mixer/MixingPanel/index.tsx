@@ -46,11 +46,11 @@ const ScrollPane = styled('div', {
 const Options: Option[] = [
     {
         id: "global",
-        value: "Global"
+        label: "Global"
     },
     {
         id: "monitor",
-        value: "Monitor"
+        label: "Monitor"
     }
 ];
 
