@@ -8,15 +8,12 @@ import {
     useCustomStageMembers
 } from "use-digital-stage";
 import Button from "../components/ui/Button";
-import debug from "debug";
 import {styled, withStyleDeep} from "styletron-react";
 import Editor from "../components/room/Editor";
 import useImage from "../lib/useImage";
 import RoomElement from "../components/room/RoomElement";
-import Select from "../components/ui/Select";
+import Select, {Option} from "../components/ui/Select";
 import {colors} from "../components/ui/Theme";
-
-const report = debug("ThreeDAudio");
 
 const FullscreenEditor = styled(Editor, {
     width: '100vw',
@@ -43,6 +40,22 @@ const ModeNotification = styled("div", {
     left: '1rem',
     color: colors.background.record
 })
+
+export enum Mode {
+    GLOBAL = "global",
+    MONITOR = "monitor"
+}
+
+const Options: Option[] = [
+    {
+        id: Mode.GLOBAL,
+        value: "Global"
+    },
+    {
+        id: Mode.MONITOR,
+        value: "Monitor"
+    }
+];
 
 const Room = () => {
     const {updateStageMember, setCustomStageMember, removeCustomStageMember} = useStageActions()
@@ -89,15 +102,12 @@ const Room = () => {
                     height={stage.height}
                     onChange={(element) => {
                         if (globalMode && isStageAdmin) {
-                            report("Updating stage member");
                             updateStageMember(element._id, {
                                 x: element.x,
                                 y: element.y,
                                 rZ: element.rZ
                             })
                         } else {
-                            report("Updating custom stage member");
-                            report(element.x, element.y, element.rZ);
                             setCustomStageMember(element._id, {
                                 x: element.x,
                                 y: element.y,
@@ -115,8 +125,8 @@ const Room = () => {
                             stageMembers.forEach(stageMember => {
                                 updateStageMember(stageMember._id, {
                                     x: 0,
-                                    y: 0,
-                                    rZ: 0
+                                    y: -1,
+                                    rZ: 180
                                 })
                             });
                         } else {
@@ -144,14 +154,11 @@ const Room = () => {
                 {globalMode && <ModeNotification>MODIFYING GLOBAL VALUES</ModeNotification>}
                 {isStageAdmin ? (
                     <ModeSelect
-                        onSelected={(value) => setGlobalMode(value === "global")}
-                        options={[{
-                            id: "global",
-                            value: "Global"
-                        }, {
-                            id: "monitor",
-                            value: "Monitor"
-                        }]}/>
+                        onSelected={(option: Option) => {
+                            setGlobalMode(option.id === "global");
+                        }}
+                        selected={globalMode ? Options[0] : Options[1]}
+                        options={Options}/>
                 ) : null}
             </>
         )

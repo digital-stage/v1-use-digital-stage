@@ -31,14 +31,14 @@ const LevelControlFader = (props: {
 
     const handleMuteClicked = React.useCallback(() => {
         onChanged(value, !muted);
-    }, [value, muted]);
+    }, [value, muted, onChanged]);
 
     const handleEnd = React.useCallback(
         (updatedVolume: number) => {
             setValue(updatedVolume);
             onChanged(updatedVolume, muted);
         },
-        [muted]
+        [muted, onChanged]
     );
 
     return (

@@ -31,7 +31,7 @@ const ChannelActions = styled('div', {
     height: '60px',
 });
 
-const VolumeFader = styled('div', {
+const VolumeFaderWrapper = styled('div', {
     width: '100%',
     flexShrink: 0,
     flexGrow: 1,
@@ -42,11 +42,7 @@ const VolumeFader = styled('div', {
     justifyContent: 'center'
 });
 
-const LeftVolumeFader = styled(LevelControlFader, {
-    paddingLeft: '.4rem',
-    paddingRight: '.4rem',
-});
-const RightVolumeFader = styled(LevelControlFader, {
+const VolumeFader = styled(LevelControlFader, {
     paddingLeft: '.4rem',
     paddingRight: '.4rem',
 });
@@ -66,81 +62,44 @@ const ChannelStrip = (props: {
     isAdmin?: boolean;
     volume: number;
     muted: boolean;
-    customVolume?: number;
-    customMuted?: boolean;
     onVolumeChanged: (volume: number, muted: boolean) => void;
-    onCustomVolumeChanged: (volume: number, muted: boolean) => void;
-    onCustomVolumeReset: () => void;
+
+    reset?: boolean;
+    onReset?: () => void;
 
     className?: string;
 }) => {
-    const {addHeader, className, analyserL, analyserR, isAdmin, volume, muted, customVolume, customMuted, onVolumeChanged, onCustomVolumeChanged, onCustomVolumeReset} = props;
-
-    const addCustom = useCallback(() => {
-        props.onCustomVolumeChanged(volume, muted);
-    }, [volume, muted]);
+    const {addHeader, className, analyserL, analyserR, isAdmin, volume, muted, onVolumeChanged, reset, onReset} = props;
 
     const handleChange = useCallback((value: number, muted: boolean) => {
         if (onVolumeChanged)
             onVolumeChanged(value, muted);
     }, [onVolumeChanged]);
 
-    const handleCustomChange = useCallback((value: number, muted: boolean) => {
-        if (onCustomVolumeChanged)
-            onCustomVolumeChanged(value, muted);
-    }, [onCustomVolumeChanged]);
-
-    const handleCustomReset = useCallback(() => {
-        if (onCustomVolumeReset)
-            onCustomVolumeReset();
-    }, [onCustomVolumeReset]);
-
     return (
         <Strip className={className}>
             {addHeader && <StripHeader>{addHeader}</StripHeader>}
 
             <ChannelActions>
-                {customVolume ? (
+                {reset && (
                     <Button
-                        onClick={handleCustomReset}>
+                        onClick={() => onReset()}>
                         Reset
                     </Button>
-                ) : (
-                    isAdmin && <Button onClick={addCustom}>Custom</Button>
                 )}
             </ChannelActions>
 
-            <VolumeFader>
-                {isAdmin ? (
-                    <>
-                        <LeftVolumeFader
-                            volume={volume}
-                            muted={muted}
-                            onChanged={handleChange}
-                            color={[255, 255, 255]}
-                            alignLabel="left"
-                        />
-                        {customVolume ? (
-                            <RightVolumeFader
-                                volume={customVolume || volume}
-                                muted={customMuted}
-                                onChanged={handleCustomChange}
-                                color={[255, 0, 0]}
-                                alignLabel="right"
-                            />
-                        ) : undefined}
-                    </>
-                ) : (
-                    <LeftVolumeFader
-                        volume={customVolume || volume}
-                        muted={muted || customMuted}
-                        onChanged={handleCustomChange}
-                        color={customVolume ? [255, 0, 0] : [255, 255, 255]}
-                    />
-                )}
+            <VolumeFaderWrapper>
+                <VolumeFader
+                    volume={volume}
+                    muted={muted}
+                    onChanged={handleChange}
+                    color={[255, 255, 255]}
+                    alignLabel="left"
+                />
                 {analyserL ? <VolumeMeter analyser={analyserL}/> : undefined}
                 {analyserR ? <VolumeMeter analyser={analyserR}/> : undefined}
-            </VolumeFader>
+            </VolumeFaderWrapper>
         </Strip>
     );
 };

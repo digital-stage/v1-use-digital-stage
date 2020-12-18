@@ -1,41 +1,31 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback} from "react";
 
 export interface Option {
     id: any;
-    value: string;
+    value: any;
+
+    [key: string]: any;
 }
 
 const Select = (props: {
     options?: Option[];
-    onSelected?(id: any): void;
+    selected: any;
+    onSelected?(option: Option): void;
     className?: string;
 }) => {
-    const {options, onSelected, className} = props;
-    const [selected, setSelected] = useState<Option>();
-
-    useEffect(() => {
-        if (selected && onSelected) {
-            onSelected(selected.id)
-        }
-    }, [onSelected, selected])
-
-    useEffect(() => {
-        if (options) {
-            if (selected && !options.find(o => o.id === selected.id)) {
-                setSelected(undefined);
-            }
-        } else {
-            setSelected(undefined);
-        }
-    }, [options]);
+    const {options, onSelected, className, selected} = props;
 
     const handleSelect = useCallback((event) => {
-        setSelected(options.find(o => o.id === event.target.value));
+        onSelected(options.find(o => o.id === event.target.value));
     }, [options])
 
     return (
         <select className={className} onChange={handleSelect}>
-            {options && options.map(o => <option value={o.id}>{o.value}</option>)}
+            {options && options.map(o => <option
+                selected={selected.id === o.id}
+                key={o.id}
+                value={o.id}
+            >{o.value}</option>)}
         </select>
     )
 };

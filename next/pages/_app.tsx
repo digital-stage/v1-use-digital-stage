@@ -17,6 +17,7 @@ import LocalDeviceControl from "../components/global/LocalDeviceControl";
 import ShowRoomButton from "../components/global/ShowRoomButton";
 import {ColorProvider} from "../lib/useColors";
 import AppNavigation from "../components/global/AppNavigation";
+import {ModalInjector, ModalProvider} from "../lib/useModal";
 
 function MyApp({Component, pageProps}) {
     return (
@@ -42,16 +43,19 @@ function MyApp({Component, pageProps}) {
                                             <AudioContextProvider>
                                                 <StageWebAudioProvider handleError={reportError}>
                                                     <StageJoinerProvider>
-                                                        <ColorProvider>
-                                                            <Component {...pageProps} />
-                                                        </ColorProvider>
-                                                        <StageOrMixerToggle/>
-                                                        <ShowRoomButton/>
-                                                        <LocalDeviceControl/>
-                                                        <StartPlaybackInformer/>
-                                                        <StageJoiner/>
-                                                        <AppNavigation/>
-                                                        <StatusInformer/>
+                                                        <ModalProvider>
+                                                            <ColorProvider>
+                                                                <Component {...pageProps} />
+                                                            </ColorProvider>
+                                                            <StageOrMixerToggle/>
+                                                            <ShowRoomButton/>
+                                                            <LocalDeviceControl/>
+                                                            <StartPlaybackInformer/>
+                                                            <StageJoiner/>
+                                                            <AppNavigation/>
+                                                            <StatusInformer/>
+                                                            <ModalInjector/>
+                                                        </ModalProvider>
                                                     </StageJoinerProvider>
                                                 </StageWebAudioProvider>
                                             </AudioContextProvider>

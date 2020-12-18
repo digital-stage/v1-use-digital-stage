@@ -34,7 +34,7 @@ const SocketProvider = (props: {
   apiUrl: string;
 }): JSX.Element => {
   const { children, apiUrl } = props;
-  const [socket, setSocket] = useState<TeckosClient>();
+  const [socket, setSocket] = useState<TeckosClient | undefined>();
   const [status, setStatus] = useState<IStatus[keyof IStatus]>(
     Status.disconnected
   );

@@ -5,6 +5,7 @@ import useDigitalStage, {useStageActions} from "use-digital-stage";
 import useStageJoiner, {Errors} from "../lib/useStageJoiner";
 import Modal, {ModalBody, ModalButton, ModalFooter, ModalHeader} from "./ui/Modal";
 import Input from "./ui/Input";
+import useModal from "../lib/useModal";
 
 /**
  * The StageJoiner is a usually hidden component,
@@ -17,11 +18,12 @@ const StageJoiner = () => {
     const {
         stageId, groupId, password, reset
     } = useStageJoiner();
-    const stageActions = useStageActions();
+    const {joinStage} = useStageActions();
     const [retries, setRetries] = useState<number>(0);
     const [wrongPassword, setWrongPassword] = useState<boolean>();
     const [notFound, setNotFound] = useState<boolean>();
     const passwordRef = useRef<HTMLInputElement>();
+    const {setModal} = useModal();
 
     const clear = useCallback(() => {
         setNotFound(false);
@@ -31,7 +33,7 @@ const StageJoiner = () => {
 
     const retryJoiningStage = useCallback((stageId: string, groupId: string, password?: string) => {
         // Try to connect
-        stageActions.joinStage(stageId, groupId, password)
+        joinStage(stageId, groupId, password)
             .then(() => {
                 console.log('Joined');
                 clear();
@@ -45,7 +47,7 @@ const StageJoiner = () => {
                     setNotFound(true);
                 }
             })
-    }, [stageActions, clear]);
+    }, [joinStage, clear]);
 
     useEffect(() => {
         if (ready) {
@@ -57,40 +59,54 @@ const StageJoiner = () => {
         }
     }, [ready, stageId, groupId, password]);
 
-    return (
-        <>
-            <Modal
-                isOpen={notFound}
-                onClose={() => setNotFound(false)}
-            >
-                <ModalHeader>Bühne nicht gefunden</ModalHeader>
-                <ModalFooter>
-                    <ModalButton onClick={() => setNotFound(false)}>Verstanden</ModalButton>
-                </ModalFooter>
-            </Modal>
-            <Modal
-                isOpen={wrongPassword}
-                onClose={() => clear()}
-            >
-                <ModalHeader>{retries === 0 ? 'Passwort notwendig' : 'Falsches Passwort'}</ModalHeader>
-                <ModalBody>
-                    <Input ref={passwordRef} type="password" />
-                </ModalBody>
-                <ModalFooter>
-                    <ModalButton onClick={() => clear()}>Abbrechen</ModalButton>
-                    <ModalButton
-                        onClick={() => {
-                            const updatePassword = passwordRef.current.value;
-                            setRetries((prevState) => prevState + 1);
-                            retryJoiningStage(stageId, groupId, updatePassword);
-                        }}
-                    >
-                        Erneut versuchen
-                    </ModalButton>
-                </ModalFooter>
-            </Modal>
-        </>
-    );
+    useEffect(() => {
+        if( notFound ) {
+            const modal = (
+                <Modal
+                    onClose={() => setNotFound(false)}
+                >
+                    <ModalHeader>Bühne nicht gefunden</ModalHeader>
+                    <ModalFooter>
+                        <ModalButton onClick={() => setNotFound(false)}>Verstanden</ModalButton>
+                    </ModalFooter>
+                </Modal>
+            )
+            setModal(modal);
+            return () => setModal(undefined);
+        }
+    },[notFound]);
+
+    useEffect(() => {
+        if( passwordRef && wrongPassword ) {
+            const modal = (
+
+                <Modal
+                    onClose={() => clear()}
+                >
+                    <ModalHeader>{retries === 0 ? 'Passwort notwendig' : 'Falsches Passwort'}</ModalHeader>
+                    <ModalBody>
+                        <Input ref={passwordRef} type="password" />
+                    </ModalBody>
+                    <ModalFooter>
+                        <ModalButton onClick={() => clear()}>Abbrechen</ModalButton>
+                        <ModalButton
+                            onClick={() => {
+                                const updatePassword = passwordRef.current.value;
+                                setRetries((prevState) => prevState + 1);
+                                retryJoiningStage(stageId, groupId, updatePassword);
+                            }}
+                        >
+                            Erneut versuchen
+                        </ModalButton>
+                    </ModalFooter>
+                </Modal>
+            )
+            setModal(modal);
+            return () => setModal(undefined);
+        }
+    },[wrongPassword, passwordRef]);
+
+    return null;
 };
 
 export default StageJoiner;

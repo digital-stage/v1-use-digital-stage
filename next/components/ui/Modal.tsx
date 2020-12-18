@@ -1,6 +1,8 @@
 import Button from "./Button";
 import {styled} from "styletron-react";
-import React from "react";
+import React, {useEffect, useRef} from "react";
+import {colors} from "./Theme";
+import {disableBodyScroll, clearAllBodyScrollLocks} from 'body-scroll-lock';
 
 const Wrapper = styled("div", {
     position: "fixed",
@@ -8,9 +10,7 @@ const Wrapper = styled("div", {
     left: 0,
     width: '100vw',
     height: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
+    overflow: 'auto'
 })
 
 const Backdrop = styled("div", {
@@ -19,92 +19,119 @@ const Backdrop = styled("div", {
     left: 0,
     width: "100%",
     height: "100%",
-    backgroundColor: "rgba(0,0,0,0.7)",
+    backgroundColor: colors.modal.backdrop.background,
     zIndex: -1
 })
 
-const ModalWrapper = styled("div", {
+const OuterModalWrapper = styled("div", {
+    minHeight: "100%",
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '16px',
+    backgroundColor: colors.modal.backdrop.background,
+})
+
+const InnerModalWrapper = styled("div", (props: {
+    $full: boolean
+}) => ({
     display: 'flex',
     flexDirection: 'column',
-    maxWidth: '600px',
+    width: props.$full ? '100%' : '80vw',
+    maxWidth: props.$full ? undefined : '800px',
+    backgroundColor: colors.modal.background,
     borderRadius: '1rem',
     overflow: 'hidden',
-})
+}));
 
 const ModalHeaderWrapper = styled("div", {
     width: '100%',
-    color: '#fff',
-    backgroundColor: '#000',
+    color: colors.text.default,
+    backgroundColor: colors.modal.header.background,
     padding: '1rem'
 })
 const ModalBodyWrapper = styled("div", {
     width: '100%',
-    color: '#000',
-    backgroundColor: '#fff',
-    padding: '1rem'
+    color: colors.text.default,
+    backgroundColor: colors.modal.body.background,
+    padding: '1rem',
+    overflow: 'scroll'
 })
 const ModalFooterWrapper = styled("div", {
     width: '100%',
-    color: '#fff',
-    backgroundColor: '#000',
+    color: colors.text.default,
+    backgroundColor: colors.modal.footer.background,
     padding: '1rem'
 })
 
 const Modal = (props: {
-    isOpen: boolean;
     onClose?: () => void;
     children: React.ReactNode;
-    closeOnBackdropClicked?: boolean;
+    size?: "full" | "auto"
 }) => {
-    const {isOpen, onClose, children, closeOnBackdropClicked} = props;
+    const {onClose, children, size} = props;
+    const modalRef = useRef<HTMLDivElement>();
 
-    if (isOpen) {
-        return (
-            <Wrapper>
-                <Backdrop onClick={() => {
-                    if (closeOnBackdropClicked && onClose)
+    useEffect(() => {
+        if (modalRef.current) {
+            disableBodyScroll(modalRef.current)
+            return () => clearAllBodyScrollLocks()
+        }
+    }, [modalRef]);
+
+    return (
+        <Wrapper>
+            <OuterModalWrapper
+                onClick={() => {
+                    if (onClose)
                         onClose();
-                }}/>
-                <ModalWrapper>
+                }}
+            >
+                <InnerModalWrapper
+                    onClick={(e) => e.stopPropagation()}
+                    ref={modalRef}
+                    $full={size && size === "full"}
+                >
                     {children}
-                </ModalWrapper>
-            </Wrapper>
-        );
-    }
-
-    return null;
+                </InnerModalWrapper>
+            </OuterModalWrapper>
+        </Wrapper>
+    );
 }
 
 const ModalHeader = (
     props: {
-        children: React.ReactNode
+        children: React.ReactNode;
+        className?: string;
     }
 ) => {
-    const {children} = props;
+    const {children, className} = props;
     return (
-        <ModalHeaderWrapper>
+        <ModalHeaderWrapper className={className}>
             {children}
         </ModalHeaderWrapper>
     )
 }
 const ModalBody = (
     props: {
-        children: React.ReactNode
+        children: React.ReactNode;
+        className?: string;
     }) => {
-    const {children} = props;
+    const {children, className} = props;
     return (
-        <ModalBodyWrapper>
+        <ModalBodyWrapper className={className}>
             {children}
         </ModalBodyWrapper>
     )
 }
 const ModalFooter = (
     props: {
-        children: React.ReactNode
+        children: React.ReactNode;
+        className?: string;
     }) => {
-    const {children} = props;
+    const {children, className} = props;
     return (
-        <ModalFooterWrapper>
+        <ModalFooterWrapper className={className}>
             {children}
         </ModalFooterWrapper>
     )

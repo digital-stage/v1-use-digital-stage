@@ -30,14 +30,17 @@
     "@types/styletron-standard": "^2.0.1",
     "body-scroll-lock": "^3.1.5",
     "debug": "^4.3.1",
+    "formik": "^2.2.6",
     "konva": "^7.2.1",
     "next": "^10.0.3",
     "react-copy-to-clipboard": "^5.0.2",
+    "react-icons": "^4.1.0",
     "react-konva": "^17.0.0-0",
     "react-range": "^1.8.3",
     "standardized-audio-context": "^25.1.6",
     "styletron-engine-atomic": "^1.4.6",
     "styletron-react": "^5.2.7",
-    "use-digital-stage": "file:.."
+    "use-digital-stage": "file:..",
+    "yup": "^0.32.8"
   }
 }
