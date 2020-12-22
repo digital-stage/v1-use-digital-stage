@@ -157,7 +157,7 @@ const Room = () => {
                         onSelected={(option: Option) => {
                             setGlobalMode(option.id === "global");
                         }}
-                        selected={globalMode ? Options[0] : Options[1]}
+                        selected={globalMode ? Options[0].id : Options[1].id}
                         options={Options}/>
                 ) : null}
             </>

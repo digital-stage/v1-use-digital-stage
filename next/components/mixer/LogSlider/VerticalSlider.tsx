@@ -4,13 +4,7 @@ import {styled, useStyletron} from 'styletron-react';
 import {RGBColor} from './index';
 
 const Wrapper = styled("div", {
-    position: 'relative',
-    display: "flex",
-    height: '100%',
-    flexDirection: 'column',
-    alignItem: "center",
-    justifyContent: "center",
-    boxSizing: "border-box",
+    boxSizing: "border-box"
 });
 
 const VerticalSlider = (props: {
@@ -90,96 +84,6 @@ const VerticalSlider = (props: {
                         {renderSingleMark(index, markProps.style)}
                     </div>
                 ) : null}
-                /*
-                renderTrack={({props: trackProps, children}) => (
-                    <div
-                        {...trackProps}
-                        ref={trackProps.ref}
-                        onMouseDown={trackProps.onMouseDown}
-                        onTouchStart={trackProps.onTouchStart}
-                        className={css({
-                            ...trackProps.style,
-                            flexGrow: 1,
-                            display: 'flex',
-                            height: '100%'
-                        })}
-                    >
-                        <div
-                            className={css({
-                                width: width + "px",
-                                height: '100%',
-                                borderWidth: "1px",
-                                borderStyle: "solid",
-                                borderColor: solidColor,
-                                background: getTrackBackground({
-                                    values: [value],
-                                    colors: ["rgba(255,255,255,0.2)", "transparent"],
-                                    min: min,
-                                    max: max,
-                                    direction: Direction.Up
-                                }),
-                                ":hover": {
-                                    background: getTrackBackground({
-                                        values: [value],
-                                        colors: [`rgba(${color[0]},${color[1]},${color[2]},0.6)`, "transparent"],
-                                        min: min,
-                                        max: max,
-                                        direction: Direction.Up
-                                    })
-                                },
-                                alignSelf: 'center'
-                            })}
-                        >
-                            {children}
-                        </div>
-                    </div>
-                )}
-                renderThumb={({props: thumbProps, isDragged}) => {
-                    return (
-                        <div
-                            {...thumbProps}
-                            ref={thumbProps.ref}
-                            className={css({
-                                height: width + "px",
-                                width: width + "px",
-                                borderRadius: '4px',
-                                backgroundColor: '#FFF',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                outlineColor: solidColor,
-                                boxShadow: '0px 1px 6px #AAA'
-                            })}
-                            style={thumbProps.style}
-                        >
-                            {text && (
-                                <div
-                                    className={css({
-                                        position: 'absolute',
-                                        top: "0px",
-                                        right: alignLabel && alignLabel === "left" ? (width + 4) + "px" : undefined,
-                                        left: !alignLabel || alignLabel === "right" ? (width + 4) + "px" : undefined,
-                                        color: '#000',
-                                        fontWeight: 'bold',
-                                        padding: '4px',
-                                        borderRadius: '4px',
-                                        backgroundColor: solidColor,
-                                        whiteSpace: 'nowrap'
-                                    })}
-                                >
-                                    {text}
-                                </div>
-                            )}
-                            <div
-                                className={css({
-                                    width: '16px',
-                                    height: '4px',
-                                    backgroundColor: isDragged ? solidColor : '#CCC'
-                                })}
-                            />
-                        </div>
-                    )
-                }}*/
                 renderTrack={({props, children}) => (
                     <div
                         {...props}

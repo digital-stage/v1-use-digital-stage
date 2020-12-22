@@ -7,13 +7,21 @@ import ChannelStrip from "../ChannelStrip";
 import {Property} from "csstype";
 import HSLColor from "../../../lib/useColors/HSLColor";
 
-const PanelRow = styled("div", {
+const PADDING = .2;
+
+const PanelRow = styled("div", (props: { $backgroundColor: Property.BackgroundColor, $isLastChild?: boolean }) => ({
+    position: 'relative',
     display: 'flex',
     flexDirection: 'row',
     borderRadius: '20px',
-    marginRight: '1rem',
-    backgroundColor: colors.background.dark
-});
+    marginRight: props.$isLastChild ? undefined : PADDING + 'rem',
+    height: '100%',
+    backgroundColor: props.$backgroundColor || colors.background.dark,
+    padding: PADDING + 'rem'
+}));
+const StyledChannelStrip = styled(ChannelStrip, (props: { $padding?: number }) => ({
+    padding: props.$padding + "rem"
+}));
 const Header = styled('div', (props: { $color?: Property.BackgroundColor }) => ({
     width: '100%',
     height: '64px',
@@ -25,28 +33,30 @@ const Header = styled('div', (props: { $color?: Property.BackgroundColor }) => (
 }));
 const HeaderButton = styled("div", {
     width: '100%',
-    height: '64px',
+    height: '100%',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     cursor: "pointer"
 });
+const HeaderTitle = styled('div', {
+    padding: PADDING + 'rem'
+});
 const Row = styled('div', {
-    paddingTop: '1rem',
-    paddingBottom: '1rem',
-    paddingLeft: '1rem',
-    paddingRight: '1rem',
     display: 'flex',
     flexDirection: 'row',
     height: '100%',
 });
-const InnerRow = styled('div', {
+const InnerRow = styled('div', (props: {
+    $color?: Property.BackgroundColor
+}) => ({
     display: 'flex',
     flexDirection: 'row',
-    backgroundColor: colors.background.default,
+    backgroundColor: props.$color || colors.background.default,
     borderRadius: '20px',
     height: '100%',
-});
+    padding: PADDING + 'rem'
+}));
 
 const ChannelRow = (props: {
     name: string;
@@ -55,32 +65,40 @@ const ChannelRow = (props: {
     analyserR?: IAnalyserNode<IAudioContext>;
 
     color?: HSLColor;
+    backgroundColor?: Property.BackgroundColor;
+    isLastChild?: boolean;
+
+    numChildLayers?: number;
 
     onChange: (volume: number, muted: boolean) => void;
 
     reset?: boolean;
     onReset?: () => void;
 
-    children?: React.ReactNode
+    children?: React.ReactNode;
+
+    className?: string;
 }) => {
-    const {name, values, analyserL, analyserR, children, color, onChange, reset, onReset} = props;
+    const {numChildLayers, name, values, analyserL, analyserR, children, color, onChange, reset, onReset, className, backgroundColor, isLastChild} = props;
     const [expanded, setExpanded] = React.useState<boolean>();
 
     return (
-        <PanelRow>
-            <ChannelStrip
+        <PanelRow $backgroundColor={backgroundColor} $isLastChild={isLastChild}>
+            <StyledChannelStrip
+                $padding={(numChildLayers + 1) * PADDING * 2}
+                className={className}
                 addHeader={
                     <Header $color={color?.toProperty()}>
                         {React.Children.count(children) > 0 ? (
                             <HeaderButton
                                 onClick={() => setExpanded((prev) => !prev)}
                             >
-                                <h3>{name}</h3>
+                                <HeaderTitle>{name}</HeaderTitle>
                                 {expanded ? <img src="/static/chevron_left-18dp.svg" alt="collapse"/> :
                                     <img src="/static/chevron_right-18dp.svg" alt="expand"/>}
                             </HeaderButton>
                         ) : (
-                            <h3>{name}</h3>
+                            <HeaderTitle>{name}</HeaderTitle>
                         )}
                     </Header>
                 }
@@ -94,7 +112,7 @@ const ChannelRow = (props: {
             />
             {children && expanded && (
                 <Row>
-                    <InnerRow>
+                    <InnerRow $color={color?.toProperty()}>
                         {children}
                     </InnerRow>
                 </Row>

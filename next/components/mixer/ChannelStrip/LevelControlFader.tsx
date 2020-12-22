@@ -5,14 +5,20 @@ import {styled} from "styletron-react";
 import ToggleButton from '../../ui/ToggleButton';
 
 const Wrapper = styled("div", {
+    display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
 })
 
 const TopActions = styled("div", {
-    display: 'block',
+    display: 'flex',
+    flexGrow: 0,
     paddingBottom: '.6rem',
+})
+const Slider = styled(LogSlider, {
+    display: 'flex',
+    flexGrow: 1,
 })
 
 const LevelControlFader = (props: {
@@ -54,7 +60,7 @@ const LevelControlFader = (props: {
                     M
                 </ToggleButton>
             </TopActions>
-            <LogSlider
+            <Slider
                 min={0}
                 middle={1}
                 max={4}

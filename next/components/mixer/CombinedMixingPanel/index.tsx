@@ -1,8 +1,7 @@
 import React from "react";
 import {
+    useSelector,
     useStageActions,
-    useCurrentStageId,
-    useGroupsByStage,
     useCustomStageMembers,
     useCustomGroups,
     useUsers,
@@ -19,7 +18,6 @@ const CombinedMixingPanel = (props: {
 }): JSX.Element => {
     const {global} = props;
 
-    const stageId = useCurrentStageId();
     const {
         setCustomGroup,
         setCustomStageMember,
@@ -32,7 +30,12 @@ const CombinedMixingPanel = (props: {
         updateStageMemberAudio
     } = useStageActions();
     // For groups
-    const groups = useGroupsByStage(stageId);
+    const groups = useSelector(state => {
+        if( state.global.stageId && state.groups.byStage[state.global.stageId] ) {
+            return state.groups.byStage[state.global.stageId].map(id => state.groups.byId[id]);
+        }
+        return [];
+    });
     const customGroups = useCustomGroups();
     // For stage members
     const users = useUsers();
@@ -51,21 +54,20 @@ const CombinedMixingPanel = (props: {
 
                 return (
                     <GroupRow
+                        key={group._id}
                         group={group}
                         customGroup={!global && customGroup}
                         reset={!global && !!customGroup}
                         onReset={() => !global && customGroup && removeCustomGroup(customGroup._id)}
                         onChange={(volume, muted) => {
                             if (!global) {
-                                console.debug("setCustomGroup");
                                 setCustomGroup(group._id, {volume, muted})
                             } else {
-                                console.debug("updateGroup");
                                 updateGroup(group._id, {volume, muted})
                             }
                         }}
                     >
-                        {stageMembers.byGroup[group._id] && stageMembers.byGroup[group._id].map(id => stageMembers.byId[id]).map(stageMember => {
+                        {stageMembers.byGroup[group._id] && stageMembers.byGroup[group._id].map(id => stageMembers.byId[id]).map((stageMember, index, arr) => {
                             const user = users.byId[stageMember.userId];
                             const customStageMember = customStageMembers.byStageMember[stageMember._id]
                                 ? customStageMembers.byId[customStageMembers.byStageMember[stageMember._id]]
@@ -73,6 +75,8 @@ const CombinedMixingPanel = (props: {
 
                             return (
                                 <StageMemberRow
+                                    key={stageMember._id}
+                                    isLastChild={index === (arr.length - 1)}
                                     user={user}
                                     stageMember={stageMember}
                                     customStageMember={!global && customStageMember}
@@ -86,13 +90,15 @@ const CombinedMixingPanel = (props: {
                                         }
                                     }}
                                 >
-                                    {audioProducers.byStageMember[stageMember._id] && audioProducers.byStageMember[stageMember._id].map(id => audioProducers.byId[id]).map(audioProducer => {
+                                    {audioProducers.byStageMember[stageMember._id] && audioProducers.byStageMember[stageMember._id].map(id => audioProducers.byId[id]).map((audioProducer, index, arr) => {
                                         const customAudioProducer = customAudioProducers.byAudioProducer[audioProducer._id]
                                             ? customAudioProducers.byId[customAudioProducers.byAudioProducer[audioProducer._id]]
                                             : undefined;
 
                                         return (
                                             <AudioProducerRow
+                                                key={audioProducer._id}
+                                                isLastChild={index === (arr.length - 1)}
                                                 audioProducer={audioProducer}
                                                 customAudioProducer={!global && customAudioProducer}
                                                 reset={!global && !!customAudioProducer}

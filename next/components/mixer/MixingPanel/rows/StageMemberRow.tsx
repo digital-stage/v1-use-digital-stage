@@ -7,6 +7,10 @@ import {
     StageMember,
     CustomStageMember,
 } from "use-digital-stage";
+import {styled} from "styletron-react";
+import HSLColor from "../../../../lib/useColors/HSLColor";
+import {colors} from "../../../ui/Theme";
+
 
 const StageMemberRow = (props: {
     user: User;
@@ -16,16 +20,21 @@ const StageMemberRow = (props: {
     children?: React.ReactNode;
     reset?: boolean;
     onReset?: () => void;
+    isLastChild?: boolean;
 }) => {
-    const {user, stageMember, customStageMember, onChange, children, reset, onReset} = props;
-    const color = useColors(stageMember._id);
+    const {user, stageMember, customStageMember, onChange, children, reset, onReset, isLastChild} = props;
+    //const color = useColors(stageMember._id);
+
     const {byStageMember} = useStageWebAudio();
 
     return (
         <ChannelRow
             key={stageMember._id}
             name={user.name}
-            color={color}
+            numChildLayers={1}
+            isLastChild={isLastChild}
+            //color={color}
+            backgroundColor='rgba(135,135,135,0.6)'
             reset={reset}
             onReset={onReset}
             values={customStageMember || stageMember}

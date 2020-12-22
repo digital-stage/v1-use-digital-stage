@@ -1,19 +1,18 @@
 import React from "react";
 import {styled} from "styletron-react";
-import MixerPane from "../components/mixer/MixerPane";
+import MixingPanelView from "../components/mixer/MixingPanel";
 
 const Wrapper = styled("div", {
-    display: 'flex',
-    flexDirection: "column",
     backgroundColor: '#333',
-    width: "100%",
-    minHeight: "100vh",
+    width: "100vw",
+    height: '100vh',
+    padding: '1rem',
 })
 
 const Mixer = () => {
     return (
         <Wrapper>
-            <MixerPane/>
+            <MixingPanelView/>
         </Wrapper>
     )
 }

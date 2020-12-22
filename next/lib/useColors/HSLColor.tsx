@@ -1,5 +1,6 @@
 import {Property} from "csstype";
 
+
 class HSLColor {
     private _hue: number;
     private _saturation: number;

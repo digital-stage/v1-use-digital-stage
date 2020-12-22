@@ -7,28 +7,24 @@ import Button from "../../ui/Button";
 
 const Strip = styled('div', {
     position: 'relative',
-    height: '100%',
-    width: '200px',
     display: 'flex',
     flexDirection: 'column',
-    flexGrow: 1,
-    flexShrink: 0
+    height: '100%',
+    width: '100%'
 });
 
 const StripHeader = styled('div', {
     width: '100%',
-    flexShrink: 0,
-    flexGrow: 0,
 });
 
 const ChannelActions = styled('div', {
-    width: '100%',
-    flexShrink: 0,
-    flexGrow: 0,
+    minWidth: '100px',
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
+    padding: '1rem',
     height: '60px',
+    alignItems: 'center',
+    justifyContent: 'center',
 });
 
 const VolumeFaderWrapper = styled('div', {
@@ -36,10 +32,11 @@ const VolumeFaderWrapper = styled('div', {
     flexShrink: 0,
     flexGrow: 1,
     height: '1px',
-    minHeight: '100px',
+    minHeight: '200px',
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    paddingBottom: '1rem',
 });
 
 const VolumeFader = styled(LevelControlFader, {

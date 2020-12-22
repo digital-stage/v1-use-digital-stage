@@ -9,18 +9,21 @@ import CombinedMixingPanel from "../CombinedMixingPanel";
 
 const Wrapper = styled('div', {
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    width: '100%',
+    height: '100%'
+});
+const MixingPanelHeader = styled('div', {
+    width: '100%',
+    flexGrow: 0
 });
 const ScrollPaneWrapper = styled('div', {
     position: 'relative',
     whiteSpace: 'nowrap',
     flexGrow: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
     width: '100%',
-    height: '100%',
+    margin: 0,
+    padding: 0
 });
 const ScrollPane = styled('div', {
     position: 'absolute',
@@ -31,17 +34,21 @@ const ScrollPane = styled('div', {
     bottom: 0,
     right: 0,
     overflowX: 'scroll',
-    overflowY: 'auto',
-    minHeight: '400px',
-    maxHeight: '600px',
+    overflowY: 'scroll',
+    margin: 0,
+    padding: 0
+});
+const MixingPanelWrapper = styled("div", {
     display: 'flex',
     flexGrow: 1,
     flexDirection: 'row',
     alignItems: 'stretch',
     justifyContent: 'flex-start',
     flexWrap: 'nowrap',
-    padding: '1rem'
-});
+    height: '100%',
+    minHeight: '400px',
+    maxHeight: '600px',
+})
 
 const Options: Option[] = [
     {
@@ -77,22 +84,24 @@ const MixingPanelView = (): JSX.Element => {
     return (
         <Wrapper>
             {isStageAdmin && (
-                <>
+                <MixingPanelHeader>
                     <Select
                         onSelected={(option: Option) => {
                             setMode(option);
                         }}
-                        selected={mode}
+                        selected={mode.id}
                         options={Options}
                     />
                     <Paragraph>
                         {text}
                     </Paragraph>
-                </>
+                </MixingPanelHeader>
             )}
             <ScrollPaneWrapper>
                 <ScrollPane>
-                    <CombinedMixingPanel global={mode.id === "global"}/>
+                    <MixingPanelWrapper>
+                        <CombinedMixingPanel global={mode.id === "global"}/>
+                    </MixingPanelWrapper>
                 </ScrollPane>
             </ScrollPaneWrapper>
         </Wrapper>

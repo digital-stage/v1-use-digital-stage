@@ -19,10 +19,11 @@ const Select = (props: {
         onSelected(options.find(o => o.id === event.target.value));
     }, [options, onSelected])
 
+    console.log(selected)
+
     return (
-        <select className={className} onChange={handleSelect}>
+        <select className={className} onChange={handleSelect} value={selected}>
             {options && options.map(o => <option
-                selected={selected && selected.id === o.id}
                 key={o.id}
                 value={o.id}
             >{o.label}</option>)}
