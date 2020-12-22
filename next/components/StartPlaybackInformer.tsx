@@ -28,13 +28,13 @@ const Box = styled('div', {
 });
 
 const StartPlaybackInformer = () => {
-    const {audioContext, started} = useAudioContext();
+    const {audioContext, started, start} = useAudioContext();
 
     if (audioContext && !started) {
         return (
             <Overlay onClick={() => {
                 d('Starting audio context');
-                audioContext.resume()
+                start();
             }}>
                 <Box>
                     Click to start audio engine
