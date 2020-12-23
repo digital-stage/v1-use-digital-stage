@@ -3,7 +3,6 @@ import {colors} from './Theme';
 import {Property} from "csstype";
 
 const Button = styled('button', (props: {
-    $round?: boolean;
     $color?: Property.Color,
     $backgroundColor?: Property.Color,
     $border?: boolean
@@ -15,7 +14,7 @@ const Button = styled('button', (props: {
     justifyContent: 'center',
     borderStyle: 'solid',
     outlineStyle: 'none',
-    borderRadius: props.$round ? '16px' : undefined,
+    borderRadius: '12px',
     borderWidth: props.$border ? '1px' : 0,
     borderColor: colors.button.border,
     backgroundColor: props.$backgroundColor || colors.button.background,

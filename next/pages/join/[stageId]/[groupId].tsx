@@ -30,7 +30,7 @@ const Join = () => {
 
     return (
         <Container>
-
+            Loading...
         </Container>
     );
 }

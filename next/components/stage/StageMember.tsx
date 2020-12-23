@@ -38,12 +38,8 @@ const StageMemberContent = styled("div", (props: {
     width: '100%',
     height: '100%',
     color: props.$online ? colors.text.default : colors.text.muted,
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center center',
-    backgroundSize: '50%',
-    backgroundImage: props.$online
-        ? 'url("/static/mood-18dp.svg")'
-        : 'url("/static/sentiment_satisfied-18dp.svg")',
+    backgroundRepeat: 'repeat',
+    backgroundImage: 'url("/static/video_background.svg")'
 }));
 const StageMemberVideoPlayer = styled(VideoPlayer, {
     width: 'auto',

@@ -1,7 +1,7 @@
 import {styled} from "styletron-react";
-import {breakpoints} from "../ui/Theme";
+import {breakpoints} from "../../ui/Theme";
 import React, {useCallback} from "react";
-import Button from "../ui/Button";
+import Button from "../../ui/Button";
 import {useCurrentStageId, useStageActions} from "use-digital-stage";
 import {useRouter} from "next/router";
 

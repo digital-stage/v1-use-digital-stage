@@ -6,20 +6,26 @@ import './../styles.css'
 import StatusInformer from "../components/StatusInformer";
 import {AuthConsumer, AuthProvider} from "../lib/useAuth";
 import Head from 'next/head';
-import StageOrMixerToggle from "../components/global/StageOrMixerToggle";
 import {StageWebAudioProvider} from "../lib/useStageWebAudio";
 import {AudioContextProvider} from "../lib/useAudioContext";
 import StartPlaybackInformer from "../components/StartPlaybackInformer";
 import {ErrorsConsumer, ErrorsProvider} from "../lib/useErrors";
 import StageJoiner from "../components/StageJoiner";
 import {StageJoinerProvider} from "../lib/useStageJoiner";
-import LocalDeviceControl from "../components/global/LocalDeviceControl";
-import ShowRoomButton from "../components/global/ShowRoomButton";
 import {ColorProvider} from "../lib/useColors";
 import AppNavigation from "../components/global/AppNavigation";
 import {ModalInjector, ModalProvider} from "../lib/useModal";
+import {IntlProvider} from "react-intl";
+import * as locales from "../content/locale"
+import {useRouter} from "next/router";
+
 
 function MyApp({Component, pageProps}) {
+    const router = useRouter();
+    const {locale, defaultLocale, pathname} = router;
+    const localeCopy = locales[locale]
+    const messages = localeCopy[pathname]
+
     return (
         <>
             <Head>
@@ -43,19 +49,22 @@ function MyApp({Component, pageProps}) {
                                             <AudioContextProvider>
                                                 <StageWebAudioProvider handleError={reportError}>
                                                     <StageJoinerProvider>
-                                                        <ModalProvider>
-                                                            <ColorProvider>
-                                                                <Component {...pageProps} />
-                                                            </ColorProvider>
-                                                            <StageOrMixerToggle/>
-                                                            <ShowRoomButton/>
-                                                            <LocalDeviceControl/>
-                                                            <StartPlaybackInformer/>
-                                                            <StageJoiner/>
-                                                            <AppNavigation/>
-                                                            <StatusInformer/>
-                                                            <ModalInjector/>
-                                                        </ModalProvider>
+                                                        <IntlProvider
+                                                            locale={locale}
+                                                            defaultLocale={defaultLocale}
+                                                            messages={messages}
+                                                        >
+                                                            <ModalProvider>
+                                                                <ColorProvider>
+                                                                    <Component {...pageProps} />
+                                                                </ColorProvider>
+                                                                <StartPlaybackInformer/>
+                                                                <StageJoiner/>
+                                                                <AppNavigation/>
+                                                                <StatusInformer/>
+                                                                <ModalInjector/>
+                                                            </ModalProvider>
+                                                        </IntlProvider>
                                                     </StageJoinerProvider>
                                                 </StageWebAudioProvider>
                                             </AudioContextProvider>

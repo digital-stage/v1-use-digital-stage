@@ -1,8 +1,8 @@
 import {useStageActions, useLocalDevice} from "use-digital-stage";
-import ToggleButton from "../../ui/ToggleButton";
+import ToggleButton from "../../../ui/ToggleButton";
 import React, {useCallback} from "react";
 import {styled} from "styletron-react";
-import {breakpoints} from "../../ui/Theme";
+import {breakpoints, colors} from "../../../ui/Theme";
 
 const StyledToggleButton = styled(ToggleButton, {
     borderRadius: "50%",
@@ -19,22 +19,26 @@ const Icon = styled("img", {
     }
 });
 
-const ReceiveAudioToggle = () => {
+const MicrophoneToggle = () => {
     const stageActions = useStageActions();
     const localDevice = useLocalDevice();
 
-    const toggleReceive = useCallback((active: boolean) => {
+    const toggleMicrophone = useCallback((active: boolean) => {
         stageActions.updateDevice(localDevice._id, {
-            receiveAudio: active
+            sendAudio: active
         });
     }, [stageActions])
 
     if (localDevice) {
         return (
-            <StyledToggleButton active={localDevice.receiveAudio} onToggle={toggleReceive}>
+            <StyledToggleButton
+                active={localDevice.sendAudio}
+                color={colors.background.record}
+                onToggle={toggleMicrophone}
+            >
                 <Icon
-                    alt={localDevice.receiveAudio ? "enable audio playback" : "disable audio playback"}
-                    src={localDevice.receiveAudio ? "/static/volume_up-18dp.svg" : "/static/volume_off-18dp.svg"}
+                    alt={localDevice.sendAudio ? "enable microphone" : "disable microphone"}
+                    src={localDevice.sendAudio ? "/static/mic-18dp.svg" : "/static/mic_off-18dp.svg"}
                 />
             </StyledToggleButton>
         )
@@ -42,4 +46,4 @@ const ReceiveAudioToggle = () => {
 
     return null;
 };
-export default ReceiveAudioToggle;
+export default MicrophoneToggle;

@@ -1,9 +1,9 @@
 import React from "react";
 import {styled} from "styletron-react";
 import MixingPanelView from "../components/mixer/MixingPanel";
+import Layout from "../components/global/Layout";
 
 const Wrapper = styled("div", {
-    backgroundColor: '#333',
     width: "100vw",
     height: '100vh',
     padding: '1rem',
@@ -11,9 +11,11 @@ const Wrapper = styled("div", {
 
 const Mixer = () => {
     return (
-        <Wrapper>
-            <MixingPanelView/>
-        </Wrapper>
+        <Layout>
+            <Wrapper>
+                <MixingPanelView/>
+            </Wrapper>
+        </Layout>
     )
 }
 export default Mixer;

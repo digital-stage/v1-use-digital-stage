@@ -3,6 +3,7 @@ import Container from "../components/ui/Container";
 import useAuth from "../lib/useAuth";
 import {useRouter} from "next/router";
 import StageList from "../components/stages/StageList";
+import Layout from "../components/global/Layout";
 
 const Stages = () => {
     const auth = useAuth();
@@ -15,10 +16,12 @@ const Stages = () => {
     }, [push, auth]);
 
     return (
-        <Container>
-            <h1>My stages</h1>
-            <StageList/>
-        </Container>
+        <Layout>
+            <Container>
+                <h1>My stages</h1>
+                <StageList/>
+            </Container>
+        </Layout>
     )
 }
 export default Stages;

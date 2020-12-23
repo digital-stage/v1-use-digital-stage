@@ -1,19 +1,44 @@
+
+
+const colorList = {
+    red: 'rgba(242, 5, 68, 1)',
+    blue: 'rgba(1, 35, 64, 1)',
+    lightBlue: ''
+
+
+}
+
 const colors = {
+    global: {
+        white: 'rgb(244, 244, 244)',
+        black: 'rgb(18, 18, 18)',
+        error: 'rgb(250, 64, 107)',
+        warning: 'rgb(240, 193, 27)',
+        success: 'rgba(65, 189, 100)',
+        primary: 'rgb(87, 121, 217)',
+        secondary: 'rgb(242, 5, 68)'
+    },
+    interaction: {
+        default: 'rgb(87, 121, 217)',
+        active: 'rgba(111, 146, 248)',
+        hover: 'rgb(65, 92, 167)',
+        focus: 'rgb(37, 60, 235)',
+    },
     text: {
-        default: 'rgb(0,0,0)',
+        default: 'rgb(18, 18, 18)',
         inverted: 'rgb(255,255,255)',
         muted: 'rgb(80,80,80)',
     },
     background: {
-        black: 'rgb(31,31,31)',
-        darker: 'rgb(90,90,90)',
-        dark: 'rgb(110,110,110)',
-        default: 'rgb(135,135,135)',
-        light: 'rgb(165,165,165)',
+        black: 'rgb(18,18,18)',
+        darker: 'rgb(18,18,18)',
+        dark: 'rgb(28,28,28)',
+        default: 'rgb(39,39,39)',
+        light: 'rgb(103,103,103)',
         lighter: 'rgb(195,195,195)',
         active: 'rgb(2,255,128)',
         selected: 'rgb(255,181,51)',
-        record: 'rgb(255,54,60)'
+        record: 'rgb(242, 5, 68)'
     },
     mixer: {
         group: 'rgba(80,80,80,1)',

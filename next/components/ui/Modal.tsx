@@ -67,9 +67,10 @@ const ModalFooterWrapper = styled("div", {
 const Modal = (props: {
     onClose?: () => void;
     children: React.ReactNode;
-    size?: "full" | "auto"
+    size?: "full" | "auto";
+    className?: string;
 }) => {
-    const {onClose, children, size} = props;
+    const {onClose, children, size, className} = props;
     const modalRef = useRef<HTMLDivElement>();
 
     useEffect(() => {
@@ -88,6 +89,7 @@ const Modal = (props: {
                 }}
             >
                 <InnerModalWrapper
+                    className={className}
                     onClick={(e) => e.stopPropagation()}
                     ref={modalRef}
                     $full={size && size === "full"}

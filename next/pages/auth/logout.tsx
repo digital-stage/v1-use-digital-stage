@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from "react";
-import Container from "../../components/ui/Container";
+
 import useAuth from "../../lib/useAuth";
 import {useRouter} from "next/router";
+import Layout from "../../components/global/Layout";
 
 const Logout = () => {
     const {loading, logout} = useAuth();
@@ -20,17 +21,17 @@ const Logout = () => {
 
     if (error) {
         return (
-            <Container>
+            <Layout>
                 Error when logging out:
                 {error.message}
-            </Container>
+            </Layout>
         )
     }
 
     return (
-        <Container>
+        <Layout>
             Logging you out...
-        </Container>
+        </Layout>
     )
 };
 export default Logout;

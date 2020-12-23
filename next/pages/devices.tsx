@@ -1,7 +1,7 @@
 import React from "react";
-import Wrapper from "../components/ui/Wrapper";
 import {useLocalDevice, useRemoteDevices} from "use-digital-stage";
 import DeviceBox from "../components/devices/DeviceBox";
+import Layout from "../components/global/Layout";
 
 
 const Devices = () => {
@@ -9,11 +9,11 @@ const Devices = () => {
     const remoteDevices = useRemoteDevices();
 
     return (
-        <Wrapper>
+        <Layout>
             DEVICES
             {localDevice && <DeviceBox device={localDevice}/>}
             {remoteDevices.map(remoteDevice => <DeviceBox device={remoteDevice}/>)}
-        </Wrapper>
+        </Layout>
     )
 }
 export default Devices;

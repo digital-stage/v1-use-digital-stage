@@ -1,6 +1,6 @@
 import {styled} from "styletron-react";
 import StageMember from "./StageMember";
-import React from "react";
+import React, {useState} from "react";
 import {Group, useStageMembersByGroup} from "use-digital-stage";
 import {colors} from "../ui/Theme";
 import {Property} from "csstype";
@@ -27,12 +27,17 @@ const GroupTitle = styled("h2", (props: {
     width: '100%'
 }));
 const GroupGrid = (props: {
-    group: Group
+    group: Group;
+    filterOffline?: boolean;
 }) => {
-    const {group} = props;
-    const stageMembers = useStageMembersByGroup(group._id);
+    const {group, filterOffline} = props;
+    let stageMembers = useStageMembersByGroup(group._id);
     const hueColor = useColors(group._id);
     const color = hueColor?.toProperty();
+
+    if (filterOffline) {
+        stageMembers = stageMembers.filter(stageMember => stageMember.online);
+    }
 
     return (
         <GroupWrapper>

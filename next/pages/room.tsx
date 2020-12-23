@@ -14,6 +14,7 @@ import useImage from "../lib/useImage";
 import RoomElement from "../components/room/RoomElement";
 import Select, {Option} from "../components/ui/Select";
 import {colors} from "../components/ui/Theme";
+import Layout from "../components/global/Layout";
 
 const FullscreenEditor = styled(Editor, {
     width: '100vw',
@@ -30,12 +31,11 @@ const ResetSingle = withStyleDeep(Button, {
     right: '1rem',
 });
 const ModeSelect = styled(Select, {
-    position: 'fixed',
-    top: '2rem',
-    left: '1rem',
+    position: 'absolute',
+    top: '2rem'
 });
 const ModeNotification = styled("div", {
-    position: 'fixed',
+    position: 'absolute',
     top: '4rem',
     left: '1rem',
     color: colors.background.record
@@ -71,7 +71,7 @@ const Room = () => {
 
     if (stage) {
         return (
-            <>
+            <Layout>
                 <FullscreenEditor
                     elements={stageMembers.map(stageMember => {
                         if (!globalMode && customStageMembers.byStageMember[stageMember._id]) {
@@ -160,7 +160,7 @@ const Room = () => {
                         selected={globalMode ? Options[0].id : Options[1].id}
                         options={Options}/>
                 ) : null}
-            </>
+            </Layout>
         )
     }
 
