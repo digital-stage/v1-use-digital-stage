@@ -1,5 +1,3 @@
-
-
 const colorList = {
     red: 'rgba(242, 5, 68, 1)',
     blue: 'rgba(1, 35, 64, 1)',
@@ -25,9 +23,9 @@ const colors = {
         focus: 'rgb(37, 60, 235)',
     },
     text: {
-        default: 'rgb(18, 18, 18)',
-        inverted: 'rgb(255,255,255)',
-        muted: 'rgb(80,80,80)',
+        default: 'rgb(244, 244, 244)',
+        inverted: 'rgb(18, 18, 18)',
+        muted: 'rgb(128, 128, 128)',
     },
     background: {
         black: 'rgb(18,18,18)',

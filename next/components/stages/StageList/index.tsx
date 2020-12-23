@@ -16,7 +16,6 @@ import {
 import CopyToClipboard from "react-copy-to-clipboard";
 import CreateStageModal from "./CreateStageModal";
 import useModal from "../../../lib/useModal";
-import {RiAddCircleFill, RiDeleteBinLine} from 'react-icons/ri';
 import DeleteStageModal from "./DeleteStageModal";
 import CreateGroupModal from "./CreateGroupModal";
 import DeleteGroupModal from "./DeleteGroupModal";
@@ -127,7 +126,6 @@ const StageList = () => {
             <ActionBar>
                 <Button
                     $border={true}
-                    $round={true}
                     onClick={() => {
                         setModal(<CreateStageModal
                             onClose={() => setModal(undefined)}
@@ -153,7 +151,6 @@ const StageList = () => {
                                             {isCurrentUserAdmin && (
                                                 <>
                                                     <Button
-                                                        $round={true}
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             setModal(<CreateGroupModal
@@ -164,7 +161,6 @@ const StageList = () => {
                                                         + group
                                                     </Button>
                                                     <Button
-                                                        $round={true}
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             setModal(<DeleteStageModal
@@ -201,7 +197,6 @@ const StageList = () => {
                                             {isCurrentUserAdmin && (
                                                 <>
                                                     <Button
-                                                        $round={true}
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             setModal(<DeleteStageModal

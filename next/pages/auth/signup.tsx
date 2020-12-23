@@ -4,7 +4,6 @@ import {useRouter} from "next/router";
 import SignUpPane from "../../components/auth/SignUpPane";
 import Link from "next/link";
 import A from "../../components/ui/A";
-import OutsideStageLayout from "../../components/global/OutsideStageLayout";
 import Layout from "../../components/global/Layout";
 
 const Login = () => {

@@ -1,14 +1,10 @@
 import React from "react";
-import useColors from "../../../../lib/useColors";
 import useStageWebAudio from "../../../../lib/useStageWebAudio";
 import {
     RemoteAudioProducer,
     CustomRemoteAudioProducer
 } from "use-digital-stage";
 import ChannelRow from "../../ChannelRow";
-import HSLColor from "../../../../lib/useColors/HSLColor";
-import {colors} from "../../../ui/Theme";
-import {Property} from "csstype";
 
 const AudioProducerRow = (props: {
     audioProducer: RemoteAudioProducer;
@@ -19,13 +15,15 @@ const AudioProducerRow = (props: {
     onReset?: () => void;
     padding?: number;
     isLastChild?: boolean;
+    inactive?: boolean;
 }) => {
-    const {audioProducer, customAudioProducer, onChange, children, reset, onReset, isLastChild} = props;
+    const {audioProducer, customAudioProducer, onChange, children, reset, onReset, isLastChild, inactive} = props;
     const {byAudioProducer} = useStageWebAudio();
 
     return (
         <ChannelRow
             key={audioProducer._id}
+            inactive={inactive}
             name="Web Track"
             numChildLayers={0}
             backgroundColor="transparent"

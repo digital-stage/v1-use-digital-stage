@@ -47,7 +47,7 @@ const StageMemberVideoPlayer = styled(VideoPlayer, {
 });
 const StageMemberTitle = styled("div", (props: { $online: boolean }) => ({
     position: "absolute",
-    color: props.$online ? colors.text.default : colors.text.muted,
+    color: props.$online ? colors.text.inverted : colors.text.muted,
     textShadow: props.$online ? '0px 0px 6px #fff' : "none",
     top: 0,
     left: 0,

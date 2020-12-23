@@ -1,5 +1,4 @@
 import React from "react";
-import useColors from "../../../../lib/useColors";
 import useStageWebAudio from "../../../../lib/useStageWebAudio";
 import ChannelRow from "../../ChannelRow";
 import {
@@ -7,9 +6,6 @@ import {
     StageMember,
     CustomStageMember,
 } from "use-digital-stage";
-import {styled} from "styletron-react";
-import HSLColor from "../../../../lib/useColors/HSLColor";
-import {colors} from "../../../ui/Theme";
 
 
 const StageMemberRow = (props: {
@@ -21,9 +17,9 @@ const StageMemberRow = (props: {
     reset?: boolean;
     onReset?: () => void;
     isLastChild?: boolean;
+    inactive?: boolean;
 }) => {
-    const {user, stageMember, customStageMember, onChange, children, reset, onReset, isLastChild} = props;
-    //const color = useColors(stageMember._id);
+    const {user, stageMember, customStageMember, onChange, children, reset, onReset, isLastChild, inactive} = props;
 
     const {byStageMember} = useStageWebAudio();
 
@@ -34,6 +30,7 @@ const StageMemberRow = (props: {
             numChildLayers={1}
             isLastChild={isLastChild}
             //color={color}
+            inactive={inactive}
             backgroundColor='rgba(135,135,135,0.6)'
             reset={reset}
             onReset={onReset}

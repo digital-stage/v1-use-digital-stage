@@ -6,6 +6,8 @@ import {
 import Select, {Option} from "../../ui/Select";
 import Paragraph from "../../ui/Paragraph";
 import CombinedMixingPanel from "../CombinedMixingPanel";
+import TabControl from "../../ui/TabControl";
+import {breakpoints} from "../../ui/Theme";
 
 const Wrapper = styled('div', {
     display: 'flex',
@@ -48,17 +50,21 @@ const MixingPanelWrapper = styled("div", {
     height: '100%',
     minHeight: '400px',
     maxHeight: '600px',
+    [breakpoints.TABLET]: {
+        flexWrap: 'wrap',
+        flexDirection: 'row',
+    }
 })
 
 const Options: Option[] = [
     {
+        id: "monitor",
+        label: "Monitor"
+    },
+    {
         id: "global",
         label: "Global"
     },
-    {
-        id: "monitor",
-        label: "Monitor"
-    }
 ];
 
 
@@ -85,12 +91,12 @@ const MixingPanelView = (): JSX.Element => {
         <Wrapper>
             {isStageAdmin && (
                 <MixingPanelHeader>
-                    <Select
-                        onSelected={(option: Option) => {
-                            setMode(option);
+                    <TabControl
+                        onChange={(value: string) => {
+                            setMode(Options.find(o => o.label === value));
                         }}
-                        selected={mode.id}
-                        options={Options}
+                        options={Options.map(o => o.label)}
+                        value={mode.label}
                     />
                     <Paragraph>
                         {text}

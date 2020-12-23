@@ -1,30 +1,36 @@
 import {styled} from "styletron-react";
 import React from "react";
-import {fonts} from "./Theme";
+import {colors, fonts} from "./Theme";
 
 const Caption = styled("div", {
+    color: colors.text.default,
     fontWeight: 'bold',
     fontSize: '1.2em',
     fontFamily: fonts.family.headline
 })
 
 const H1 = styled("h1", {
+    color: colors.text.default,
     fontSize: '1.4em',
     fontFamily: fonts.family.headline
 })
 const H2 = styled("h2", {
+    color: colors.text.default,
     fontSize: '1.3em',
     fontFamily: fonts.family.headline
 })
 const H3 = styled("h3", {
+    color: colors.text.default,
     fontSize: '1.2em',
     fontFamily: fonts.family.headline
 })
 const H4 = styled("h4", {
+    color: colors.text.default,
     fontSize: '1.1em',
     fontFamily: fonts.family.headline
 })
 const H5 = styled("h5", {
+    color: colors.text.default,
     fontSize: '0.9em',
     fontFamily: fonts.family.headline
 })

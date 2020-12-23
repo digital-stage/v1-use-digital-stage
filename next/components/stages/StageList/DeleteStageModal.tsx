@@ -33,12 +33,10 @@ const DeleteStageModal = (props: {
             >
                 <Button
                     $border={true}
-                    $round={true}
                     onClick={onClose}
                 >Cancel</Button>
                 <Button
                     $border={true}
-                    $round={true}
                     onClick={() => {
                         removeStage(stage._id);
                         onClose();

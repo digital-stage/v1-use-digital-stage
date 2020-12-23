@@ -97,12 +97,10 @@ const CreateGroupModal = (props: {
                         >
                             <Button
                                 $border={true}
-                                $round={true}
                                 onClick={onClose}
                             >Cancel</Button>
                             <Button
                                 $border={true}
-                                $round={true}
                                 type="submit"
                             >Create</Button>
                         </ModalFooter>

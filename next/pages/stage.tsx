@@ -6,6 +6,7 @@ import React, {useState} from "react";
 import GroupGrid from "../components/stage/GroupGrid";
 import Layout from "../components/global/Layout";
 import Button from "../components/ui/Button";
+import Headline from "../components/ui/Headline";
 
 const StageWrapper = styled("div", {
     width: '100%',
@@ -23,7 +24,7 @@ const Stage = () => {
 
     return (
         <Layout>
-            <h1>{stage?.name}</h1>
+            <Headline variant="h1">{stage?.name}</Headline>
             <Button onClick={() => setFilterOffline(prev => !prev)}>
                 Toggle offline
             </Button>

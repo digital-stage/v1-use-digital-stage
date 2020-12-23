@@ -22,14 +22,16 @@ const PanelRow = styled("div", (props: { $backgroundColor: Property.BackgroundCo
 const StyledChannelStrip = styled(ChannelStrip, (props: { $padding?: number }) => ({
     padding: props.$padding + "rem"
 }));
-const Header = styled('div', (props: { $color?: Property.BackgroundColor }) => ({
+const Header = styled('div', (props: { $color?: Property.BackgroundColor, $isCustomized?: boolean }) => ({
     width: '100%',
     height: '64px',
     display: 'flex',
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: '10px',
     backgroundColor: props.$color,
+    color: props.$isCustomized ? colors.text.muted : colors.text.inverted
 }));
 const HeaderButton = styled("div", {
     width: '100%',
@@ -78,8 +80,10 @@ const ChannelRow = (props: {
     children?: React.ReactNode;
 
     className?: string;
+
+    inactive?: boolean;
 }) => {
-    const {numChildLayers, name, values, analyserL, analyserR, children, color, onChange, reset, onReset, className, backgroundColor, isLastChild} = props;
+    const {numChildLayers, name, values, analyserL, analyserR, children, color, onChange, reset, onReset, className, backgroundColor, isLastChild, inactive} = props;
     const [expanded, setExpanded] = React.useState<boolean>();
 
     return (
@@ -88,7 +92,10 @@ const ChannelRow = (props: {
                 $padding={(numChildLayers + 1) * PADDING * 2}
                 className={className}
                 addHeader={
-                    <Header $color={color?.toProperty()}>
+                    <Header
+                        $color={color?.toProperty()}
+                        $isCustomized={inactive}
+                    >
                         {React.Children.count(children) > 0 ? (
                             <HeaderButton
                                 onClick={() => setExpanded((prev) => !prev)}

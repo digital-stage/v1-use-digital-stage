@@ -1,6 +1,6 @@
 import {styled} from "styletron-react";
 import StageMember from "./StageMember";
-import React, {useState} from "react";
+import React from "react";
 import {Group, useStageMembersByGroup} from "use-digital-stage";
 import {colors} from "../ui/Theme";
 import {Property} from "csstype";
@@ -21,7 +21,7 @@ const GroupWrapper = styled("div", {
 const GroupTitle = styled("h2", (props: {
     $color: Property.BackgroundColor
 }) => ({
-    color: colors.text.default,
+    color: colors.text.inverted,
     margin: 0,
     backgroundColor: props.$color,
     width: '100%'

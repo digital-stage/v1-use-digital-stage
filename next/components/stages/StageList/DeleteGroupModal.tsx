@@ -33,12 +33,10 @@ const DeleteGroupModal = (props: {
             >
                 <Button
                     $border={true}
-                    $round={true}
                     onClick={onClose}
                 >Cancel</Button>
                 <Button
                     $border={true}
-                    $round={true}
                     onClick={() => {
                         removeGroup(group._id);
                         onClose();

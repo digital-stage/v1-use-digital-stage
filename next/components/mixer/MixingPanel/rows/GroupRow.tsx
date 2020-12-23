@@ -6,8 +6,6 @@ import {
     Group,
     CustomGroup,
 } from "use-digital-stage";
-import {styled} from "styletron-react";
-import HSLColor from "../../../../lib/useColors/HSLColor";
 
 const GroupRow = (props: {
     group: Group;
@@ -16,14 +14,16 @@ const GroupRow = (props: {
     children?: React.ReactNode;
     reset?: boolean;
     onReset?: () => void;
+    inactive?: boolean;
 }) => {
-    const {group, customGroup, onChange, children, reset, onReset} = props;
+    const {group, customGroup, onChange, children, reset, onReset, inactive} = props;
     const {byGroup} = useStageWebAudio();
     const color = useColors(group._id);
 
     return (
         <ChannelRow
             key={group._id}
+            inactive={inactive}
             name={group.name}
             numChildLayers={2}
             color={color}

@@ -18,6 +18,7 @@ const TopActions = styled("div", {
 })
 const Slider = styled(LogSlider, {
     display: 'flex',
+    height: '100%',
     flexGrow: 1,
 })
 
