@@ -36,9 +36,10 @@ function isAudioProducer(
 
 const MediasoupProvider = (props: {
   children: React.ReactNode;
-  routerDistUrl: string;
+  standaloneRouterUrl?: string;
+  routerDistributorUrl?: string;
 }): JSX.Element => {
-  const { children, routerDistUrl } = props;
+  const { children, standaloneRouterUrl, routerDistributorUrl } = props;
   const dispatch = useDispatch();
 
   // Local device handling
@@ -76,7 +77,7 @@ const MediasoupProvider = (props: {
     produce,
     stopProducing,
     stopConsuming,
-  } = useMediasoupTransport(routerDistUrl);
+  } = useMediasoupTransport({ routerDistributorUrl, standaloneRouterUrl });
 
   const audioProducers = useAudioProducers();
   const videoProducers = useVideoProducers();
@@ -345,6 +346,11 @@ const MediasoupProvider = (props: {
   }, [ready, localDevice]);
 
   return <>{children}</>;
+};
+
+MediasoupProvider.defaultProps = {
+  standaloneRouterUrl: undefined,
+  routerDistributorUrl: undefined,
 };
 
 const useMediasoup = undefined;

@@ -1,22 +1,9 @@
 const de = {
+  projectName: 'Digitale Bühne',
   stage: 'Bühne',
-  components: {
-    global: {
-      sidebar: {
-        projectName: 'Digital Stage',
-        stage: 'Bühne',
-      },
-    },
-  },
-  '*': {
-    projectName: 'Digital Stage',
-  },
-  '/': {
-    hello: 'Hello, world!',
-    welcomeMessage: 'Welcome to your internationalised page!',
-  },
-  '/alt': {
-    hello: 'Yo',
-  },
+  mixer: 'Mischpult',
+  room: '3D Audio',
+  devices: 'Einstellungen',
+  feedback: 'Problem melden',
 };
 export default de;

@@ -1,20 +1,9 @@
 const en = {
+  projectName: 'Digital Stage',
   stage: 'Stage',
-  components: {
-    global: {
-      sidebar: {
-        projectName: 'Digital Stage',
-        stage: 'Stage',
-      },
-    },
-  },
-  '/': {
-    projectName: 'Digital Stage',
-    hello: 'Hello, world!',
-    welcomeMessage: 'Welcome to your internationalised page!',
-  },
-  '/alt': {
-    hello: 'Yo',
-  },
+  mixer: 'Mixing panel',
+  room: '3D audio',
+  devices: 'Settings',
+  feedback: 'Report issue',
 };
 export default en;

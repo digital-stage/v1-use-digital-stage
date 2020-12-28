@@ -121,11 +121,19 @@ const store = createStore(reducer, devToolsEnhancer({}));
 const DigitalStageProvider = (props: {
   children: React.ReactNode;
   apiUrl: string;
-  routerDistUrl: string;
+  routerDistributorUrl?: string;
+  standaloneRouterUrl?: string;
   token?: string;
   addErrorHandler?: (error: Error) => void;
 }): JSX.Element => {
-  const { children, token, apiUrl, routerDistUrl, addErrorHandler } = props;
+  const {
+    children,
+    token,
+    apiUrl,
+    routerDistributorUrl,
+    standaloneRouterUrl,
+    addErrorHandler,
+  } = props;
 
   const handleError = useCallback(
     (error: Error) => {
@@ -144,7 +152,10 @@ const DigitalStageProvider = (props: {
       <SocketProvider apiUrl={apiUrl}>
         <StageActionsProvider handleError={handleError}>
           <UseDigitalStageProvider handleError={handleError} token={token}>
-            <MediasoupProvider routerDistUrl={routerDistUrl}>
+            <MediasoupProvider
+              routerDistributorUrl={routerDistributorUrl}
+              standaloneRouterUrl={standaloneRouterUrl}
+            >
               {children}
             </MediasoupProvider>
           </UseDigitalStageProvider>

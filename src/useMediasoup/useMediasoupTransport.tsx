@@ -34,9 +34,10 @@ const debugCleanup = debugEffect.extend('cleanup');
 
 const TIMEOUT_MS = 5000;
 
-const useMediasoupTransport = (
-  routerDistUrl: string
-): {
+const useMediasoupTransport = (options: {
+  routerDistributorUrl?: string;
+  standaloneRouterUrl?: string;
+}): {
   ready: boolean;
   router?: Router;
   consume: (
@@ -46,6 +47,7 @@ const useMediasoupTransport = (
   produce: (track: MediaStreamTrack) => Promise<LocalProducer>;
   stopProducing: (producer: LocalProducer) => Promise<LocalProducer>;
 } => {
+  const { routerDistributorUrl } = options;
   // Connection to router
   const [ready, setReady] = useState<boolean>(false);
   const [router, setRouter] = useState<Router>();
@@ -73,9 +75,9 @@ const useMediasoupTransport = (
    */
   useEffect(() => {
     debugEffect('serverConnection routerDistUrl');
-    if (serverConnection && routerDistUrl) {
-      trace(`Using ${routerDistUrl}`);
-      getFastestRouter(routerDistUrl)
+    if (serverConnection && routerDistributorUrl) {
+      trace(`Using ${routerDistributorUrl}`);
+      getFastestRouter(routerDistributorUrl)
         .then((fastestRouter) => {
           trace(`Fastest router is ${fastestRouter.url}`);
           return setRouter(fastestRouter);
@@ -88,7 +90,7 @@ const useMediasoupTransport = (
       };
     }
     return undefined;
-  }, [serverConnection, routerDistUrl]);
+  }, [serverConnection, routerDistributorUrl]);
 
   /**
    * HANDLE ROUTER CONNECTION

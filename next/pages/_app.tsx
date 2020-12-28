@@ -15,9 +15,18 @@ import {StageJoinerProvider} from "../lib/useStageJoiner";
 import {ColorProvider} from "../lib/useColors";
 import AppNavigation from "../components/global/AppNavigation";
 import {ModalInjector, ModalProvider} from "../lib/useModal";
+import {IntlProvider} from "react-intl";
+import {useRouter} from "next/router";
+import * as locales from "../content/locale"
 
 
 function MyApp({Component, pageProps}) {
+    const router = useRouter()
+    const {locale, defaultLocale} = router
+    const localeCopy = locales[locale]
+    const messages = localeCopy["default"]
+
+    console.log(messages);
 
     return (
         <>
@@ -25,23 +34,29 @@ function MyApp({Component, pageProps}) {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
             </Head>
             <StyletronProvider value={styletron} debug={debug} debugAfterHydration>
-                <ErrorsProvider>
-                    <ErrorsConsumer>
-                        {({reportError}) => (
-                            <AuthProvider
-                                authUrl={process.env.NEXT_PUBLIC_AUTH_URL}
-                            >
-                                <AuthConsumer>
-                                    {({token}) => (
-                                        <DigitalStageProvider
-                                            apiUrl={process.env.NEXT_PUBLIC_API_URL}
-                                            routerDistUrl={process.env.NEXT_PUBLIC_ROUTERS_URL}
-                                            token={token}
-                                            addErrorHandler={reportError}
-                                        >
-                                            <AudioContextProvider>
-                                                <StageWebAudioProvider handleError={reportError}>
-                                                    <StageJoinerProvider>
+                <IntlProvider
+                    locale={locale}
+                    defaultLocale={defaultLocale}
+                    messages={messages}
+                >
+                    <ErrorsProvider>
+                        <ErrorsConsumer>
+                            {({reportError}) => (
+                                <AuthProvider
+                                    authUrl={process.env.NEXT_PUBLIC_AUTH_URL}
+                                >
+                                    <AuthConsumer>
+                                        {({token}) => (
+                                            <DigitalStageProvider
+                                                apiUrl={process.env.NEXT_PUBLIC_API_URL}
+                                                routerDistributorUrl={process.env.NEXT_PUBLIC_ROUTER_DISTRIBUTOR_URL}
+                                                standaloneRouterUrl={process.env.NEXT_PUBLIC_ROUTER_DISTRIBUTOR_URL ? undefined : process.env.NEXT_PUBLIC_ROUTER_URL}
+                                                token={token}
+                                                addErrorHandler={reportError}
+                                            >
+                                                <AudioContextProvider>
+                                                    <StageWebAudioProvider handleError={reportError}>
+                                                        <StageJoinerProvider>
                                                             <ModalProvider>
                                                                 <ColorProvider>
                                                                     <Component {...pageProps} />
@@ -52,16 +67,17 @@ function MyApp({Component, pageProps}) {
                                                                 <StatusInformer/>
                                                                 <ModalInjector/>
                                                             </ModalProvider>
-                                                    </StageJoinerProvider>
-                                                </StageWebAudioProvider>
-                                            </AudioContextProvider>
-                                        </DigitalStageProvider>
-                                    )}
-                                </AuthConsumer>
-                            </AuthProvider>
-                        )}
-                    </ErrorsConsumer>
-                </ErrorsProvider>
+                                                        </StageJoinerProvider>
+                                                    </StageWebAudioProvider>
+                                                </AudioContextProvider>
+                                            </DigitalStageProvider>
+                                        )}
+                                    </AuthConsumer>
+                                </AuthProvider>
+                            )}
+                        </ErrorsConsumer>
+                    </ErrorsProvider>
+                </IntlProvider>
             </StyletronProvider>
         </>
     );
