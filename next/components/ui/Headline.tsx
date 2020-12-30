@@ -6,38 +6,48 @@ const Caption = styled("div", {
     color: colors.text.default,
     fontWeight: 'bold',
     fontSize: '1.2em',
-    fontFamily: fonts.family.headline
+    ...fonts.headline
 })
 
 const H1 = styled("h1", {
+    ...fonts.headline.h1,
     color: colors.text.default,
     fontSize: '1.4em',
-    fontFamily: fonts.family.headline
+    ...fonts.headline
 })
 const H2 = styled("h2", {
+    ...fonts.headline.h2,
     color: colors.text.default,
     fontSize: '1.3em',
-    fontFamily: fonts.family.headline
+    ...fonts.headline
 })
 const H3 = styled("h3", {
+    ...fonts.headline.h3,
     color: colors.text.default,
     fontSize: '1.2em',
-    fontFamily: fonts.family.headline
+    ...fonts.headline
 })
 const H4 = styled("h4", {
+    ...fonts.headline.h4,
     color: colors.text.default,
     fontSize: '1.1em',
-    fontFamily: fonts.family.headline
+    ...fonts.headline
 })
 const H5 = styled("h5", {
+    ...fonts.headline.h5,
     color: colors.text.default,
     fontSize: '0.9em',
-    fontFamily: fonts.family.headline
+    ...fonts.headline
+})
+const H6 = styled("h6", {
+    ...fonts.headline.h6,
+    color: colors.text.default,
+    fontSize: '0.9em',
 })
 
 
 const Headline = (props: {
-    variant: "h1" | "h2" | "h3" | "h4" | "h5" | "caption",
+    variant: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "caption",
     children: React.ReactNode | string
 }): JSX.Element => {
     const {variant, children} = props;
@@ -61,6 +71,10 @@ const Headline = (props: {
         case "h5":
             return (
                 <H5>{children}</H5>
+            )
+        case "h6":
+            return (
+                <H6>{children}</H6>
             )
         case "caption":
             return (

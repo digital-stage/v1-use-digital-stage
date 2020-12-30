@@ -1,18 +1,21 @@
 import {colors} from "./Theme";
 import {styled} from "styletron-react";
+import Text from "./Text";
+import React from "react";
 
-const P = styled('p', {
+const P = styled(Text, {
     color: colors.text.default,
 })
 
-
 const Paragraph = (props: {
-    children: React.ReactNode
+    variant?: "body" | "micro";
+    children: React.ReactNode;
+    className?: string;
 }) => {
-    const {children} = props;
+    const {children, variant, className} = props;
 
     return (
-        <P>
+        <P variant={variant} className={className}>
             {children}
         </P>
     )

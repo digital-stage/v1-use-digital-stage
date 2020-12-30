@@ -1,8 +1,12 @@
-import {styled, withStyleDeep} from "styletron-react";
+import {styled, useStyletron, withStyleDeep} from "styletron-react";
 import {FaUserAlt} from 'react-icons/fa';
 import React, {useState} from "react";
 import RoundButton from "../../ui/RoundButton";
 import {colors} from "../../ui/Theme";
+import {useCurrentUser} from "use-digital-stage";
+import useAuth from "../../../lib/useAuth";
+import Headline from "../../ui/Headline";
+import Paragraph from "../../ui/Paragraph";
 
 const FixedButton = withStyleDeep(RoundButton, {
     position: 'fixed',
@@ -16,14 +20,34 @@ const Overlay = styled("div", {
     top: 0,
     left: 0,
 })
-const Menu = styled("div", {
+const MenuWrapper = styled("div", {
     position: 'fixed',
     top: '58px',
     right: '20px',
     padding: '2rem',
     borderRadius: '1.125rem',
-    backgroundColor: colors.background.light
+    backgroundColor: colors.background.light,
+    boxShadow: colors.modal.boxShadow
 });
+
+const Menu = () => {
+    const {user: authUser} = useAuth();
+    const user = useCurrentUser();
+
+    const [css] = useStyletron();
+
+    return (
+        <>
+            <Headline variant="caption">
+                {user.name}
+            </Headline>
+            <Paragraph>
+                {authUser.email}
+            </Paragraph>
+            <hr/>
+        </>
+    )
+}
 
 const ProfileMenuButton = () => {
     const [open, setOpen] = useState<boolean>(false)
@@ -31,17 +55,17 @@ const ProfileMenuButton = () => {
     return (
         <>
             <FixedButton onClick={() => setOpen(prev => !prev)}>
-                <FaUserAlt size={24}/>
+                <FaUserAlt size="1rem"/>
             </FixedButton>
             {open && (
                 <Overlay
                     onClick={() => setOpen(false)}
                 >
-                    <Menu onClick={(e) => {
+                    <MenuWrapper onClick={(e) => {
                         e.stopPropagation();
                     }}>
-                        MENU
-                    </Menu>
+                        <Menu/>
+                    </MenuWrapper>
                 </Overlay>
             )}
         </>

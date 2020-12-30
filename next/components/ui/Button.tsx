@@ -1,36 +1,33 @@
 import {styled} from 'styletron-react';
 import {colors} from './Theme';
-import {Property} from "csstype";
 
-const Button = styled('button', (props: {
-    $color?: Property.Color,
-    $backgroundColor?: Property.Color,
-    $border?: boolean
-}) => ({
-    padding: '.5rem',
-    color: props.$color || colors.button.text,
+const Button = styled("button", (props: {
+    $variant?: "primary" | "secondary" | "tertiary" | "danger";
+}) =>  ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     borderStyle: 'solid',
+    borderWidth: '2px',
     outlineStyle: 'none',
     borderRadius: '12px',
-    borderWidth: props.$border ? '1px' : 0,
-    borderColor: colors.button.border,
-    backgroundColor: props.$backgroundColor || colors.button.background,
-    ':hover': {
-        color: colors.button.hover.text,
-        outlineColor: colors.button.hover.border,
-        backgroundColor: colors.button.hover.background,
+    boxShadow: '3px 8px black 16px',
+    padding: '.5rem',
+    color: colors.button[props.$variant || "primary"].color,
+    borderColor: colors.button[props.$variant || "primary"].borderColor,
+    backgroundColor: colors.button[props.$variant || "primary"].backgroundColor,
+    ":hover": {
+        ...colors.button[props.$variant || "primary"].hover
     },
-    ':disabled': {
-        color: colors.button.disabled.text,
-        outlineColor: colors.button.disabled.border,
-        backgroundColor: colors.button.disabled.background,
-        cursor: 'default',
+    ":focus": {
+        ...colors.button[props.$variant || "primary"].focus
     },
-    ':active': {
-        backgroundColor: colors.background.selected
-    }
+    ":active": {
+        ...colors.button[props.$variant || "primary"].active
+    },
+    ":disabled": {
+        ...colors.button[props.$variant || "primary"].disabled
+    },
 }));
+
 export default Button;

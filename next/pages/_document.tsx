@@ -29,7 +29,8 @@ class MyDocument extends Document<{
                             key={i}
                         />
                     ))}
-                    <link href="/static/fonts/lato/style.css" rel="stylesheet"/>
+                    <link href="/static/fonts/open-sans/style.css" rel="stylesheet"/>
+                    <link href="/static/fonts/poppins/style.css" rel="stylesheet"/>
                 </Head>
                 <body>
                 <Main />

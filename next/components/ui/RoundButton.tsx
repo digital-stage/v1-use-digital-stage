@@ -1,5 +1,5 @@
 import {styled} from "styletron-react";
-import {colors} from "./Theme";
+import {breakpoints, colors} from "./Theme";
 
 const RoundButton = styled('button', (props: {
     $variant?: "primary" | "secondary"
@@ -7,7 +7,8 @@ const RoundButton = styled('button', (props: {
     borderRadius: '50%',
     borderWidth: '1px',
     borderStyle: 'solid',
-    padding: '1rem',
+    width: '32px',
+    height: '32px',
     outline: 'none',
     color: colors.button.text,
     borderColor: colors.button.text,
@@ -15,5 +16,9 @@ const RoundButton = styled('button', (props: {
     ":hover": {
         backgroundColor: colors.button.background,
     },
+    [breakpoints.TABLET]: {
+        width: '48px',
+        height: '48px',
+    }
 }));
 export default RoundButton;

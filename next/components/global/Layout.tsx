@@ -39,6 +39,8 @@ const StyledSideBar = styled(SideBar, {
     }
 });
 
+const GradientWrapper = styled("div", {})
+
 const Layout = (props: {
     children: React.ReactNode
 }) => {
@@ -61,9 +63,11 @@ const Layout = (props: {
     }
 
     return (
-        <Container>
-            {children}
-        </Container>
+        <GradientWrapper>
+            <Container>
+                {children}
+            </Container>
+        </GradientWrapper>
     )
 }
 export default Layout;
