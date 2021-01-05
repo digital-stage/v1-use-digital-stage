@@ -3,7 +3,7 @@ import React from "react";
 import Modal, {ModalBody, ModalFooter, ModalHeader} from "../../ui/Modal";
 import Button from "../../ui/Button";
 import {useStyletron} from "styletron-react";
-import Headline from "../../ui/Headline";
+import Headline from "../../theme/Headline";
 
 const DeleteGroupModal = (props: {
     group: Group;

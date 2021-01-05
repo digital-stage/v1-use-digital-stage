@@ -3,7 +3,7 @@ import Container from "../components/ui/Container";
 import useAuth from "../lib/useAuth";
 import {useRouter} from "next/router";
 import StageList from "../components/stages/StageList";
-import Layout from "../components/global/Layout";
+import Layout from "../components/theme/Layout";
 
 const Stages = () => {
     const auth = useAuth();

@@ -14,7 +14,7 @@ import useImage from "../lib/useImage";
 import RoomElement from "../components/room/RoomElement";
 import Select, {Option} from "../components/ui/Select";
 import {colors} from "../components/ui/Theme";
-import Layout from "../components/global/Layout";
+import Layout from "../components/theme/Layout";
 
 const FullscreenEditor = styled(Editor, {
     width: '100vw',

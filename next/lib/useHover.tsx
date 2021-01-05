@@ -1,17 +1,15 @@
-import {useRef, useState, useEffect} from 'react';
+import { MutableRefObject, useEffect, useState } from 'react';
 
 // Hook
-function useHover() {
+export default function useHover<T extends HTMLElement>(parent: MutableRefObject<T>) {
     const [value, setValue] = useState(false);
-
-    const ref = useRef(null);
 
     const handleMouseOver = () => setValue(true);
     const handleMouseOut = () => setValue(false);
 
     useEffect(
         () => {
-            const node = ref.current;
+            const node = parent.current;
             if (node) {
                 node.addEventListener('mouseover', handleMouseOver);
                 node.addEventListener('mouseout', handleMouseOut);
@@ -21,10 +19,10 @@ function useHover() {
                     node.removeEventListener('mouseout', handleMouseOut);
                 };
             }
+            return null;
         },
-        [ref.current] // Recall only if ref changes
+        [parent.current] // Recall only if ref changes
     );
 
-    return [ref, value];
+    return value;
 }
-export default useHover;

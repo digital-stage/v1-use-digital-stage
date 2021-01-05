@@ -7,7 +7,7 @@ import Input from "../../ui/Input";
 import Button from '../../ui/Button';
 import {styled, useStyletron, withStyleDeep} from "styletron-react";
 import Table, {FullColumn, HalfColumn} from '../../ui/Table';
-import Headline from "../../ui/Headline";
+import Headline from "../../theme/Headline";
 
 const StyledInput = withStyleDeep(Input, {
     marginBottom: '.4rem'

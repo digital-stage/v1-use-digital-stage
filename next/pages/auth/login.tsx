@@ -1,14 +1,18 @@
 import React, {useEffect} from "react";
-import LoginPane from "../../components/auth/LoginPane";
 import useAuth from "../../lib/useAuth";
 import {useRouter} from "next/router";
 import Link from "next/link";
 import A from "../../components/ui/A";
-import Layout from "../../components/global/Layout";
+import {useIntl} from "react-intl";
+import AuthLayout from "../../components/theme/AuthLayout";
+import AuthPanel from "../../components/auth/AuthPanel";
+import LoginForm from "../../components/auth/LoginForm";
 
 const Login = () => {
     const auth = useAuth();
     const {push, prefetch} = useRouter();
+    const {formatMessage} = useIntl();
+    const f = id => formatMessage({id});
 
     useEffect(() => {
         if (prefetch) {
@@ -23,11 +27,13 @@ const Login = () => {
     }, [auth, push])
 
     return (
-        <Layout>
-            <h1>Log In</h1>
-            <LoginPane/>
-            Don't have an account yet? <Link href="/auth/signup"><A>Create a new account</A></Link>
-        </Layout>
+        <AuthLayout>
+            <AuthPanel>
+                <LoginForm/>
+                <Link href="/auth/forgot">{f("forgotPassword")}</Link>
+                Don't have an account yet? <Link href="/auth/signup"><A>Create a new account</A></Link>
+            </AuthPanel>
+        </AuthLayout>
     )
 }
 

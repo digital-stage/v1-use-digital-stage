@@ -1,10 +1,10 @@
-import {colors} from "./Theme";
 import {styled} from "styletron-react";
 import Text from "./Text";
 import React from "react";
+import colors from "./theme/colors";
 
 const P = styled(Text, {
-    color: colors.text.default,
+    color: colors.text.regular.default
 })
 
 const Paragraph = (props: {

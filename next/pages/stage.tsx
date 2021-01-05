@@ -4,9 +4,9 @@ import {
 import {styled} from "styletron-react";
 import React, {useState} from "react";
 import GroupGrid from "../components/stage/GroupGrid";
-import Layout from "../components/global/Layout";
 import Button from "../components/ui/Button";
-import Headline from "../components/ui/Headline";
+import Headline from "../components/theme/Headline";
+import StageLayout from "../components/theme/StageLayout";
 
 const StageWrapper = styled("div", {
     width: '100%',
@@ -23,7 +23,7 @@ const Stage = () => {
     );
 
     return (
-        <Layout>
+        <StageLayout>
             <Headline variant="h1">{stage?.name}</Headline>
             <Button onClick={() => setFilterOffline(prev => !prev)}>
                 Toggle offline
@@ -31,7 +31,7 @@ const Stage = () => {
             <StageWrapper>
                 {groups.map(group => <GroupGrid filterOffline={filterOffline} key={group._id} group={group}/>)}
             </StageWrapper>
-        </Layout>
+        </StageLayout>
     )
 }
 export default Stage;

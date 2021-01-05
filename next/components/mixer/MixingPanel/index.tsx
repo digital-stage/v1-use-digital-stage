@@ -4,9 +4,9 @@ import {
     useIsStageAdmin,
 } from "use-digital-stage";
 import Select, {Option} from "../../ui/Select";
-import Paragraph from "../../ui/Paragraph";
+import Paragraph from "../../theme/Paragraph";
 import CombinedMixingPanel from "../CombinedMixingPanel";
-import TabControl from "../../ui/TabControl";
+import TabControl from "../../theme/TabControl";
 import {breakpoints} from "../../ui/Theme";
 
 const Wrapper = styled('div', {

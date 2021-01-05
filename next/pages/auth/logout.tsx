@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
-
 import useAuth from "../../lib/useAuth";
 import {useRouter} from "next/router";
-import Layout from "../../components/global/Layout";
+import AuthLayout from "../../components/theme/AuthLayout";
+import Panel from "../../components/theme/Panel";
 
 const Logout = () => {
     const {loading, logout} = useAuth();
@@ -21,17 +21,18 @@ const Logout = () => {
 
     if (error) {
         return (
-            <Layout>
-                Error when logging out:
-                {error.message}
-            </Layout>
+            <AuthLayout>
+                <Panel variant="white">
+                    {error.message}
+                </Panel>
+            </AuthLayout>
         )
     }
 
     return (
-        <Layout>
+        <AuthLayout>
             Logging you out...
-        </Layout>
+        </AuthLayout>
     )
 };
 export default Logout;

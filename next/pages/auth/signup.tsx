@@ -1,10 +1,11 @@
 import React, {useEffect} from "react";
 import useAuth from "../../lib/useAuth";
 import {useRouter} from "next/router";
-import SignUpPane from "../../components/auth/SignUpPane";
 import Link from "next/link";
 import A from "../../components/ui/A";
-import Layout from "../../components/global/Layout";
+import AuthPanel from "../../components/auth/AuthPanel";
+import AuthLayout from "../../components/theme/AuthLayout";
+import SignUpForm from "../../components/auth/SignUpForm";
 
 const Login = () => {
     const auth = useAuth();
@@ -23,11 +24,13 @@ const Login = () => {
     }, [auth, push])
 
     return (
-        <Layout>
-            <h1>Sign up</h1>
-            <SignUpPane/>
-            Already have an account? <Link href="/auth/login"><A>Log in</A></Link>
-        </Layout>
+        <AuthLayout>
+            <AuthPanel>
+                <h1>Sign up</h1>
+                <SignUpForm/>
+                Already have an account? <Link href="/auth/login"><A>Log in</A></Link>
+            </AuthPanel>
+        </AuthLayout>
     )
 }
 

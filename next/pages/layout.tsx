@@ -1,6 +1,6 @@
 import React, {useState} from "react";
-import Headline from "../components/ui/Headline";
-import Paragraph from "../components/ui/Paragraph";
+import Headline from "../components/theme/Headline";
+import Paragraph from "../components/theme/Paragraph";
 import {styled} from "styletron-react";
 import Button from "../components/theme/Button";
 import {colors} from "../components/theme/Theme";

@@ -1,7 +1,7 @@
 import React from "react";
 import {styled} from "styletron-react";
 import MixingPanelView from "../components/mixer/MixingPanel";
-import Layout from "../components/global/Layout";
+import Layout from "../components/theme/Layout";
 
 const Wrapper = styled("div", {
     width: "100vw",

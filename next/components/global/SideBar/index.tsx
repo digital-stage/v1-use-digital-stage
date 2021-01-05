@@ -1,45 +1,38 @@
 import {styled} from "styletron-react";
 import Link from "next/link";
 import React from "react";
-import {colors} from "../../ui/Theme";
 import {useIntl} from "react-intl";
-import { FaBug, FaCog, FaUserAlt, FaVideo, FaVolumeUp } from 'react-icons/fa';
-import { BiCube } from 'react-icons/bi';
-import { GoSettings } from 'react-icons/go';
+import {FaBug, FaCog, FaUserAlt, FaVideo, FaVolumeUp} from 'react-icons/fa';
+import {BiCube} from 'react-icons/bi';
+import {GoSettings} from 'react-icons/go';
 import {useRouter} from "next/router";
+import colors from "../../theme/theme/colors";
 
 const Wrapper = styled("div", {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
     width: '72px',
-    backgroundColor: colors.background.darker
+    backgroundColor: colors.background.level3
 });
-const UpperItemsWrapper = styled("div", {
-
-});
-const CenteredItemsWrapper = styled("div", {
-
-
-});
-const LowerItemsWrapper = styled("div", {
-
-});
-const SideBarItem = styled("a", (props: {$active: boolean}) => ({
+const UpperItemsWrapper = styled("div", {});
+const CenteredItemsWrapper = styled("div", {});
+const LowerItemsWrapper = styled("div", {});
+const SideBarItem = styled("a", (props: { $active: boolean }) => ({
     display: 'flex',
     flexDirection: 'column',
     width: '72px',
     height: '72px',
-    color: colors.global.white,
-    backgroundColor: props.$active ? colors.background.dark : undefined,
+    color: colors.text.regular.default,
+    backgroundColor: props.$active ? colors.background.level4 : undefined,
     alignItems: 'center',
     justifyContent: 'center',
     ":active": {
-        color: colors.global.white,
-        backgroundColor: colors.background.default
+        color: colors.text.regular.default,
+        backgroundColor: colors.background.level3
     },
     ":hover": {
-        color: colors.interaction.active,
+        color: colors.primary.link,
     }
 }));
 
@@ -91,7 +84,7 @@ const SideBar = (props: {
                 </Link>
             </CenteredItemsWrapper>
             <LowerItemsWrapper>
-                <Link href="https://forum.digital-stage.org/c/deutsch/ds-web/30" >
+                <Link href="https://forum.digital-stage.org/c/deutsch/ds-web/30">
                     <a target="_blank">
                         <SideBarItem $active={pathname === "/devices"}>
                             <FaBug size={18}/>

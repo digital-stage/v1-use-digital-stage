@@ -1,6 +1,6 @@
 import {styled} from "styletron-react";
-import {colors, fonts} from "./Theme";
 import React from "react";
+import fonts from "./theme/fonts";
 
 
 const Body = styled("p", fonts.body.regular);

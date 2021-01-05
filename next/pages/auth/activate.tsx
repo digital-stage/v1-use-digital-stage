@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import React from 'react';
 import ActivationPane from "../../components/auth/ActivationPane";
-import Layout from "../../components/global/Layout";
+import AuthLayout from "../../components/theme/AuthLayout";
 
 const Activate = (): JSX.Element => {
   const { query } = useRouter();
@@ -9,9 +9,9 @@ const Activate = (): JSX.Element => {
   const initialCode = Array.isArray(query.code) ? query.code[0] : query.code;
 
   return (
-    <Layout>
+    <AuthLayout>
         <ActivationPane initialCode={initialCode} />
-    </Layout>
+    </AuthLayout>
   );
 };
 

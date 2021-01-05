@@ -5,8 +5,8 @@ import RoundButton from "../../ui/RoundButton";
 import {colors} from "../../ui/Theme";
 import {useCurrentUser} from "use-digital-stage";
 import useAuth from "../../../lib/useAuth";
-import Headline from "../../ui/Headline";
-import Paragraph from "../../ui/Paragraph";
+import Headline from "../../theme/Headline";
+import Paragraph from "../../theme/Paragraph";
 
 const FixedButton = withStyleDeep(RoundButton, {
     position: 'fixed',
